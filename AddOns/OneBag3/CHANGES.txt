@@ -1,0 +1,7 @@
+changeset:   187:658117c99b65
+tag:         v3.9.1
+user:        Bryan McLemore <kaelten@gmail.com>
+date:        Thu Sep 07 14:37:29 2017 -0700
+summary:     testing onecore as embeded dependency again
+
+

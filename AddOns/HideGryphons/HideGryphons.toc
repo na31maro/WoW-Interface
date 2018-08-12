@@ -1,0 +1,4 @@
+## Interface: 50300
+## Title: HideGryphons
+## Notes: Hides the gryphons on the default action bars
+HideGryphons.lua

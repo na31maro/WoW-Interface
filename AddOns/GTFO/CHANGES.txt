@@ -1,0 +1,13 @@
+------------------------------------------------------------------------
+r405 | Zensunim | 2018-07-25 22:45:49 +0000 (Wed, 25 Jul 2018) | 3 lines
+Changed paths:
+   M /trunk/GTFO.lua
+   M /trunk/GTFO.toc
+   M /trunk/GTFO_Spells_Special.lua
+   M /trunk/ReadMe.txt
+
+4.46.1
+* Added Battle for Azeroth launch event spells (special)
+
+------------------------------------------------------------------------
+

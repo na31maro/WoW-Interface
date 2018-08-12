@@ -1,0 +1,16 @@
+tag 3793f240736841dbbe24afdf39316f76a800b8c6 Beta_3c
+Author:	Michael P. Starkweather <mpstark@gmail.com>
+Date:	Thu Apr 13 12:55:03 2017 -0500
+
+commit 400cb363e9f459706876b2af5605df52ede13dd9
+Author: Michael P. Starkweather <mpstark@gmail.com>
+Date:   Thu Apr 13 12:48:21 2017 -0500
+
+    Update version in toc
+
+commit 47fce56c60899fd9a831724715953ba5b6afe05e
+Author: Michael P. Starkweather <mpstark@gmail.com>
+Date:   Thu Apr 13 12:45:49 2017 -0500
+
+    Default ActionCam setting to "On", fix issue with options setting old cvar
+
