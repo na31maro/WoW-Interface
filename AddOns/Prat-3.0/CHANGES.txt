@@ -1,7 +1,7 @@
-changeset:   1170:bd28c1fa136e
-tag:         3.7.8
+changeset:   1173:bdb9e058b1a7
+tag:         3.7.10
 user:        sylvanaar <sylvanaar@mindspring.com>
-date:        Sun Jul 29 09:59:41 2018 -0700
-summary:     Stop disabling blizzard timestamps so there can be timestamps in the community chat.
+date:        Wed Aug 08 20:02:50 2018 -0700
+summary:     Curseforge needs to re-build when I tag without code changes.
 
 
