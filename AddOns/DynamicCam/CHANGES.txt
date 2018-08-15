@@ -1,5 +1,11 @@
 Changes since tag Beta_4
 
+commit d328082e1f4df309989334cd2085b28cc96b736d
+Author: Michael P. Starkweather <mpstark@gmail.com>
+Date:   Sun Aug 12 14:06:18 2018 -0500
+
+    Fixed continous yaw (in LibCamera repo), lowered rotate speed step to 1
+
 commit 44ff0349aeb5e1aad5589bec32dd69fd1de51659
 Author: Michael P. Starkweather <mpstark@gmail.com>
 Date:   Sat Aug 11 14:56:57 2018 -0500

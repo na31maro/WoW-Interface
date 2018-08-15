@@ -128,7 +128,9 @@ function Cursor:Move(oldAnchor)
 		end
 		local oldX, oldY = self:GetCenter()
 		if ( not current.node.noAnimation ) and oldX and oldY and newX and newY and self:IsVisible() then
-			self.Translate:SetOffset(newX - oldX, newY - oldY)
+			local oldScale, newScale = self:GetEffectiveScale(), self.Pointer:GetEffectiveScale()
+			local sDiff, sMult = oldScale / newScale, newScale / oldScale
+			self.Translate:SetOffset((newX - oldX * sDiff) * sMult, (newY - oldY * sDiff) * sMult)
 			self.Enlarge:SetStartDelay(0.05)
 			self.MoveAndScale:ConfigureScale()
 			self.MoveAndScale:Play()
@@ -431,7 +433,7 @@ end
 function Node:GetCandidateVectorForCurrent()
 	local x, y = current.node:GetCenter()
 	return {x = x; y = y; h = huge; v = huge}
-end
+end 
 
 function Node:GetCandidatesForVector(vector, comparator, candidates)
 	local thisX, thisY = vector.x, vector.y

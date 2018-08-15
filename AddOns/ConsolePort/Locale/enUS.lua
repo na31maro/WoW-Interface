@@ -123,6 +123,7 @@ TUTORIAL = {
 		LOOKAROUND 			= 'Hold |T%s:32:32:0:0|t to pan the camera around',
 		DISABLEMOUSE 		= 'Disable automatic mouse behaviour',
 		INVERTPITCH			= 'Invert camera pitch',
+		INVERTYAW			= 'Invert camera yaw',
 		TARGETING 			= 'Targeting',
 		RAIDCURSORDIRECT 	= 'Target directly with raid cursor',
 		TARGETALGORITHM 	= 'Use new tab-targeting algorithm',

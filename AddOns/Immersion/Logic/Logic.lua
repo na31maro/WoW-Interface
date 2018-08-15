@@ -1,6 +1,6 @@
 local _, L = ...
 local NPC, TalkBox = {}, {}
-local frame, GetTime, GetOffset = L.frame, GetTime, UIParent.GetBottom
+local frame, GetTime, GetOffset, GetNamePlateForUnit = L.frame, GetTime, UIParent.GetBottom, C_NamePlate.GetNamePlateForUnit
 
 ----------------------------------
 -- Event handler
@@ -8,9 +8,6 @@ local frame, GetTime, GetOffset = L.frame, GetTime, UIParent.GetBottom
 function NPC:OnEvent(event, ...)
 	self:ResetElements(event)
 	if self[event] then
-		if event ~= 'QUEST_ACCEPTED' and event:match('QUEST') then
-			CloseGossip()
-		end
 		event = self[event](self, ...) or event
 	end
 	self.TalkBox.lastEvent = event
@@ -119,11 +116,7 @@ function NPC:IsSpeechFinished()
 end
 
 function NPC:ResetElements(event)
-	-- Do not reset elements on QUEST_ACCEPTED,
-	-- because it fires on auto-accepted quests.
-	-- E.g. QUEST_DETAIL is immediately followed by
-	-- QUEST_ACCEPTED, closing the elements frame.
-	if ( event == 'QUEST_ACCEPTED' ) then return end
+	if ( self.IgnoreResetEvent[event] ) then return end
 	
 	self.Inspector:Hide()
 	self.TalkBox.Elements:Reset()
@@ -149,10 +142,14 @@ function NPC:UpdateTalkingHead(title, text, npcType, explicitUnit, isToastPlayba
 	local textFrame = talkBox.TextFrame
 	textFrame.Text:SetText(text)
 	-- Add contents to toast.
-	if L('onthefly') and not isToastPlayback then
-		self:QueueToast(title, text, npcType, unit)
+	if not isToastPlayback then
+		if L('onthefly') then
+			self:QueueToast(title, text, npcType, unit)
+		elseif L('supertracked') then
+			self:QueueQuestToast(title, text, npcType, unit)
+		end
 	end
-	if textFrame.Text:IsSequence() and L('showprogressbar') and not L('disableprogression') then
+	if L('showprogressbar') and not L('disableprogression') then
 		talkBox.ProgressionBar:Show()
 	end
 end
@@ -308,6 +305,7 @@ function NPC:PlayIntro(event, freeFloating)
 	else
 		self:EnableKeyboard(not freeFloating)
 		self:FadeIn(nil, shouldAnimate, freeFloating)
+
 		local box = self.TalkBox
 		local x, y = L('boxoffsetX'), L('boxoffsetY')
 		box:ClearAllPoints()
@@ -324,7 +322,7 @@ end
 function NPC:PlayOutro(optionFrameOpen)
 	self:EnableKeyboard(false)
 	self:FadeOut(0.5)
-	self:PlayToast(optionFrameOpen)
+	self:PlayToasts(optionFrameOpen)
 end
 
 function NPC:ForceClose(optionFrameOpen)
@@ -443,6 +441,10 @@ end
 -- TalkBox "button"
 ----------------------------------
 function TalkBox:SetOffset(x, y)
+	if self:UpdateNameplateAnchor() then
+		return
+	end
+
 	local point = L('boxpoint')
 	local anidivisor = L('anidivisor')
 	x = x or L('boxoffsetX')
@@ -461,7 +463,6 @@ function TalkBox:SetOffset(x, y)
 		self:SetPoint(point, UIParent, x, y)
 		return
 	end
-
 	self:SetScript('OnUpdate', function(self)
 		self.isOffsetting = true
 		local offset = (GetOffset(self) or 0) - (GetOffset(UIParent) or 0)
@@ -484,6 +485,29 @@ function TalkBox:SetExtraOffset(newOffset)
 	local allowExtra = L('anidivisor') > 0
 	self.extraY = allowExtra and newOffset or 0
 	self:SetOffset(currX, currY)
+end
+
+function TalkBox:UpdateNameplateAnchor()
+	if self.plateInHiding then
+		self.plateInHiding:SetAlpha(1)
+		self.plateInHiding = nil
+	end
+	if L('nameplatemode') then
+		local plate = GetNamePlateForUnit('npc')
+		if plate then
+			if self.isOffsetting then
+				self:SetScript('OnUpdate', nil)
+				self.isOffsetting = false
+			end
+			self:ClearAllPoints()
+			self:SetPoint('CENTER', plate, 'TOP', 0, self.extraY or 0)
+			if plate.UnitFrame then
+				self.plateInHiding = plate.UnitFrame
+				self.plateInHiding:SetAlpha(0)
+			end
+			return true
+		end
+	end
 end
 
 function TalkBox:OnEnter()
