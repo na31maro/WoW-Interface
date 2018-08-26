@@ -20,6 +20,15 @@ local MAPID_KROKUUN = 830
 local MAPID_MACAREE = 882
 local MAPID_DARKSHORE = 62
 local MAPID_AZEROTH = 947
+local MAPID_ZANDALAR = 875
+local MAPID_VOLDUN = 864
+local MAPID_NAZMIR = 863
+local MAPID_ZULDAZAR = 862
+local MAPID_KUL_TIRAS = 876
+local MAPID_STORMSONG_VALLEY = 942
+local MAPID_DRUSTVAR = 896
+local MAPID_TIRAGARDE_SOUND = 895
+local MAPID_TOL_DAGOR = 1169
 
 local MAPID_ZONES_CONTINENTS = {
 	[MAPID_DALARAN] = MAPID_BROKENISLES,
@@ -33,13 +42,38 @@ local MAPID_ZONES_CONTINENTS = {
 	[MAPID_ANTORANWASTES] = MAPID_ARGUS,
 	[MAPID_KROKUUN] = MAPID_ARGUS,
 	[MAPID_MACAREE] = MAPID_ARGUS,
+	[MAPID_VOLDUN] = MAPID_ZANDALAR,
+	[MAPID_NAZMIR] = MAPID_ZANDALAR,
+	[MAPID_ZULDAZAR] = MAPID_ZANDALAR,
+	[MAPID_STORMSONG_VALLEY] = MAPID_KUL_TIRAS,
+	[MAPID_DRUSTVAR] = MAPID_KUL_TIRAS,
+	[MAPID_TIRAGARDE_SOUND] = MAPID_KUL_TIRAS,
+	[MAPID_TOL_DAGOR] = MAPID_KUL_TIRAS,
 }
-local MAPID_CONTINENTS = { [MAPID_BROKENISLES] = true, [MAPID_ARGUS] = true }
+local MAPID_CONTINENTS = { [MAPID_BROKENISLES] = true, [MAPID_ARGUS] = true, [MAPID_ZANDALAR] = true, [MAPID_KUL_TIRAS] = true }
 
 local MAPID_ALL = { MAPID_AZEROTH, MAPID_ANTORANWASTES, MAPID_KROKUUN, MAPID_MACAREE }
 local MAPID_ALL_ARGUS = { MAPID_ANTORANWASTES, MAPID_KROKUUN, MAPID_MACAREE }
-local MAPID_LEGION = { [MAPID_SURAMAR]=1, [MAPID_AZSUNA]=1, [MAPID_VALSHARAH]=1, [MAPID_HIGHMOUNTAIN]=1, [MAPID_STORMHEIM]=1, [MAPID_DALARAN]=1, [MAPID_EYEOFAZSHARA]=1, [MAPID_BROKENSHORE]=1, [MAPID_ANTORANWASTES]=1, [MAPID_KROKUUN]=1, [MAPID_MACAREE]=1 }
-local MAPID_ORDER = { [MAPID_SURAMAR] = 1, [MAPID_AZSUNA] = 2, [MAPID_VALSHARAH] = 3, [MAPID_HIGHMOUNTAIN] = 4, [MAPID_STORMHEIM] = 5, [MAPID_DALARAN] = 6, [MAPID_EYEOFAZSHARA] = 7, [MAPID_BROKENSHORE] = 8, [MAPID_ANTORANWASTES] = 9, [MAPID_KROKUUN] = 10, [MAPID_MACAREE] = 11 }
+local MAPID_ORDER = {
+	[MAPID_VOLDUN] = 1,
+	[MAPID_NAZMIR] = 2,
+	[MAPID_ZULDAZAR] = 3,
+	[MAPID_STORMSONG_VALLEY] = 4,
+	[MAPID_DRUSTVAR] = 5,
+	[MAPID_TIRAGARDE_SOUND] = 6,
+	[MAPID_TOL_DAGOR] = 7,
+	[MAPID_SURAMAR] = 51,
+	[MAPID_AZSUNA] = 52,
+	[MAPID_VALSHARAH] = 53,
+	[MAPID_HIGHMOUNTAIN] = 54,
+	[MAPID_STORMHEIM] = 55,
+	[MAPID_DALARAN] = 56,
+	[MAPID_EYEOFAZSHARA] = 57,
+	[MAPID_BROKENSHORE] = 58,
+	[MAPID_ANTORANWASTES] = 59,
+	[MAPID_KROKUUN] = 60,
+	[MAPID_MACAREE] = 61
+}
 
 local CURRENCYID_RESOURCES = 1220
 local CURRENCYID_WAR_SUPPLIES = 1342
@@ -49,8 +83,7 @@ local CURRENCYID_WAKENING_ESSENCE = 1533
 local CURRENCYID_AZERITE = 1553
 local CURRENCYID_WAR_RESOURCES = 1560
 
-local TitleButton_RarityColorTable_Old = { [LE_WORLD_QUEST_QUALITY_COMMON] = 110, [LE_WORLD_QUEST_QUALITY_RARE] = 113, [LE_WORLD_QUEST_QUALITY_EPIC] = 120 }
-local TitleButton_RarityColorTable = { [LE_WORLD_QUEST_QUALITY_COMMON] = 120, [LE_WORLD_QUEST_QUALITY_RARE] = 123, [LE_WORLD_QUEST_QUALITY_EPIC] = 130 }
+local TitleButton_RarityColorTable = { [LE_WORLD_QUEST_QUALITY_COMMON] = 0, [LE_WORLD_QUEST_QUALITY_RARE] = 3, [LE_WORLD_QUEST_QUALITY_EPIC] = 10 }
 
 local FILTER_CURRENCY = 1
 local FILTER_ITEMS = 2
@@ -64,7 +97,9 @@ local SORT_ORDER = { SORT_NAME, SORT_TIME, SORT_ZONE, SORT_FACTION, SORT_REWARDS
 local REWARDS_ORDER = { ARTIFACT_POWER = 1, LOOT = 2, CURRENCY = 3, GOLD = 4, ITEMS = 5 }
 Mod.SortOrder = SORT_ORDER
 
-local FACTION_ORDER = { 1900, 1883, 1828, 1948, 1894, 1859, 1090, 2045, 2165, 2170 }
+local FACTION_ORDER_HORDE = { 2157, 2164, 2156, 2158, 2103, 2163 }
+local FACTION_ORDER_ALLIANCE = { 2159, 2164, 2160, 2161, 2162, 2163 }
+local FACTION_ORDER
 
 local FILTER_LOOT_ALL = 1
 local FILTER_LOOT_UPGRADES = 2
@@ -83,7 +118,25 @@ end
 --  Utility Functions
 -- ===================
 
+local __legionMap = {}
+local function IsLegionMap(mapID)
+	if __legionMap[mapID] == nil then
+		local mapInfo = C_Map.GetMapInfo(mapID)
+		local isLegion = false
+		while mapInfo and mapInfo.parentMapID > 0 do
+			if mapInfo.mapID == MAPID_BROKENISLES then
+				isLegion = true
+			end
+			mapInfo = C_Map.GetMapInfo(mapInfo.parentMapID)
+		end
+		__legionMap[mapID] = isLegion
+	end
+	return __legionMap[mapID]
+end
 
+local function IsLegionWorldQuest(info)
+	return IsLegionMap(info.mapID)
+end
 
 -- =================
 --  Event Functions
@@ -101,7 +154,7 @@ end
 
 local function TitleButton_OnEnter(self)
 	local tagID, tagName, worldQuestType, rarity, isElite, tradeskillLineIndex = GetQuestTagInfo(self.questID)
-	local _, color = GetQuestDifficultyColor( TitleButton_RarityColorTable[rarity] )
+	local _, color = GetQuestDifficultyColor( UnitLevel("player") + TitleButton_RarityColorTable[rarity] )
 	self.Text:SetTextColor( color.r, color.g, color.b )
 	
 	hoveredQuestID = self.questID
@@ -120,7 +173,7 @@ end
 
 local function TitleButton_OnLeave(self)
 	local tagID, tagName, worldQuestType, rarity, isElite, tradeskillLineIndex = GetQuestTagInfo(self.questID)
-	local color = GetQuestDifficultyColor( TitleButton_RarityColorTable[rarity] )
+	local color = GetQuestDifficultyColor( UnitLevel("player") + TitleButton_RarityColorTable[rarity] )
 	self.Text:SetTextColor( color.r, color.g, color.b )
 
 	hoveredQuestID = nil
@@ -232,7 +285,7 @@ local function FilterMenu_Initialize(self, level)
 		info.checked = info.value == value
 		My_UIDropDownMenu_AddButton(info, level)
 
-		local bounties = GetQuestBountyInfoForMapID(MAPID_BROKENISLES)
+		local bounties = GetQuestBountyInfoForMapID(UnitLevel("player") and MAPID_KUL_TIRAS or MAPID_BROKENISLES)
 		for _, bounty in ipairs(bounties) do
 			if not IsQuestComplete(bounty.questID) then
 				info.text =  GetQuestLogTitle(GetQuestLogIndexByID(bounty.questID))
@@ -322,7 +375,7 @@ local function FilterButton_OnClick(self, button)
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	if (button == 'RightButton' and (self.filter == "EMISSARY" or self.filter == "LOOT" or self.filter == "FACTION" or self.filter == "TIME")) -- or self.filter == "ZONE"
 			or (self.filter == "SORT")
-			or (self.filter == "FACTION" and not Config:GetFilter("FACTION") and Config.filterFaction == 0) then
+			or (self.filter == "FACTION" and not Config:GetFilter("FACTION")) then -- and Config.filterFaction == 0
 		local MY_UIDROPDOWNMENU_OPEN_MENU = Lib_UIDropDownMenu_Initialize and LIB_UIDROPDOWNMENU_OPEN_MENU or UIDROPDOWNMENU_OPEN_MENU
 		if filterMenu and MY_UIDROPDOWNMENU_OPEN_MENU == filterMenu and My_DropDownList1:IsShown() and filterMenu.filter == self.filter then
 			My_HideDropDownMenu(1)
@@ -338,12 +391,14 @@ local function FilterButton_OnClick(self, button)
 			Config:ToggleFilter(self.filter)
 		else
 			if Config:IsOnlyFilter(self.filter) then
+				Config:Set('filterFaction', 0, true)
 				Config:Set('filterEmissary', 0, true)
 				Config:Set('filterLoot', 0, true)
 				Config:Set('filterZone', 0, true)
 				Config:Set('filterTime', 0, true)
 				Config:SetNoFilter()
 			else
+				if self.filter ~= "FACTION" then Config:Set('filterFaction', 0, true) end
 				if self.filter ~= "EMISSARY" then Config:Set('filterEmissary', 0, true) end
 				if self.filter ~= "LOOT" then Config:Set('filterLoot', 0, true) end
 				if self.filter ~= "ZONE" then Config:Set('filterZone', 0, true) end
@@ -458,7 +513,7 @@ local function QuestFrame_AddQuestButton(questInfo, prevButton)
 	button.numObjectives = questInfo.numObjectives
 	button.infoX = questInfo.x
 	button.infoY = questInfo.y
-	local difficultyColor = GetQuestDifficultyColor( TitleButton_RarityColorTable[rarity] )
+	local difficultyColor = GetQuestDifficultyColor( UnitLevel("player") + TitleButton_RarityColorTable[rarity] )
 
 	button.Text:SetText(title)
 	button.Text:SetTextColor( difficultyColor.r, difficultyColor.g, difficultyColor.b )
@@ -524,6 +579,7 @@ local function QuestFrame_AddQuestButton(questInfo, prevButton)
 		tagText = BreakUpLargeNumbers(gold)
 		button.rewardCategory = "GOLD"
 		button.rewardValue = gold
+		button.rewardValue2 = 0
 	end	
 
 	local numQuestCurrencies = GetNumQuestLogRewardCurrencies(questID)
@@ -534,8 +590,12 @@ local function QuestFrame_AddQuestButton(questInfo, prevButton)
 				tagText = numItems
 				tagTexture = texture
 				tagTexCoords = nil
+				if currencyID == CURRENCYID_AZERITE then
+					tagColor = BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_ARTIFACT]
+				end
 				button.rewardCategory = "CURRENCY"
-				button.rewardValue = numItems
+				button.rewardValue = currencyID
+				button.rewardValue2 = numItems
 			end
 		end
 	end
@@ -544,28 +604,20 @@ local function QuestFrame_AddQuestButton(questInfo, prevButton)
 	if numQuestRewards > 0 then
 		local itemName, itemTexture, quantity, quality, isUsable, itemID = GetQuestLogRewardInfo(1, questID)
 		if itemName and itemTexture then
-			local artifactPower = nil--Addon.Data:ItemArtifactPower(itemID)
 			local iLevel = Addon.Data:RewardItemLevel(itemID, questID)
-			if artifactPower then
-				tagTexture = "Interface\\Icons\\inv_7xp_inscription_talenttome01"
-				tagTexCoords = nil
-				tagText = ArtifactPowerTruncate(artifactPower)
-				tagColor = BAG_ITEM_QUALITY_COLORS[LE_ITEM_QUALITY_ARTIFACT]
-				button.rewardCategory = "ARTIFACT_POWER"
-				button.rewardValue = artifactPower
+			tagTexture = itemTexture
+			tagTexCoords = nil
+			if iLevel then
+				tagText = iLevel
+				tagColor = BAG_ITEM_QUALITY_COLORS[quality]
+				button.rewardCategory = "LOOT"
+				button.rewardValue = iLevel
+				button.rewardValue2 = 0
 			else
-				tagTexture = itemTexture
-				tagTexCoords = nil
-				if iLevel then
-					tagText = iLevel
-					tagColor = BAG_ITEM_QUALITY_COLORS[quality]
-					button.rewardCategory = "LOOT"
-					button.rewardValue = iLevel
-				else
-					tagText = quantity > 1 and quantity
-					button.rewardCategory = "ITEMS"
-					button.rewardValue = quantity
-				end
+				tagText = quantity > 1 and quantity
+				button.rewardCategory = "ITEMS"
+				button.rewardValue = quantity
+				button.rewardValue2 = 0
 			end
 		end
 	end
@@ -651,7 +703,7 @@ local function TaskPOI_IsFilteredReward(selectedFilters, questID)
 	end
 end
 
-local function TaskPOI_IsFiltered(info)
+local function TaskPOI_IsFiltered(info, displayMapID)
 	local hasFilters = Config:HasFilters()
 	local selectedFilters = Config:GetFilterTable()
 
@@ -663,7 +715,10 @@ local function TaskPOI_IsFiltered(info)
 	local isFiltered = hasFilters
 
 	if UnitLevel("player") > 110 then
-		if MAPID_LEGION[info.mapID] then
+		if IsLegionWorldQuest(info) and not IsLegionMap(displayMapID) then
+			return true
+		end
+		if not IsLegionWorldQuest(info) and IsLegionMap(displayMapID) then
 			return true
 		end
 	end
@@ -739,7 +794,7 @@ local function TaskPOI_IsFiltered(info)
 		end
 
 		if selectedFilters.EMISSARY then
-			local bounties = GetQuestBountyInfoForMapID(MAPID_BROKENISLES)
+			local bounties = GetQuestBountyInfoForMapID(UnitLevel("player") and MAPID_KUL_TIRAS or MAPID_BROKENISLES)
 			local bountyFilter = Config.filterEmissary
 			if GetQuestLogIndexByID(bountyFilter) == 0 or IsQuestComplete(bountyFilter) then bountyFilter = 0 end
 			for _, bounty in ipairs(bounties) do
@@ -773,8 +828,12 @@ local function TaskPOI_Sorter(a, b)
 		local bcat = (b.rewardCategory and REWARDS_ORDER[b.rewardCategory]) or default_cat
 		if acat ~= bcat then
 			return acat < bcat
-		elseif acat ~= default_cat and (a.rewardValue or 0) ~= (b.rewardValue or 0) then
-			return (a.rewardValue or 0) > (b.rewardValue or 0)
+		elseif acat ~= default_cat then
+			if (a.rewardValue or 0) ~= (b.rewardValue or 0) then
+				return (a.rewardValue or 0) > (b.rewardValue or 0)
+			elseif (a.rewardValue2 or 0) ~= (b.rewardValue2 or 0) then
+				return (a.rewardValue2 or 0) > (b.rewardValue2 or 0)
+			end
 		end
 	end
 
@@ -882,14 +941,14 @@ local function QuestFrame_Update()
 		end
 
 		local displayMapIDs = GetMapIDsForDisplay(mapID)
-		for _, mapID in ipairs(displayMapIDs) do
-			local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(mapID)
+		for _, mID in ipairs(displayMapIDs) do
+			local taskInfo = C_TaskQuest.GetQuestsForPlayerByMapID(mID)
 
 			if taskInfo then
 				for i, info in ipairs(taskInfo) do
 					if HaveQuestData(info.questId) and QuestUtils_IsQuestWorldQuest(info.questId) then
-						if WorldMap_DoesWorldQuestInfoPassFilters(info) and (info.mapID == mapID or MAPID_CONTINENTS[mapID] or mapID == MAPID_AZEROTH) then
-							local isFiltered = TaskPOI_IsFiltered(info)
+						if WorldMap_DoesWorldQuestInfoPassFilters(info) and (info.mapID == mID or MAPID_CONTINENTS[mID] or mID == MAPID_AZEROTH) then
+							local isFiltered = TaskPOI_IsFiltered(info, mapID)
 							if not isFiltered then
 								local button = QuestFrame_AddQuestButton(info)
 								table.insert(usedButtons, button)
@@ -937,7 +996,7 @@ local function WorldMap_WorldQuestDataProviderMixin_ShouldShowQuest(self, info)
 	end
 
 	if Config.hideFilteredPOI then
-		if TaskPOI_IsFiltered(info) then
+		if TaskPOI_IsFiltered(info, mapID) then
 			return false
 		end
 	end
@@ -1001,7 +1060,7 @@ function Mod:BeforeStartup()
 	self:AddFilter("ZONE", Addon.Locale.CURRENT_ZONE, "inv_misc_map02") -- ZONE
 	self:AddFilter("TRACKED", TRACKING, "icon_treasuremap")
 	self:AddFilter("FACTION", FACTION, "achievement_reputation_06")
-	self:AddFilter("ARTIFACT_POWER", ARTIFACT_POWER, "inv_7xp_inscription_talenttome01", true)
+	-- self:AddFilter("ARTIFACT_POWER", ARTIFACT_POWER, "inv_7xp_inscription_talenttome01", true)
 	self:AddFilter("LOOT", BONUS_ROLL_REWARD_ITEM, "inv_misc_lockboxghostiron", true)
 
 	-- self:AddCurrencyFilter("ORDER_RESOURCES", CURRENCYID_RESOURCES, true)
@@ -1015,14 +1074,14 @@ function Mod:BeforeStartup()
 
 	self:AddFilter("GOLD", BONUS_ROLL_REWARD_MONEY, "inv_misc_coin_01")
 	self:AddFilter("ITEMS", ITEMS, "inv_box_01", true)
-	self:AddFilter("PVP", PVP, "pvpcurrency-honor-horde")
+	-- self:AddFilter("PVP", PVP, "pvpcurrency-honor-horde")
 	self:AddFilter("PROFESSION", TRADE_SKILLS, "inv_misc_note_01")
 	self:AddFilter("PETBATTLE", SHOW_PET_BATTLES_ON_MAP_TEXT, "tracking_wildpet")
 	self:AddFilter("RARE", ITEM_QUALITY3_DESC, "achievement_general_stayclassy")
 	self:AddFilter("DUNGEON", GROUP_FINDER, "inv_misc_summonable_boss_token")
 	self:AddFilter("SORT", RAID_FRAME_SORT_LABEL, "inv_misc_map_01")
 
-	if UnitFactionGroup("player") == "Alliance" then self.Filters.PVP.icon = "Interface\\Icons\\pvpcurrency-honor-alliance" end
+	-- if UnitFactionGroup("player") == "Alliance" then self.Filters.PVP.icon = "Interface\\Icons\\pvpcurrency-honor-alliance" end
 
 	self.Filters.TIME.values = { 1, 3, 6, 12, 24 }
 end
@@ -1054,6 +1113,12 @@ end
 
 function Mod:Startup()
 	Config = Addon.Config
+
+	if UnitFactionGroup("player") == "Alliance" then
+		FACTION_ORDER = FACTION_ORDER_ALLIANCE
+	else
+		FACTION_ORDER = FACTION_ORDER_HORDE
+	end
 
 	self:RegisterAddOnLoaded("Blizzard_WorldMap")
 
