@@ -74,6 +74,77 @@
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --> comm functions
 
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--> item level
+	function _detalhes:SendCharacterData()
+		--> only send if in group
+		if (not IsInGroup() and not IsInRaid()) then
+			return
+		end
+		
+		--> check the player level
+		local playerLevel = UnitLevel ("player")
+		if (not playerLevel) then
+			return
+		elseif (playerLevel < 60) then
+			return
+		end
+		
+		--> delay to sent information again
+		if (_detalhes.LastPlayerInfoSync and _detalhes.LastPlayerInfoSync+10 > GetTime()) then
+			--do not send info if recently sent
+			return
+		end
+	
+		--> get player item level
+		local overall, equipped = GetAverageItemLevel()
+		
+		--> get player talents
+		local talents = {}
+		for i = 1, 7 do
+			for o = 1, 3 do
+				local talentID, name, texture, selected, available = GetTalentInfo (i, o, 1)
+				if (selected) then
+					tinsert (talents, talentID)
+					break
+				end
+			end
+		end
+		
+		--> get the spec ID
+		local spec = GetSpecialization()
+		local currentSpec
+		if (spec) then
+			local specID = GetSpecializationInfo (spec)
+			if (specID and specID ~= 0) then
+				currentSpec = specID
+			end
+		end
+		
+		--> get the character serial number
+		local serial = UnitGUID ("player")
+		
+		if (IsInRaid()) then
+			_detalhes:SendRaidData (CONST_ITEMLEVEL_DATA, serial, equipped, talents, currentSpec)
+			if (_detalhes.debug) then
+				_detalhes:Msg ("(debug) sent ilevel data to Raid")
+			end
+			
+		elseif (IsInGroup()) then
+			_detalhes:SendPartyData (CONST_ITEMLEVEL_DATA, serial, equipped, talents, currentSpec)
+			if (_detalhes.debug) then
+				_detalhes:Msg ("(debug) sent ilevel data to Party")
+			end
+		end
+		
+		_detalhes.LastPlayerInfoSync = GetTime()
+	end
+	
+	function _detalhes.network.ItemLevel_Received (player, realm, core_version, serial, itemlevel, talents, spec)
+		_detalhes:IlvlFromNetwork (player, realm, core_version, serial, itemlevel, talents, spec)
+	end
+
+--high five
 	function _detalhes.network.HighFive_Request()
 		return _detalhes:SendRaidData (CONST_HIGHFIVE_DATA, _detalhes.userversion)
 	end
@@ -412,7 +483,7 @@
 		local prefix, player, realm, dversion, arg6, arg7, arg8, arg9 =  _select (2, _detalhes:Deserialize (data))
 		
 		if (_detalhes.debug) then
-			_detalhes:Msg ("(debug) network received:", prefix, "length:",string.len (data))
+			_detalhes:Msg ("(debug) network received:", prefix, "length:", string.len (data))
 		end
 		
 		--event
@@ -564,19 +635,38 @@
 	end
 	
 	function _detalhes:SendRaidData (type, ...)
-		if (IsInRaid (LE_PARTY_CATEGORY_INSTANCE) and IsInInstance()) then
+	
+		local isInInstanceGroup = IsInRaid (LE_PARTY_CATEGORY_INSTANCE)
+	
+		if (isInInstanceGroup) then
 			_detalhes:SendCommMessage (CONST_DETAILS_PREFIX, _detalhes:Serialize (type, _UnitName ("player"), _GetRealmName(), _detalhes.realversion, ...), "INSTANCE_CHAT")
+			if (_detalhes.debug) then
+				_detalhes:Msg ("(debug) sent comm to INSTANCE raid group")
+			end
 		else
 			_detalhes:SendCommMessage (CONST_DETAILS_PREFIX, _detalhes:Serialize (type, _UnitName ("player"), _GetRealmName(), _detalhes.realversion, ...), "RAID")
+			if (_detalhes.debug) then
+				_detalhes:Msg ("(debug) sent comm to LOCAL raid group")
+			end
 		end
 	end
 	
 	function _detalhes:SendPartyData (type, ...)
-		if (IsInGroup (LE_PARTY_CATEGORY_INSTANCE) and IsInInstance()) then
+		
+		local isInInstanceGroup = IsInGroup (LE_PARTY_CATEGORY_INSTANCE)
+		
+		if (isInInstanceGroup) then
 			_detalhes:SendCommMessage (CONST_DETAILS_PREFIX, _detalhes:Serialize (type, _UnitName ("player"), _GetRealmName(), _detalhes.realversion, ...), "INSTANCE_CHAT")
+			if (_detalhes.debug) then
+				_detalhes:Msg ("(debug) sent comm to INSTANCE party group")
+			end
 		else
 			_detalhes:SendCommMessage (CONST_DETAILS_PREFIX, _detalhes:Serialize (type, _UnitName ("player"), _GetRealmName(), _detalhes.realversion, ...), "PARTY")
+			if (_detalhes.debug) then
+				_detalhes:Msg ("(debug) sent comm to LOCAL party group")
+			end
 		end
+		
 	end
 	
 	function _detalhes:SendRaidOrPartyData (type, ...)
@@ -633,17 +723,6 @@
 		end
 	end
 
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---> item level
-	function _detalhes:SentMyItemLevel()
-		local overall, equipped = GetAverageItemLevel()
-		_detalhes:SendRaidData (CONST_ITEMLEVEL_DATA, equipped)
-	end
-	
-	function _detalhes.network.ItemLevel_Received (player, realm, core_version, itemlevel)
-		_detalhes:IlvlFromNetwork (player, realm, core_version, itemlevel)
-	end
-	
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --> update
 

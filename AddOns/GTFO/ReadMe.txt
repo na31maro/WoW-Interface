@@ -1346,3 +1346,25 @@ Change Log:
 4.46.4
 * Fixed BFA spells for Siege of Boralus
 * Added BFA spells for Siege of Boralus
+
+4.46.5
+* Added Battle for Azeroth spells (world)
+* Added BFA spells for Uldir
+* Added BFA spells for Tol Dagor
+* Added BFA spells for Atal'Dazar
+
+4.46.6
+* Added BFA spells for Uldir
+
+4.46.7
+* Added BFA spells for Uldir
+
+4.46.8
+* Added Battle for Azeroth spells (world)
+* Added BFA spells for Uldir
+* Added BFA spells for King's Rest
+
+4.46.9
+* Added Battle for Azeroth spells (world)
+* Added BFA spells for Uldir
+

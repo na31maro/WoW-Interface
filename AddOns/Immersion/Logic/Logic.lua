@@ -7,6 +7,7 @@ local frame, GetTime, GetOffset, GetNamePlateForUnit = L.frame, GetTime, UIParen
 ----------------------------------
 function NPC:OnEvent(event, ...)
 	self:ResetElements(event)
+	self:HandleGossipQuestOverlap(event)
 	if self[event] then
 		event = self[event](self, ...) or event
 	end
@@ -43,7 +44,7 @@ function NPC:AddQuestInfo(template)
 	self.TalkBox.NameFrame.FadeIn:Play()
 end
 
-function NPC:IsGossipAvailable()
+function NPC:IsGossipAvailable(ignoreAutoSelect)
 	-- if there is only a non-gossip option, then go to it directly
 	if 	(GetNumGossipAvailableQuests() == 0) and 
 		(GetNumGossipActiveQuests() == 0) and 
@@ -52,7 +53,9 @@ function NPC:IsGossipAvailable()
 		----------------------------
 		local text, gossipType = GetGossipOptions()
 		if ( gossipType ~= 'gossip' ) then
-			SelectGossipOption(1)
+			if not ignoreAutoSelect then
+				SelectGossipOption(1)
+			end
 			return false
 		end
 	end
@@ -113,6 +116,16 @@ end
 
 function NPC:IsSpeechFinished()
 	return self.TalkBox.TextFrame.Text:IsFinished()
+end
+
+function NPC:HandleGossipQuestOverlap(event)
+	if (type(event) == 'string') then
+		if ( event == 'GOSSIP_SHOW' ) then
+		--	CloseQuest()
+		elseif ( event:match('^QUEST') and event ~= 'QUEST_ACCEPTED' ) then
+			CloseGossip()
+		end
+	end
 end
 
 function NPC:ResetElements(event)

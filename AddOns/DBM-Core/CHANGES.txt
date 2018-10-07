@@ -1,183 +1,187 @@
-tag 6a862cdce55a872b6f1587ae5d7d23b51d85a38a 8.0.4
+tag ad11f012f6b6e519939d0ad0b57dc4dd6002dc5d 8.0.12
 Author:	subversion <svn@deadlybossmods.com>
-Date:	Tue Aug 21 13:15:44 2018 +0200
+Date:	Thu Oct 4 23:21:51 2018 +0200
 
-Tagging as 8.0.4
+Tagging as 8.0.12
 
-commit c89c3a3220c33e6d633cb1fd50d0c649f1202a20
+commit eb16bf2144c884d0a4da063650a6e882182f4be0
 Author: subversion <svn@deadlybossmods.com>
-Date:   Tue Aug 21 13:15:44 2018 +0200
+Date:   Thu Oct 4 23:21:51 2018 +0200
 
-    increment version number to 8.0.4
+    increment version number to 8.0.12
 
-commit 3ee57f91f57fe1fdb49e4c210cb8349308e2b58a
+commit 04e08c5d548405c05e9a89c0e9c701faf4fd179f
 Author: subversion <svn@deadlybossmods.com>
-Date:   Tue Aug 21 10:42:56 2018 +0200
+Date:   Thu Oct 4 23:20:59 2018 +0200
 
-    Omega via svn r17719:
-    Kill this timer for now. AI timers don?\226?\128?\153t have proper canceling or really true handling of GUID
+    Omega via svn r17959:
+    Add some estimated respawns
 
-commit 1ba78cba1ab52de60a0aa026e78040c56e535d65
+commit 6f487e5d1caae3cfc87c071fafbfac4ee0f880ee
 Author: subversion <svn@deadlybossmods.com>
-Date:   Tue Aug 21 10:37:55 2018 +0200
+Date:   Thu Oct 4 17:42:42 2018 +0200
 
-    Omega via svn r17718:
-    Small antispam
+    Omega via svn r17957:
+    Forgot to push this. updated timers for Hailstone Construct
 
-commit 1ba78cba1ab52de60a0aa026e78040c56e535d65
+commit 2e52aeb8ab106b8ad287c5de350b1312b5faa4bf
 Author: subversion <svn@deadlybossmods.com>
-Date:   Tue Aug 21 10:37:55 2018 +0200
+Date:   Thu Oct 4 17:36:42 2018 +0200
 
-    Omega via svn r17718:
-    Small antispam
+    Omega via svn r17956:
+    Change flags on these to what is assumed to make sense
 
-commit bc688c0311f6872cd62e84df6433183f4413c80c
+commit aef45340951184a830633b23a4742622f1a1695e
+Author: subversion <svn@deadlybossmods.com>
+Date:   Thu Oct 4 07:32:12 2018 +0200
+
+    Omega via svn r17955:
+    Flag grong as shared while at it
+
+commit c155eac4884a4b6a2b9de2f087bd95b29bd7972f
+Author: subversion <svn@deadlybossmods.com>
+Date:   Thu Oct 4 07:29:23 2018 +0200
+
+    Omega via svn r17954:
+    Add load blockers for duplicate Grongs
+
+commit b0f54006b7efae0db6ff35fc867bf8de528043c0
+Author: subversion <svn@deadlybossmods.com>
+Date:   Thu Oct 4 07:16:48 2018 +0200
+
+    Omega via svn r17953:
+    *Pushed change so that Look Away warnings now require source name, since distinction is important when source can be any number of npcs on a single fight.
+    *Pushed Frida/Kanye mod drycode
+
+commit cfd5777aea594cf6305ddbabe7227920b16fec31
+Author: subversion <svn@deadlybossmods.com>
+Date:   Thu Oct 4 04:32:55 2018 +0200
+
+    Omega via svn r17952:
+    Push Grong Drycodes (both of them)
+
+commit 92ffe3159364003dc1db20f1dcc00e0c0a706dd3
+Author: subversion <svn@deadlybossmods.com>
+Date:   Thu Oct 4 02:12:19 2018 +0200
+
+    Omega via svn r17951:
+    assume journal is just wrong on these two bosses and set faction flags myself to what makes most sense
+
+commit d836f596e80032827ee5f69e8ad2c167a558cb9e
+Author: subversion <svn@deadlybossmods.com>
+Date:   Thu Oct 4 01:37:51 2018 +0200
+
+    Omega via svn r17950:
+    Sync 8.1 mods with todays build
+
+commit 0df54a068f6f6f58d59e39d1bd830be4d3adb308
+Author: subversion <svn@deadlybossmods.com>
+Date:   Wed Oct 3 18:39:37 2018 +0200
+
+    Omega via svn r17949:
+    fix a drop down code change from over 3 years ago that broke DBM RaidLeadTools
+
+commit 6ec7a0bc84d23dd57a2069306b079b516265ff71
+Author: subversion <svn@deadlybossmods.com>
+Date:   Tue Oct 2 22:13:58 2018 +0200
+
+    Omega via svn r17948:
+    Allow ScheduleVoice to unschedule at same time, so it can be used like CombinedShow is.
+
+commit e6e81eef24240d53ac2b4cc2050ea8c81295645b
+Author: subversion <svn@deadlybossmods.com>
+Date:   Mon Oct 1 14:37:35 2018 +0200
+
+    ultrashining via svn r17947:
+    zhTW update
+
+commit 8944801edfbe129d0e0300780825f7e294078b34
+Author: subversion <svn@deadlybossmods.com>
+Date:   Mon Oct 1 04:24:30 2018 +0200
+
+    Omega via svn r17946:
+    Insert temp names for now
+
+commit f9baefbd733a38c9985f4076e15aed0f9ab35bc9
+Author: subversion <svn@deadlybossmods.com>
+Date:   Mon Oct 1 01:39:34 2018 +0200
+
+    Omega via svn r17945:
+    Fix a couple bugs
+
+commit 7359fe0f13da4194f0cdd7ea0cfe624280266f98
+Author: subversion <svn@deadlybossmods.com>
+Date:   Mon Oct 1 01:17:22 2018 +0200
+
+    Omega via svn r17944:
+    Add all currently supportable 8.1 raid zones/bosses with blank mods and basic combat detection
+
+commit 7359fe0f13da4194f0cdd7ea0cfe624280266f98
+Author: subversion <svn@deadlybossmods.com>
+Date:   Mon Oct 1 01:17:22 2018 +0200
+
+    Omega via svn r17944:
+    Add all currently supportable 8.1 raid zones/bosses with blank mods and basic combat detection
+
+commit 742a7beed71cf61114d68940f97660138b391284
 Author: MysticalOS <MysticalOS@nomail.com>
-Date:   Tue Aug 21 03:56:00 2018 -0400
+Date:   Sun Sep 30 17:21:13 2018 -0400
 
-    update pkgmeta
+    Update pkgmeta
 
-commit d4d9ebc7e4cf9449e12aba145fd2e113575a7be9
+commit 219c6a06171c82243ce9f75d8ca90472f68dce5d
 Author: subversion <svn@deadlybossmods.com>
-Date:   Tue Aug 21 09:52:20 2018 +0200
+Date:   Sun Sep 30 20:43:15 2018 +0200
 
-    Omega via svn r17717:
-    Legion Mods removed from download
+    Omega via svn r17943:
+    Fix couple dungeon bugs reported
 
-commit f1e0bd9924fdb99a2b49bc33924f3f0c7ec28fc3
+commit c13e9c9fb94b8230fcd9884e5f6295d440447e75
 Author: subversion <svn@deadlybossmods.com>
-Date:   Tue Aug 21 09:35:06 2018 +0200
+Date:   Sun Sep 30 03:50:58 2018 +0200
 
-    Omega via svn r17716:
-    Couple decimal tweaks
+    Omega via svn r17942:
+    Change look away to be diff sound from growth
 
-commit e1d5013c1c02a18aee4a1cb87fae379b9ea54299
+commit 7822daa69b3d43daa88d14a8a5fbbdc9b7382927
 Author: subversion <svn@deadlybossmods.com>
-Date:   Tue Aug 21 09:15:40 2018 +0200
+Date:   Sat Sep 29 08:49:29 2018 +0200
 
-    Omega via svn r17715:
-    Tweak
+    Omega via svn r17941:
+    0.2 second timer tweak for P3 and fix timer being too short on heroic in P2
 
-commit d0dc2077a171f915642e49b408df13dd6a7c3648
+commit 44a8564105fa0af629d06a4cc4e527707203247a
 Author: subversion <svn@deadlybossmods.com>
-Date:   Tue Aug 21 07:31:57 2018 +0200
+Date:   Sat Sep 29 08:16:19 2018 +0200
 
-    Omega via svn r17714:
-    De-emphesize the tank warning now that the threat wipe is gone
+    Omega via svn r17940:
+    Add side to warning as well
 
-commit 7525db5f9a4f32abd515bcffc82a83a093e971bb
+commit f2cb30f65833ab86cab1dd6d426ff703dad6e9fd
 Author: subversion <svn@deadlybossmods.com>
-Date:   Mon Aug 20 11:30:52 2018 +0200
+Date:   Sat Sep 29 06:48:09 2018 +0200
 
-    Omega via svn r17713:
-    Raising going bannanas antispam
+    Omega via svn r17939:
+    Even further tweak
 
-commit 7e56423a324d888bd1048ee4fc7839c4c1cb62d8
+commit 7a4685e0c1467e9008ca6e818f8a072c3ef16551
 Author: subversion <svn@deadlybossmods.com>
-Date:   Mon Aug 20 10:56:08 2018 +0200
+Date:   Sat Sep 29 06:36:09 2018 +0200
 
-    Omega via svn r17712:
-    Another shrine of storm update
-    Temple of Sethraliss
-    Underot
+    Omega via svn r17938:
+    Add missing updateAllTimers condition, the 8.5 second ICD triggered by beams to all abilities except tank strike. This should make mother timers more correct in certain interaction timings.
 
-commit ee382d7691e9f50b237edbf251b83bbe93ec98c5
+commit 00771ab10ccdc9f3f13101ba3cbc0408eb0cd678
 Author: subversion <svn@deadlybossmods.com>
-Date:   Mon Aug 20 07:37:43 2018 +0200
+Date:   Sat Sep 29 03:46:13 2018 +0200
 
-    Omega via svn r17711:
-    Tol Dagor and Temple of Sethtraliss updates
+    Omega via svn r17937:
+    Fix voice pack errors on Jiarak
 
-commit 1d36d284e746666ddd8378812cc83b3f56b365f1
+commit dd0132d693791e0091c45476e3eb891dafc04048
 Author: subversion <svn@deadlybossmods.com>
-Date:   Mon Aug 20 03:17:32 2018 +0200
+Date:   Sat Sep 29 00:21:53 2018 +0200
 
-    Omega via svn r17710:
-    Another pass of fixes to ataldazar, freehold and waycrest manor. new warnings were added, timer updates, and bug fixes
-
-commit 0efffda7b884eba417fb15ee457bfa9d87c0ac23
-Author: subversion <svn@deadlybossmods.com>
-Date:   Sun Aug 19 22:53:39 2018 +0200
-
-    Omega via svn r17709:
-    Kr Update
-    Fix html coding on English text for new filter option
-
-commit 6494138abfd523b737a1be434eebad2fd762b253
-Author: subversion <svn@deadlybossmods.com>
-Date:   Sun Aug 19 11:11:54 2018 +0200
-
-    Omega via svn r17708:
-    Add new filter option to just completely disable all trash warnings in normal and heroic 5 man dungeons
-
-commit 6990e61a8b122d7d96ebbf46edb45d6e51759e7e
-Author: subversion <svn@deadlybossmods.com>
-Date:   Sun Aug 19 10:53:40 2018 +0200
-
-    Omega via svn r17707:
-    Fix remaining adds for unbound
-
-commit d116f8dda04e6d0d54766cdda791540f83b9976e
-Author: subversion <svn@deadlybossmods.com>
-Date:   Sun Aug 19 08:30:20 2018 +0200
-
-    Omega via svn r17706:
-    Fixed spam for electroshock
-    changed interrupt warning on tidesage council and made off by default, since it conflicts with strategy
-    Kr Update
-
-commit 0280124da45410286613696afa9f538bc07ef832
-Author: subversion <svn@deadlybossmods.com>
-Date:   Sun Aug 19 03:43:27 2018 +0200
-
-    Omega via svn r17705:
-    Push a voice pack fix
-    Pushed some failsafe antispams for some SoS warnings
-
-commit 04d41677998281a108f797f2c5992763934e92e1
-Author: subversion <svn@deadlybossmods.com>
-Date:   Sat Aug 18 12:14:17 2018 +0200
-
-    Omega via svn r17704:
-    Added Transfusion trash warning to Atal Dazar
-    Fixed interrupt warnings showing ?\226?\128?\156unknown?\226?\128?\157 instead of mob name in Atal Dazar
-    Added Goin?\226?\128?\153 Bananas warning to Freehold Trash
-    Added Shattering Toss warning to Freehold Trash
-    Fixed RP timer on freehold trash (blizzard corrected typo for Gurgthok)
-    Added Quake Warning to Azerokk in MOTHERLOAD
-    Updated timers for all bosses in MOTHERLOAD
-    Fixed creature ID for 3/4 bosses in MOTHERLOAD so they once again report health % in status messages and wipes
-    Fixed Footbomb launcher warning on Crowd Pummeler
-    Improved warnings for Homing Missile and Drill Smash on Mogul Razzdunk in MOTHERLOAD
-    Added new warning for Heartseeker to mogul razzdunk in MOTHERLOAD
-    Added Trash warning for Cover to MOTHERLOAD trash
-    Added Trash warning for Earth Shield to MOTHERLOAD trash
-    Added trash warning for Furious Quake to MOTHERLOAD trash
-    Fixed some bad timers on Goraktul that changed since beta in waycrest Manor
-    Re-added interrupt warning and updated interrupt timer on Goraktul in Waycrest Manor, since interrupts on dark lightning work again during the encounter.
-    Added Soul Volley trash warning to Waycrest Manor
-    Added Decaying Touch Warning to waycrest manor
-
-commit 69df8486af346dd8f21db7b327f2f4e57709055b
-Author: subversion <svn@deadlybossmods.com>
-Date:   Sat Aug 18 07:20:23 2018 +0200
-
-    Omega via svn r17703:
-    Fixed crowd pummeler spam
-    Fixed Alunza health reporting
-    Fixed trio engaging from trash do to blizzard firing encounter_start for entryway trash for some reason.
-
-commit 7283410d614da2add47d526d3d90bf93cd080304
-Author: subversion <svn@deadlybossmods.com>
-Date:   Thu Aug 16 08:51:10 2018 +0200
-
-    Omega via svn r17702:
-    Some fixes to Tol Dagor
-
-commit 39fe5ce2137e76b2567a61703bf8f5fd32eb6192
-Author: subversion <svn@deadlybossmods.com>
-Date:   Wed Aug 15 23:24:48 2018 +0200
-
-    tandanu via svn r17701:
+    tandanu via svn r17936:
     increment alpha version
 

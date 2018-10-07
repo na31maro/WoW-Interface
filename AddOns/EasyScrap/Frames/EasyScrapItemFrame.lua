@@ -40,10 +40,6 @@ itemFrame.scrollFrame:SetClipsChildren(false)
 itemFrame.scrollFrame:SetScript('OnScrollRangeChanged', ScrollFrame_OnScrollRangeChanged_EasyScrap)
 
 
---itemFrame.scrollFrame.ScrollBar:SetMinMaxValues(0, 0)
---itemFrame.scrollFrame.ScrollBar.SetMinMaxValue = itemFrame.scrollFrame.ScrollBar.SetMinMaxValues
---itemFrame.scrollFrame.ScrollBar.SetMinMaxValues = function () end
---itemFrame.scrollFrame.ScrollBar:SetValue(0)
 itemFrame.scrollFrame.ScrollBar.scrollStep = 25
 
 itemFrame.scrollFrame.ScrollBar.t = itemFrame.scrollFrame.ScrollBar:CreateTexture(nil, 'BACKGROUND')
@@ -168,14 +164,14 @@ ignoreItemFrame:SetScript('OnShow', function(self)
         self.itemButton:SetScript('OnEnter', function(self) GameTooltip:SetOwner(self, "ANCHOR_RIGHT") GameTooltip:SetHyperlink(itemToIgnore.itemLink) GameTooltip:Show() end)
         self.itemButton:SetScript('OnLeave', function(self) GameTooltip_Hide() end)
         
-        if not EasyScrap:itemInIgnoreList(itemToIgnore.itemID, itemToIgnore.itemName) then
+        if not EasyScrap:itemInIgnoreList(self.itemRef) then
             ignoreItemFrame.headerText:SetText('Add item to ignore list?')
-            ignoreItemFrame.ignoreItemText:SetText('Ignoring this item will prevent all items with this name from showing up in the eligible tab.')
-            ignoreItemFrame.okayButton:SetScript('OnClick', function() EasyScrap:addItemToIgnoreList(itemToIgnore.itemID, itemToIgnore.itemName) EasyScrap:filterScrappableItems() itemFrame:updateContent() end)
+            ignoreItemFrame.ignoreItemText:SetText('Ignoring this item will prevent all items with the exact same stats from showing up as eligible.')
+            ignoreItemFrame.okayButton:SetScript('OnClick', function() EasyScrap:addItemToIgnoreList(self.itemRef) EasyScrap:filterScrappableItems() itemFrame:updateContent() end)
         else
             ignoreItemFrame.headerText:SetText('Remove item from ignore list?')
             ignoreItemFrame.ignoreItemText:SetText('This will remove the item from the ignore list.')
-            ignoreItemFrame.okayButton:SetScript('OnClick', function() EasyScrap:removeItemFromIgnoreList(itemToIgnore.itemID, itemToIgnore.itemName) EasyScrap:filterScrappableItems() itemFrame:updateContent() end)
+            ignoreItemFrame.okayButton:SetScript('OnClick', function() EasyScrap:removeItemFromIgnoreList(self.itemRef) EasyScrap:filterScrappableItems() itemFrame:updateContent() end)
         end
     end
 end)
@@ -207,6 +203,13 @@ itemFrame.contentFrame.tabInfo:SetText("This tab shows you all items currently q
 itemFrame.contentFrame.tabInfo:SetPoint('TOPLEFT', 4, -4)
 itemFrame.contentFrame.tabInfo:SetWidth(itemFrame.contentFrame:GetWidth()-16)
 itemFrame.contentFrame.tabInfo:Hide()
+
+itemFrame.contentFrame.noEligibleInfo = itemFrame.contentFrame:CreateFontString()
+itemFrame.contentFrame.noEligibleInfo:SetFontObject("GameFontHighlight")
+itemFrame.contentFrame.noEligibleInfo:SetText("You have no items that match your current filter and/or are available for scrapping.")
+itemFrame.contentFrame.noEligibleInfo:SetPoint('TOPLEFT', 4, -4)
+itemFrame.contentFrame.noEligibleInfo:SetWidth(itemFrame.contentFrame:GetWidth()-16)
+itemFrame.contentFrame.noEligibleInfo:Hide()
 
 local ignoreHeader = CreateFrame('Frame', nil, itemFrame.contentFrame)
 ignoreHeader:SetSize(itemFrame.contentFrame:GetWidth(), 24)
@@ -251,7 +254,7 @@ filterHeader.text:SetPoint('CENTER')
 
 filterHeader.subText = ignoreHeader:CreateFontString()
 filterHeader.subText:SetFontObject("GameFontNormal")
-filterHeader.subText:SetText("No items currently being filtered, adjust filter settings.")
+filterHeader.subText:SetText("No items are currently being filtered, adjust filter settings.")
 filterHeader.subText:SetTextColor(1, 1, 1, 1)
 filterHeader.subText:SetWidth(itemFrame.contentFrame:GetWidth()-16)
 filterHeader.subText:SetPoint('TOP', filterHeader, 'BOTTOM', 0, 0)

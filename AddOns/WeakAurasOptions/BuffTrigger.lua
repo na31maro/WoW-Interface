@@ -711,7 +711,7 @@ function WeakAuras.GetBuffTriggerOptions(data, trigger)
     },
     useGroupRole = {
       type = "toggle",
-      name = L["Filter by Group Role"],
+      name = '|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:0|t' .. L["Filter by Group Role"],
       order = 47.1,
       hidden = function() return not (trigger.type == "aura" and trigger.unit == "group"); end,
     },
@@ -869,6 +869,7 @@ function WeakAuras.GetBuffTriggerOptions(data, trigger)
     },
     ownOnly = {
       type = "toggle",
+      width = "double",
       name = function()
         local value = trigger.ownOnly;
         if(value == nil) then return L["Own Only"];
@@ -900,22 +901,33 @@ function WeakAuras.GetBuffTriggerOptions(data, trigger)
       order = 70,
       hidden = function() return not (trigger.type == "aura"); end
     },
+    useBuffShowOn = {
+      type = "toggle",
+      name = L["Show On"],
+      order = 71,
+      disabled = true,
+      hidden = function()
+        return not (trigger.type == "aura" and not(trigger.unit ~= "group" and trigger.fullscan and trigger.autoclone) and trigger.unit ~= "multi" and not(trigger.unit == "group" and not trigger.groupclone));
+      end,
+      get = function() return true end
+    },
     buffShowOn = {
       type = "select",
-      name = L["Show On"],
+      name = "",
       values = WeakAuras.bufftrigger_progress_behavior_types,
-      order = 71,
+      order = 71.1,
       get = function() return trigger.buffShowOn end,
-      hidden = function() return not (trigger.type == "aura" and not(trigger.unit ~= "group" and trigger.autoclone) and trigger.unit ~= "multi" and not(trigger.unit == "group" and not trigger.groupclone)); end
+      hidden = function()
+        return not (trigger.type == "aura" and not(trigger.unit ~= "group" and trigger.fullscan and trigger.autoclone) and trigger.unit ~= "multi" and not(trigger.unit == "group" and not trigger.groupclone));
+      end
     },
     unitExists = {
       type = "toggle",
       name = L["Show If Unit Is Invalid"],
       order = 72,
-      width = "double",
       hidden = function()
         return not (trigger.type == "aura"
-          and not(trigger.unit ~= "group" and trigger.autoclone)
+          and not(trigger.unit ~= "group" and trigger.fullscan and trigger.autoclone)
           and trigger.unit ~= "multi"
           and trigger.unit ~= "group"
           and trigger.unit ~= "player");

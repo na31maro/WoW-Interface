@@ -204,7 +204,7 @@
 	local read_actor_flag = function (novo_objeto, dono_do_pet, serial, flag, nome, container_type)
 
 		if (flag) then
-
+		
 			--> � um player
 			if (_bit_band (flag, OBJECT_TYPE_PLAYER) ~= 0) then
 			
@@ -264,6 +264,7 @@
 						novo_objeto.arena_ally = true
 						novo_objeto.arena_team = my_team_color
 					else --> is enemy
+						novo_objeto.enemy = true
 						novo_objeto.arena_enemy = true
 						novo_objeto.arena_team = 1 - my_team_color
 					end
@@ -332,21 +333,39 @@
 				--end
 				
 			else
+				--> anything else that isn't a player or a pet
 				novo_objeto.displayName = nome
 				
+				--[=[
 				--Chromie - From 'The Deaths of Chromie'
 				if (serial and type (serial) == "string") then
 					if (serial:match ("^Creature%-0%-%d+%-%d+%-%d+%-122663%-%w+$")) then
 						novo_objeto.grupo = true
 					end
 				end
+				--]=]
 			end
 			
-			--> � inimigo
+			--> check if is hostile
 			if (_bit_band (flag, REACTION_HOSTILE) ~= 0) then 
-				if (_bit_band (flag, OBJECT_TYPE_PLAYER) == 0 and _bit_band (flag, OBJECT_TYPE_PETGUARDIAN) == 0) then
-					novo_objeto.monster = true
+			
+				if (_bit_band (flag, OBJECT_TYPE_PLAYER) == 0) then
+					--> is hostile and isn't a player
+					
+					if (_bit_band (flag, OBJECT_TYPE_PETGUARDIAN) == 0) then
+						--> isn't a pet or guardian
+						novo_objeto.monster = true
+					end
+					
+					if (serial and type (serial) == "string") then
+						local npcID = _detalhes:GetNpcIdFromGuid (serial)
+						if (npcID and not _detalhes.npcid_pool [npcID] and type (npcID) == "number") then
+							_detalhes.npcid_pool [npcID] = nome
+						end
+					end
+					
 				end
+
 			end
 		end
 

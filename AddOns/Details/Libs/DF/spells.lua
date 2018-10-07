@@ -623,7 +623,7 @@ DF.CrowdControlSpells = {
 	[408] = "ROGUE", --Kidney Shot
 	[6770] = "ROGUE", --Sap
 	[1776] = "ROGUE", --Gouge
-
+	
 	[853] = "PALADIN", --Hammer of Justice
 	[20066] = "PALADIN", --Repentance (talent)
 	[105421] = "PALADIN", --Blinding Light (talent)
@@ -643,16 +643,18 @@ DF.CrowdControlSpells = {
 	[203123] = "DRUID", --Maim
 	[50259] = "DRUID", --Dazed (from Wild Charge)
 	[209753] = "DRUID", --Cyclone (from pvp talent)
-
+	
 	[3355] = "HUNTER", --Freezing Trap
 	[19577] = "HUNTER", --Intimidation
 	[190927] = "HUNTER", --Harpoon
 	[162480] = "HUNTER", --Steel Trap
+	[24394] = "HUNTER", --Intimidation
 	
 	[119381] = "MONK", --Leg Sweep
 	[115078] = "MONK", --Paralysis
 	[198909] = "MONK", --Song of Chi-Ji (talent)
 	[116706] = "MONK", --Disable
+	[107079] = "MONK", --Quaking Palm (racial)
 	
 	[118905] = "SHAMAN", --Static Charge (Capacitor Totem)
 	[51514] = "SHAMAN", --Hex
@@ -765,4 +767,105 @@ end
 function DF:GetCooldownInfo (spellId)
 	return DF.CooldownsInfo [spellId]
 end
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--consumables
+
+DF.FlaskIDs = {
+	[251836] = true, -- Flask of the Currents agility
+	[251837] = true, -- Flask of Endless Fathoms intellect
+	[251838] = true, -- Flask of the Vast Horizon stamina
+	[251839] = true, -- Flask of the Undertow strength
+}
+
+DF.FoodIDs = {
+	[257422] = 41, --Mon'Dazi versatility
+	[257413] = 41, --Ravenberry Tarts haste
+	[257418] = 41, --Loa Loaf mastery
+	[257408] = 41, --Kul Tiramisu critical
+	
+	[257424] =  55, --Spiced Snapper versatility
+	[257415] =  55, --Swamp Fish 'n Chips haste
+	[257420] =  55, --Sailor's Pie mastery
+	[257410] =  55, --Honey-Glazed Haunches critical
+	
+	[259448] = 75, --Galley Banquet agility
+	[259449] = 75, --Galley Banquet intellect
+	[259453] = 75, --Galley Banquet stamina
+	[259452] = 75, --Galley Banquet strength
+
+	[259454] = 100, --Bountiful Captain's Feast agility
+	[259455] = 100, --Bountiful Captain's Feast intellect
+	[259457] = 100, --Bountiful Captain's Feast stamina
+	[257427] = 100, --Bountiful Captain's Feast strength
+}
+
+DF.PotionIDs = {
+	[279152] = true, --Battle Potion of Agility
+	[279151] = true, --Battle Potion of Intellect
+	[279154] = true, --Battle Potion of Stamina
+	[279153] = true, --Battle Potion of Strength
+	
+	[269853] = true, --Potion of Rising Death (range)
+	[251316] = true, --Potion of Bursting Blood (melee)
+	[251231] = true, --Steelskin Potion (tank)
+}
+
+DF.RuneIDs = {
+	[270058] = true, --Battle-Scarred Augment Rune
+}
+
+--	/dump UnitAura ("player", 1)
+--	/dump UnitAura ("player", 2)
+
+function DF:GetSpellsForEncounterFromJournal (instanceEJID, encounterEJID)
+
+	EJ_SelectInstance (instanceEJID) 
+	local name, description, encounterID, rootSectionID, link = EJ_GetEncounterInfo (encounterEJID) --taloc (primeiro boss de Uldir)
+	
+	if (not name) then
+		print ("DetailsFramework: Encounter Info Not Found!", instanceEJID, encounterEJID)
+		return {}
+	end
+	
+	local spellIDs = {}
+	
+	--overview
+	local sectionInfo = C_EncounterJournal.GetSectionInfo (rootSectionID)
+	local nextID = {sectionInfo.siblingSectionID}
+	
+	while (nextID [1]) do
+		--> get the deepest section in the hierarchy
+		local ID = tremove (nextID)
+		local sectionInfo = C_EncounterJournal.GetSectionInfo (ID)
+		
+		if (sectionInfo) then
+			if (sectionInfo.spellID and type (sectionInfo.spellID) == "number" and sectionInfo.spellID ~= 0) then
+				tinsert (spellIDs, sectionInfo.spellID)
+			end
+			
+			local nextChild, nextSibling = sectionInfo.firstChildSectionID, sectionInfo.siblingSectionID
+			if (nextSibling) then
+				tinsert (nextID, nextSibling)
+			end
+			if (nextChild) then
+				tinsert (nextID, nextChild)
+			end
+		else
+			break
+		end
+	end
+	
+	return spellIDs
+end
+
+
+
+
+
+
+
+
+
+
 

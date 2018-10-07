@@ -5,131 +5,89 @@ end
 local L = WeakAuras.L
 
 -- WeakAuras
---[[Translation missing --]]
-L["   • %d auras added"] = "   • %d auras added"
---[[Translation missing --]]
-L["   • %d auras deleted"] = "   • %d auras deleted"
---[[Translation missing --]]
-L["   • %d auras modified"] = "   • %d auras modified"
+L["   • %d auras added"] = "• %d auras adicionadas"
+L["   • %d auras deleted"] = "• %d auras removidas"
+L["   • %d auras modified"] = "• %d auras modificadas"
 L["!="] = "!="
 --[[Translation missing --]]
 L["%s - %i. Trigger"] = "%s - %i. Trigger"
---[[Translation missing --]]
-L["%s - 1. Trigger"] = "%s - 1. Trigger"
---[[Translation missing --]]
-L["%s - Alpha Animation"] = "%s - Alpha Animation"
---[[Translation missing --]]
-L["%s - Color Animation"] = "%s - Color Animation"
+L["%s - Alpha Animation"] = "%s - Animação da transparência"
+L["%s - Color Animation"] = "%s - Animação da cor"
 --[[Translation missing --]]
 L["%s - Condition Custom Chat"] = "%s - Condition Custom Chat"
---[[Translation missing --]]
-L["%s - Custom Text"] = "%s - Custom Text"
---[[Translation missing --]]
-L["%s - Finish"] = "%s - Finish"
---[[Translation missing --]]
-L["%s - Finish Action"] = "%s - Finish Action"
---[[Translation missing --]]
-L["%s - Finish Custom Text"] = "%s - Finish Custom Text"
---[[Translation missing --]]
-L["%s - Init Action"] = "%s - Init Action"
---[[Translation missing --]]
-L["%s - Main"] = "%s - Main"
---[[Translation missing --]]
-L["%s - Rotate Animation"] = "%s - Rotate Animation"
---[[Translation missing --]]
-L["%s - Scale Animation"] = "%s - Scale Animation"
---[[Translation missing --]]
-L["%s - Start"] = "%s - Start"
---[[Translation missing --]]
-L["%s - Start Action"] = "%s - Start Action"
---[[Translation missing --]]
-L["%s - Start Custom Text"] = "%s - Start Custom Text"
---[[Translation missing --]]
-L["%s - Translate Animation"] = "%s - Translate Animation"
---[[Translation missing --]]
-L["%s - Trigger Logic"] = "%s - Trigger Logic"
---[[Translation missing --]]
-L["%s Duration Function"] = "%s Duration Function"
---[[Translation missing --]]
-L["%s Icon Function"] = "%s Icon Function"
---[[Translation missing --]]
-L["%s Name Function"] = "%s Name Function"
+L["%s - Custom Text"] = "%s - Texto personalizado"
+L["%s - Finish"] = "%s - Finalização"
+L["%s - Finish Action"] = "%s - Ação de fim"
+L["%s - Finish Custom Text"] = "%s - Texto personalizado de fim"
+L["%s - Init Action"] = "%s - Ação de início"
+L["%s - Main"] = "%s - Principal"
+L["%s - Rotate Animation"] = "%s - Animação de rotação"
+L["%s - Scale Animation"] = "%s - Animação de escala"
+L["%s - Start"] = "%s - Começo"
+L["%s - Start Action"] = "%s - Ação de começo"
+L["%s - Start Custom Text"] = "%s - Texto personalizado de começo"
+L["%s - Translate Animation"] = "%s - Animação de translado"
+L["%s - Trigger Logic"] = "%s - Lógica de gatilho"
+L["%s Duration Function"] = "%s Função de duração"
+L["%s Icon Function"] = "%s Função de ícone"
+L["%s Name Function"] = "%s Função de nome"
 --[[Translation missing --]]
 L["%s Overlay Color"] = "%s Overlay Color"
 --[[Translation missing --]]
 L["%s Stacks Function"] = "%s Stacks Function"
---[[Translation missing --]]
-L["%s Texture Function"] = "%s Texture Function"
---[[Translation missing --]]
-L["%s total auras"] = "%s total auras"
---[[Translation missing --]]
-L["%s Trigger Function"] = "%s Trigger Function"
+L["%s Texture Function"] = "%s Função de texture"
+L["%s total auras"] = "%s auras totais"
+L["%s Trigger Function"] = "%s Função de gatilho"
 --[[Translation missing --]]
 L["%s Untrigger Function"] = "%s Untrigger Function"
+--[[Translation missing --]]
+L["|cff9900ffWeakAuras EXPERIMENTAL Profiling Data:|r"] = "|cff9900ffWeakAuras EXPERIMENTAL Profiling Data:|r"
 L["<"] = "<"
 L["<="] = "<="
 L["="] = "="
 L[">"] = ">"
 L[">="] = ">="
---[[Translation missing --]]
-L["1. Text Color"] = "1. Text Color"
---[[Translation missing --]]
-L["1. Text Size"] = "1. Text Size"
+L["1. Text Color"] = "1. Cor do texto"
+L["1. Text Size"] = "1. Tamanho do texto"
 L["10 Man Raid"] = "Raide de 10 jogadores"
---[[Translation missing --]]
-L["2. Text Color"] = "2. Text Color"
---[[Translation missing --]]
-L["2. Text Size"] = "2. Text Size"
---[[Translation missing --]]
-L["20 Man Raid"] = "20 Man Raid"
+L["2. Text Color"] = "2. Cor do texto"
+L["2. Text Size"] = "2. Tamanho do texto"
+L["20 Man Raid"] = "Raide de 20 jogadores"
 L["25 Man Raid"] = "Raide de 25 jogadores"
---[[Translation missing --]]
-L["40 Man Raid"] = "40 Man Raid"
+L["40 Man Raid"] = "Raide de 40 jogadores"
 L["5 Man Dungeon"] = "Masmorra de 5 jogadores"
+--[[Translation missing --]]
+L["A WeakAura just tried to use a forbidden function but has been blocked from doing so. Please check your auras!"] = "A WeakAura just tried to use a forbidden function but has been blocked from doing so. Please check your auras!"
 L["Absorb"] = "Absorver"
 --[[Translation missing --]]
 L["Absorb Display"] = "Absorb Display"
 L["Absorbed"] = "Absorvido"
 L["Action Usable"] = "Ação Usável"
---[[Translation missing --]]
-L["Actions"] = "Actions"
---[[Translation missing --]]
-L["Active"] = "Active"
---[[Translation missing --]]
-L["Add Missing Auras"] = "Add Missing Auras"
---[[Translation missing --]]
-L["Additional Trigger Replacements"] = "Additional Trigger Replacements"
---[[Translation missing --]]
-L["Adjust Timer"] = "Adjust Timer"
+L["Actions"] = "Ações"
+L["Active"] = "Ativo"
+L["Add Missing Auras"] = "Adicionar auras faltantes"
+L["Additional Trigger Replacements"] = "Substitutos de gatilho adicionais"
+L["Adjust Timer"] = "Ajustar temporizador"
 L["Affected"] = "Afetado"
---[[Translation missing --]]
 L["Aggro"] = "Aggro"
---[[Translation missing --]]
-L["Alert Type"] = "Alert Type"
+L["Alert Type"] = "Tipo de alerta"
 L["Alive"] = "Vivo"
 L["All Triggers"] = "Todos os Gatilhos"
 --[[Translation missing --]]
 L["Alliance"] = "Alliance"
---[[Translation missing --]]
-L["Allow partial matches"] = "Allow partial matches"
---[[Translation missing --]]
-L["Alpha"] = "Alpha"
+L["Allow partial matches"] = "Permitir combinações parciais"
+L["Alpha"] = "Transparência"
 L["Alternate Power"] = "Alternar Poder"
---[[Translation missing --]]
-L["Always"] = "Always"
---[[Translation missing --]]
-L["Always active trigger"] = "Always active trigger"
+L["Always"] = "Sempre"
+L["Always active trigger"] = "Gatilho sempre ativo"
 L["Ambience"] = "Ambiente"
 L["Amount"] = "Quantidade"
 --[[Translation missing --]]
 L["And Talent selected"] = "And Talent selected"
---[[Translation missing --]]
-L["Animations"] = "Animations"
---[[Translation missing --]]
-L["Anticlockwise"] = "Anticlockwise"
---[[Translation missing --]]
-L["Any"] = "Any"
-L["Any Triggers"] = "Qualquer Gatilhos"
+L["Animations"] = "Animações"
+L["Anticlockwise"] = "Anti-horário"
+L["Any"] = "Qualquer"
+L["Any Triggers"] = "Quaisquer gatilhos"
 L["Arena"] = "Arena"
 L["Ascending"] = "Ascendente"
 --[[Translation missing --]]
@@ -140,6 +98,8 @@ L["Attach to End"] = "Attach to End"
 --[[Translation missing --]]
 L["Attach to Start"] = "Attach to Start"
 L["Attackable"] = "Atacável"
+--[[Translation missing --]]
+L["Attackable Target"] = "Attackable Target"
 L["Aura"] = "Aura"
 L["Aura Applied"] = "Aura Aplicada"
 L["Aura Applied Dose"] = "Dose de Aura Aplicada"
@@ -370,8 +330,6 @@ L["Evade"] = "Evade"
 L["Event"] = "Evento"
 L["Event(s)"] = "Evento(s)"
 L["Every Frame"] = "Todo Frame"
---[[Translation missing --]]
-L["EXPERIMENTAL Profiling Data:"] = "EXPERIMENTAL Profiling Data:"
 --[[Translation missing --]]
 L["Extend Outside"] = "Extend Outside"
 L["Extra Amount"] = "Quantidade Extra"
@@ -967,6 +925,8 @@ L["Swing Timer"] = "Tempo de balanço"
 L["System"] = "System"
 --[[Translation missing --]]
 L["Tabard"] = "Tabard"
+--[[Translation missing --]]
+L["Talent Selected"] = "Talent Selected"
 --[[Translation missing --]]
 L["Talent selected"] = "Talent selected"
 L["Talent Specialization"] = "Especialização de talentos"

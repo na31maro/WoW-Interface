@@ -10,7 +10,6 @@ L["   • %d auras deleted"] = "   • %d Auren gelöscht"
 L["   • %d auras modified"] = "   • %d Auren modifiziert"
 L["!="] = "!= (Ungleich)"
 L["%s - %i. Trigger"] = "%s - %i. Auslöser"
-L["%s - 1. Trigger"] = "%s - 1. Auslöser"
 L["%s - Alpha Animation"] = "%s - Transparenz der Animation"
 L["%s - Color Animation"] = "%s - Farbe der Animation"
 --[[Translation missing --]]
@@ -40,6 +39,8 @@ L["%s Texture Function"] = "%s Texturfunktion"
 L["%s total auras"] = "%s Gesamt Auren"
 L["%s Trigger Function"] = "%s Auslöserfunktion"
 L["%s Untrigger Function"] = "%s Umkehrauslöser-Funktion"
+--[[Translation missing --]]
+L["|cff9900ffWeakAuras EXPERIMENTAL Profiling Data:|r"] = "|cff9900ffWeakAuras EXPERIMENTAL Profiling Data:|r"
 L["<"] = "< (Kleiner)"
 L["<="] = "<= (Kleinergleich)"
 L["="] = "= (Gleich)"
@@ -54,6 +55,8 @@ L["20 Man Raid"] = "20-Mann-Schlachtzug"
 L["25 Man Raid"] = "25-Mann-Schlachtzug"
 L["40 Man Raid"] = "40-Mann-Schlachtzug"
 L["5 Man Dungeon"] = "5-Mann-Dungeon"
+--[[Translation missing --]]
+L["A WeakAura just tried to use a forbidden function but has been blocked from doing so. Please check your auras!"] = "A WeakAura just tried to use a forbidden function but has been blocked from doing so. Please check your auras!"
 L["Absorb"] = "Absorbieren"
 L["Absorb Display"] = "Absorbanzeige"
 L["Absorbed"] = "Absorbiert"
@@ -92,6 +95,8 @@ L["At Least One Enemy"] = "Zumindest ein Feind"
 L["Attach to End"] = "am Ende befestigen"
 L["Attach to Start"] = "am Anfang befestigen"
 L["Attackable"] = "Angreifbar"
+--[[Translation missing --]]
+L["Attackable Target"] = "Attackable Target"
 L["Aura"] = "Aura (Buff/Debuff)"
 L["Aura Applied"] = "Aura angewandt (AURA_APPLIED)"
 L["Aura Applied Dose"] = "Aura angewandt, Stapel erhöht (AURA_APPLIED_DOSE)"
@@ -251,7 +256,6 @@ L["Evade"] = "Entkommen (EVADE)"
 L["Event"] = "Ereignis"
 L["Event(s)"] = "Ereignis(se)"
 L["Every Frame"] = "Bei jedem OnUpdate"
-L["EXPERIMENTAL Profiling Data:"] = "EXPERIMENTELLE Profiling Daten:"
 --[[Translation missing --]]
 L["Extend Outside"] = "Extend Outside"
 L["Extra Amount"] = "Extrabetrag"
@@ -336,8 +340,7 @@ L["Import as Update"] = "Als Update importieren"
 L["Import disabled"] = "Import disabled"
 --[[Translation missing --]]
 L["Import Group"] = "Import Group"
---[[Translation missing --]]
-L["Import in progress"] = "Import in progress"
+L["Import in progress"] = "Import im Gange"
 --[[Translation missing --]]
 L["Importing is disabled while in combat"] = "Importing is disabled while in combat"
 L["In Combat"] = "im Kampf"
@@ -452,7 +455,8 @@ L["Next"] = "Weiter"
 --[[Translation missing --]]
 L["No Children"] = "No Children"
 L["No Instance"] = "Keine Instanz"
-L["No Profiling information saved."] = "Keine Profilinginformationen vorhanden."
+--[[Translation missing --]]
+L["No Profiling information saved."] = "No Profiling information saved."
 --[[Translation missing --]]
 L["none"] = "none"
 L["None"] = "Keine(r)"
@@ -516,11 +520,16 @@ L["Preset"] = "Standard"
 L["Press Ctrl+C to copy"] = "Drücke Strg-C zum Kopieren"
 --[[Translation missing --]]
 L["Print Profiling Results"] = "Print Profiling Results"
-L["Profiling already started."] = "Profiling bereits gestartet."
-L["Profiling not running."] = "Profiling war nicht aktiv, vorher starten!"
-L["Profiling started."] = "Profiling gestartet."
-L["Profiling still running, stop before trying to print."] = "Profiling läuft noch, vorher stoppen damit Ausgabe erfolgen kann."
-L["Profiling stopped."] = "Profiling gestoppt."
+--[[Translation missing --]]
+L["Profiling already started."] = "Profiling already started."
+--[[Translation missing --]]
+L["Profiling not running."] = "Profiling not running."
+--[[Translation missing --]]
+L["Profiling started."] = "Profiling started."
+--[[Translation missing --]]
+L["Profiling still running, stop before trying to print."] = "Profiling still running, stop before trying to print."
+--[[Translation missing --]]
+L["Profiling stopped."] = "Profiling stopped."
 L["Progress"] = "Fortschritt"
 L["Progress Total"] = "Totaler Fortschritt"
 L["Progress Value"] = "Fortschrittswert"
@@ -686,6 +695,8 @@ L["Swing"] = "Schwingen (SWING)"
 L["Swing Timer"] = "Schlagtimer"
 L["System"] = "System"
 L["Tabard"] = "Wappenrock"
+--[[Translation missing --]]
+L["Talent Selected"] = "Talent Selected"
 L["Talent selected"] = "Gewähltes Talent"
 L["Talent Specialization"] = "Talentspezialisierung"
 L["Tank"] = "Tank"

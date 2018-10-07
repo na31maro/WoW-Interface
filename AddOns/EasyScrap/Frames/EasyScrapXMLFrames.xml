@@ -134,6 +134,36 @@
 		</HighlightTexture>
     </Button>
     
+    <CheckButton name="EasyScrapCheckButtonTemplate" inherits="UICheckButtonTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="20" y="20"/>
+        </Size>
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString name="$parentText" parentKey="text" inherits="GameFontNormalSmall" text="CheckButton Text">
+        			<Anchors>
+        				<Anchor point="LEFT">
+        					<Offset>
+        						<AbsDimension x="20" y="1"/>
+        					</Offset>
+        				</Anchor>
+        			</Anchors>
+                    <Color r="1" g="1" b="1"/>
+                </FontString>
+            </Layer>
+        </Layers>
+    </CheckButton>
+    
+    <EditBox name="EasyScrapEditBoxTemplate" autoFocus="false" inherits="InputBoxTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="28" y="24" />
+        </Size>
+        <Scripts>
+            <OnEscapePressed function="EditBox_ClearFocus"/>
+            <OnEnterPressed function="EditBox_ClearFocus"/>
+        </Scripts>
+    </EditBox>
+    
  	<Button name="EasyScrapItemButtonTemplate" registerForClicks="LeftButtonUp, RightButtonUp" virtual="true">
 		<Size>
 			<AbsDimension x="37" y="37"/>

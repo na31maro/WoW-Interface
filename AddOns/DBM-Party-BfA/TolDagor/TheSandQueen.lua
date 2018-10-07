@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(2097, "DBM-Party-BfA", 9, 1001)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 17711 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 17858 $"):sub(12, -3))
 mod:SetCreatureID(127479)
 mod:SetEncounterID(2101)
 mod:SetZone()
@@ -14,6 +14,7 @@ mod:RegisterEventsInCombat(
 	"CHAT_MSG_RAID_BOSS_EMOTE"
 )
 
+--TODO, figure out why cast time for upheavel isn't honoring 5 second pre coded
 local warnUpheavel					= mod:NewTargetAnnounce(257617, 2)
 local warnUpheavelCast				= mod:NewCastAnnounce(257617, 2, 5)--Cast time until we have a target
 
@@ -21,7 +22,7 @@ local specWarnSandTrap				= mod:NewSpecialWarningDodge(257092, nil, nil, nil, 2,
 local specWarnUpheavel				= mod:NewSpecialWarningYou(257617, nil, nil, nil, 2, 2)
 local yellUpheavel					= mod:NewYell(257617)
 local specWarnUpheavelNear			= mod:NewSpecialWarningClose(257617, nil, nil, nil, 2, 2)
-local specWarnSandstorm				= mod:NewSpecialWarningSpell(257092, nil, nil, nil, 2, 2)
+local specWarnSandstorm				= mod:NewSpecialWarningSpell(257495, nil, nil, nil, 2, 2)
 --local specWarnGTFO				= mod:NewSpecialWarningGTFO(238028, nil, nil, nil, 1, 2)
 
 --local timerReapSoulCD				= mod:NewNextTimer(13, 194956, nil, nil, nil, 5, nil, DBM_CORE_TANK_ICON..DBM_CORE_DEADLY_ICON)

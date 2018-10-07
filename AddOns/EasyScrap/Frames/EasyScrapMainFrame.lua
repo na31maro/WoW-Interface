@@ -56,35 +56,36 @@ mainFrame.searchBox:SetScript('OnTextChanged', function(searchBox, value)
     end
 end)
 
---[[
-local optionsButton = CreateFrame('Button', 'Bert', mainFrame)
-optionsButton:SetSize(32, 32)
-optionsButton:SetPoint('BOTTOMRIGHT', -2, 14)
-
-local t = optionsButton:CreateTexture(nil, 'BACKGROUND')
-t:SetAllPoints()
-t:SetTexture('Interface/HelpFrame/HelpIcon-CharacterStuck')
-t:SetDesaturated(true)
-
-local th = optionsButton:CreateTexture(nil, 'BACKGROUND')
-th:SetAllPoints()
-th:SetTexture('Interface/HelpFrame/HelpIcon-CharacterStuck')
-th:SetDesaturated(false)
 
 
-optionsButton:SetNormalTexture(t)
-optionsButton:SetHighlightTexture(th)
+local optionsButton = CreateFrame('Button', nil, mainFrame, 'GameMenuButtonTemplate')
+optionsButton:SetSize(32, 24)
+optionsButton:SetPoint('BOTTOM', 0, 8)
+--optionsButton:SetText('Config')
+optionsButton:SetScript('OnClick', function()
+    if not EasyScrap.scrapInProgress then
+        EasyScrap:clearQueue()
+        mainFrame:Hide()
+        EasyScrap.optionsFrame:Show()
+    else
+        DEFAULT_CHAT_FRAME:AddMessage('Easy Scrap: Cannot switch menu while scrapping items.')
+    end
+end)
 
-optionsButton:SetPushedTexture('Interface/Buttons/UI-SpellbookIcon-PrevPage-Down')
-optionsButton:SetDisabledTexture('Interface/Buttons/UI-SpellbookIcon-PrevPage-Disabled')
---]]
+optionsButton:SetScript('OnEnter', function(self) self.t:SetDesaturated(false) end)
+optionsButton:SetScript('OnLeave', function(self) self.t:SetDesaturated(true) end)
 
 
-local menu = {
-    {}
-}
+optionsButton.t = optionsButton:CreateTexture(nil, 'ARTWORK')
+optionsButton.t:SetSize(22, 22)
+optionsButton.t:SetPoint('CENTER', 0, -1)
+optionsButton.t:SetTexture('Interface/HelpFrame/HelpIcon-CharacterStuck')
+optionsButton.t:SetDesaturated(true)
 
--- Note that this frame must be named for the dropdowns to work.
+
+
+
+
 local filterSelection = CreateFrame("Frame", "EasyScrapFilterSelectionMenu", mainFrame, "UIDropDownMenuTemplate")
 filterSelection.Middle:SetWidth(96)
 filterSelection:SetPoint("LEFT", mainFrame.searchBox, "RIGHT", 56, -4) --32
@@ -94,9 +95,18 @@ filterSelection.text:SetFontObject('GameFontNormal')
 filterSelection.text:SetText('Filter:')
 filterSelection.text:SetPoint('RIGHT', filterSelection, 'LEFT', 16, 4)
 
-UIDropDownMenu_SetText(filterSelection, "Wardrobe")
---filterSelection.Button:SetScript('OnClick', function() EasyMenu(menu, filterSelection, menuFrame, 0, 0) end)
-filterSelection.Button:SetEnabled(false)
+filterSelection.Button:SetScript('OnClick', function() 
+    if DropDownList1:IsVisible() then
+        DropDownList1:Hide()
+    else
+        if not EasyScrap.scrapInProgress then
+            EasyMenu(EasyScrap.filterSelectionMenuTable, filterSelection, filterSelection, 16, 8, nil, 3)
+        else
+            DEFAULT_CHAT_FRAME:AddMessage('Easy Scrap: Cannot switch filters while scrapping items.')
+        end
+    end
+end)
+UIDropDownMenu_SetText(filterSelection, "Default")
 
 
 local queueAllButton = CreateFrame('Button', nil, mainFrame, 'GameMenuButtonTemplate')
@@ -105,6 +115,20 @@ queueAllButton:SetPoint('BOTTOMLEFT', 16, 12)
 queueAllButton:SetText('Queue All')
 queueAllButton:SetScript('OnClick', function()
     EasyScrapItemFrame:queueAllItems()
+end)
+
+local filtersButton = CreateFrame('Button', nil, mainFrame, 'GameMenuButtonTemplate')
+filtersButton:SetSize(96, 24)
+filtersButton:SetPoint('BOTTOMRIGHT', -16, 12)
+filtersButton:SetText('Filters')
+filtersButton:SetScript('OnClick', function()
+    if not EasyScrap.scrapInProgress then
+        EasyScrap:clearQueue()
+        mainFrame:Hide()
+        EasyScrap.filterFrame:Show()
+    else
+        DEFAULT_CHAT_FRAME:AddMessage('Easy Scrap: Cannot switch menu while scrapping items.')
+    end
 end)
 
 mainFrame.queueAllButton = queueAllButton
@@ -142,6 +166,12 @@ updateOverlay.dismissButton:SetScript('OnClick', function()
     EasyScrap.saveData.showWhatsNew = nil
     updateOverlay:Hide()
     mainFrame:Show()
+end)
+
+mainFrame:SetScript('OnShow', function()
+    EasyScrap:generateFilterDropdown()
+    EasyScrap:filterScrappableItems()
+    EasyScrapItemFrame:updateContent()
 end)
 
 updateOverlay:Hide()

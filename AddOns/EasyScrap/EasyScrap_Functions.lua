@@ -21,9 +21,9 @@ function EasyScrap:getScrappableItems()
 
          if itemID and EasyScrap:itemScrappable(itemID) then
             local texture, itemCount, locked, quality, readable, lootable, itemLink, isFiltered = GetContainerItemInfo(bag, i)
-            local itemName, _, _, itemLevel = GetItemInfo(itemLink)
+            local itemName, _, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemIcon, itemSellPrice, itemClassID, itemSubClassID, bindType, expacID, itemSetID, isCraftingReagent = GetItemInfo(itemLink)
             --table.insert(self.scrappableItems, {itemRef = itemRef, bag = bag, slot = i, itemLink = itemLink, itemTexture = texture, itemCount = itemCount, itemID = itemID, itemQuality = quality, itemName = string.match(itemLink, "%[(.+)%]")})
-            table.insert(self.scrappableItems, {itemRef = itemRef, bag = bag, slot = i, itemLink = itemLink, itemTexture = texture, itemCount = itemCount, itemID = itemID, itemQuality = quality, itemName = itemName, itemLevel = itemLevel})
+            table.insert(self.scrappableItems, {itemRef = itemRef, bag = bag, slot = i, itemLink = itemLink, itemEquipLoc = itemEquipLoc, itemClassID = itemClassID, itemSubClassID = itemSubClassID, bindType = bindType, itemTexture = texture, itemCount = itemCount, itemID = itemID, itemQuality = quality, itemName = itemName, itemLevel = itemLevel})
             itemRef = itemRef + 1
          end
       end
@@ -68,6 +68,12 @@ function EasyScrap:itemScrappable(itemID)
          return false
       end
    end
+end
+
+function EasyScrap:clearQueue()
+    EasyScrap.queueItems = {}
+    EasyScrap.addingItems = false
+    C_ScrappingMachineUI.RemoveAllScrapItems()
 end
 
 function EasyScrap:addQueueItems()
@@ -127,6 +133,7 @@ function EasyScrap:itemInWardrobeSet(itemID, bag, slot)
     return false
 end
 
+--[[
 function EasyScrap:itemMatchesFilter(i)
     --In next version we will be able to change the filters 
     if self:itemInWardrobeSet(self.scrappableItems[i].itemID, self.scrappableItems[i].bag, self.scrappableItems[i].slot) then
@@ -135,6 +142,23 @@ function EasyScrap:itemMatchesFilter(i)
     else
         return false
     end
+end
+--]]
+
+function EasyScrap:itemMatchesFilter(i)
+    local customFilter = EasyScrap.defaultFilter
+    if EasyScrap.activeFilterID > 0 then customFilter = EasyScrap.saveData.customFilters[EasyScrap.activeFilterID] end
+    
+    for k, v in pairs(customFilter.rules) do
+        if not EasyScrap.filterTypes[v.filterType].filterFunction(i, k) then
+            EasyScrap.scrappableItems[i].filterMessage = 'Easy Scrap: Filtered because '..EasyScrap.filterTypes[v.filterType].filterMessage
+            return false
+            --Set reason in filter func?
+        end
+    end
+
+    EasyScrap.scrappableItems[i].filterMessage = nil
+    return true
 end
 
 
@@ -146,12 +170,12 @@ function EasyScrap:filterScrappableItems()
     
 
     for i = 1, #self.scrappableItems do        
-        if EasyScrap:itemInIgnoreList(self.scrappableItems[i].itemID, self.scrappableItems[i].itemName) then
+        if EasyScrap:itemInIgnoreList(i) then
             table.insert(ignoredItems, i)     
         elseif EasyScrap:itemMatchesFilter(i) then
-            table.insert(filteredItems, i)            
+            table.insert(eligibleItems, i)            
         else
-            table.insert(eligibleItems, i)     
+            table.insert(filteredItems, i)     
         end
     end
 
@@ -170,7 +194,11 @@ function EasyScrap:sortItems()
         --local searchMatchB = self.scrappableItems[b].searchMatch
         
         if qualityA == qualityB then
-            return self.scrappableItems[a].itemLevel > self.scrappableItems[b].itemLevel
+            if self.scrappableItems[a].itemLevel == self.scrappableItems[b].itemLevel then
+                return self.scrappableItems[a].itemName < self.scrappableItems[b].itemName
+            else
+                return self.scrappableItems[a].itemLevel > self.scrappableItems[b].itemLevel
+            end
         else
             return qualityA > qualityB 
         end
@@ -217,48 +245,246 @@ function EasyScrap:itemInScrapper(bag, slot)
     end
 end
 
-function EasyScrap:addItemToIgnoreList(itemID, itemName)
-    if not self.itemIgnoreList[itemID] then
-        self.itemIgnoreList[itemID] = {}
-    end
- 
-    local duplicate = false
-    for k,v in pairs(self.itemIgnoreList[itemID]) do
-        if v == itemName then
-            duplicate = true
-        end
-    end
-    
-    if not duplicate then
-        table.insert(self.itemIgnoreList[itemID], itemName)
-    end
-end
 
-function EasyScrap:removeItemFromIgnoreList(itemID, itemName)
-    if self.itemIgnoreList[itemID] then
-        for k,v in pairs(self.itemIgnoreList[itemID]) do
-            if v == itemName then
-                table.remove(self.itemIgnoreList[itemID], k)
-            end
-        end
-    end
-    
-    if #self.itemIgnoreList[itemID] == 0 then self.itemIgnoreList[itemID] = nil end
-end
-
-function EasyScrap:itemInIgnoreList(itemID, itemName)
-    if self.itemIgnoreList[itemID] then
-        for k,v in pairs(self.itemIgnoreList[itemID]) do
-            --local itemString = string.match(itemLink, "item[%-?%d:]+")
-            --local storedItemString = string.match(v, "item[%-?%d:]+")
-            --string.find(itemLink, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
-            
-            if v == itemName then
-                return true
-            end
+local function inTable(t, compareValue)
+    for k,v in pairs(t) do
+        if v == compareValue then
+            return true
         end
     end
     return false
+end
+
+local function tCount(t)
+    local z = 0
+    for k,v in pairs(t) do
+        z = z + 1
+    end
+    return z
+end
+
+function EasyScrap:getTrueAzeriteItemLevel(itemIndex)
+    local item = self.scrappableItems[itemIndex]
+    local itemLocation = {}
+    itemLocation.bagID = item.bag
+    itemLocation.slotIndex = item.slot
+    
+    local tierInfo = C_AzeriteEmpoweredItem.GetAllTierInfo(itemLocation)
+    if #tierInfo[#tierInfo].azeritePowerIDs == 1 then
+        if tierInfo[#tierInfo].azeritePowerIDs[1] == 13 then
+            if C_AzeriteEmpoweredItem.IsPowerSelected(itemLocation, 13) then
+                return (item.itemLevel - 5)
+            else
+                return item.itemLevel
+            end
+        else
+            --print warning about unknown final azerite armor trait?
+            DEFAULT_CHAT_FRAME:AddMessage('Easy Scrap: Discovered unknown azerite power ID, please report the following item to the developer: '..item.itemID)
+        end
+    else
+        --print warning about unknown azerite armor with multiple final traits?
+        DEFAULT_CHAT_FRAME:AddMessage('Easy Scrap: Discovered an azerite item with new final trait(s), please report the following item to the developer: '..item.itemID)
+    end
+end
+
+local function getBonusIDTable(itemLink)
+    --local _, itemID, enchantID, gemID1, gemID2, gemID3, gemID4, suffixID, uniqueID, linkLevel, specializationID, upgradeTypeID, instanceDifficultyID, numBonusIDs = strsplit(":", itemLink)
+    local tempString, unknown1, unknown2, unknown3 = strmatch(itemLink, "item:[-%d]-:[-%d]-:[-%d]-:[-%d]-:[-%d]-:[-%d]-:[-%d]-:[-%d]-:[-%d]-:[-%d]-:[-%d]-:[-%d]-:[-%d]-:([-:%d]+):([-%d]-):([-%d]-):([-%d]-)|")
+    local bonusIDs = {}
+    local upgradeValue
+    if tempString then
+        if upgradeTypeID and upgradeTypeID ~= "" then
+           upgradeValue = tempString:match("[-:%d]+:([-%d]+)")
+           bonusIDs = {strsplit(":", tempString:match("([-:%d]+):"))}
+        else
+           bonusIDs = {strsplit(":", tempString)}
+        end
+        --4775 bonus ID = azerite power ID 13 active
+        for k,v in pairs(bonusIDs) do if v == '4775' or v == '' then table.remove(bonusIDs, k) break end end
+    end
+    
+    
+    return bonusIDs
+end
+
+function EasyScrap:addItemToIgnoreList(itemIndex)
+    local item = self.scrappableItems[itemIndex]
+    
+    if not self.itemIgnoreList[item.itemID] then
+        self.itemIgnoreList[item.itemID] = {}
+        self.itemIgnoreList[item.itemID].isAzeriteArmor = false
+    end
+
+    local itemLevel = item.itemLevel
+    if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(item.itemLink) then      
+        itemLevel = self:getTrueAzeriteItemLevel(itemIndex)
+        self.itemIgnoreList[item.itemID].isAzeriteArmor = true
+    end
+    
+    if not self.itemIgnoreList[item.itemID][itemLevel] then
+        self.itemIgnoreList[item.itemID][itemLevel] = {}
+    end
+    
+    if not self.itemIgnoreList[item.itemID][itemLevel][item.itemName] then
+        self.itemIgnoreList[item.itemID][itemLevel][item.itemName] = {}
+    end
+    
+    local bonusIDs = getBonusIDTable(item.itemLink)
+
+    table.insert(self.itemIgnoreList[item.itemID][itemLevel][item.itemName], bonusIDs)
+end
+
+function EasyScrap:removeItemFromIgnoreList(itemIndex)
+    local item = self.scrappableItems[itemIndex]
+    local itemLevel = item.itemLevel
+    
+    if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(item.itemLink) then      
+        itemLevel = self:getTrueAzeriteItemLevel(itemIndex)
+    end    
+    
+    
+    if self.itemIgnoreList[item.itemID] then
+        if self.itemIgnoreList[item.itemID][itemLevel] then
+            if self.itemIgnoreList[item.itemID][itemLevel][item.itemName] then
+                for i = 1, #self.itemIgnoreList[item.itemID][itemLevel][item.itemName] do      
+                    local bonusIDs = getBonusIDTable(item.itemLink)
+                    
+                    if #bonusIDs == #self.itemIgnoreList[item.itemID][itemLevel][item.itemName][i] then
+                        local isMatch = true
+                        for k, v in pairs(self.itemIgnoreList[item.itemID][itemLevel][item.itemName][i]) do
+                            if not inTable(bonusIDs, v) then isMatch = false end
+                        end
+                        if isMatch then table.remove(self.itemIgnoreList[item.itemID][itemLevel][item.itemName], i) break end               
+                    end
+                end
+            end
+        end
+    end
+    
+    if tCount(self.itemIgnoreList[item.itemID][itemLevel][item.itemName]) == 0 then self.itemIgnoreList[item.itemID][itemLevel][item.itemName] = nil end
+    if tCount(self.itemIgnoreList[item.itemID][itemLevel]) == 0 then self.itemIgnoreList[item.itemID][itemLevel] = nil end
+    if tCount(self.itemIgnoreList[item.itemID]) == 1 then self.itemIgnoreList[item.itemID] = nil end
+end
+
+function EasyScrap:itemInIgnoreList(itemIndex)
+    local item = self.scrappableItems[itemIndex]
+    local itemLevel = item.itemLevel
+    
+    --if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(item.itemLink) then      
+    --    itemLevel = self:getTrueAzeriteItemLevel(itemIndex)
+    --end    
+    
+    if self.itemIgnoreList[item.itemID] then
+        if self.itemIgnoreList[item.itemID].isAzeriteArmor == nil then
+            self.itemIgnoreList[item.itemID].isAzeriteArmor = C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(item.itemLink)
+        end
+        
+        if self.itemIgnoreList[item.itemID].isAzeriteArmor then
+            itemLevel = self:getTrueAzeriteItemLevel(itemIndex)
+        end
+        if self.itemIgnoreList[item.itemID][itemLevel] then            
+            if self.itemIgnoreList[item.itemID][itemLevel][item.itemName] then
+                local bonusIDs = getBonusIDTable(item.itemLink)
+                
+                for i = 1, #self.itemIgnoreList[item.itemID][itemLevel][item.itemName] do               
+                    if #bonusIDs == #self.itemIgnoreList[item.itemID][itemLevel][item.itemName][i] then
+                        local isMatch = true
+                        for k, v in pairs(self.itemIgnoreList[item.itemID][itemLevel][item.itemName][i]) do
+                            if not inTable(bonusIDs, v) then isMatch = false end
+                        end
+                        if isMatch then return true end                   
+                    end
+                end
+            end
+            
+        end
+    end
+    return false
+end
+
+function EasyScrap:createNewCustomFilter()
+    local newFilter = {}
+    newFilter.name = 'New Filter'
+    newFilter.rules = {}
+    newFilter.rules[1] = {filterType = 'equipmentSet'}
+    table.insert(EasyScrap.saveData.customFilters, newFilter)
+    return #EasyScrap.saveData.customFilters
+end
+
+function EasyScrap:deleteCustomFilter(filterID)
+    table.remove(EasyScrap.saveData.customFilters, filterID)
+    --EasyScrap:generateFilterDropdown()
+    
+    if filterID == EasyScrap.saveData.addonSettings.defaultFilter then
+        EasyScrap.saveData.addonSettings.defaultFilter = 0
+    end
+    
+    if self.activeFilterID == filterID then
+        self:setActiveFilter(0)
+    elseif self.activeFilterID > filterID then
+        self:setActiveFilter(self.activeFilterID-1)
+    end
+end
+
+--[[
+local filterChoices = {
+    {text="Categories", notCheckable=true, isTitle = true},
+    {text="Item level", notCheckable=true, hasArrow = true, 
+        menuList= {
+            {text ='Item level is less than', notCheckable=true, func = function() addRuleEntry('itemLevel', '<') end}, 
+            {text='Item level is equal to', notCheckable=true, func = function() addRuleEntry('itemLevel', '=') end}, 
+            {text='Item level is higher than', notCheckable=true, func = function() addRuleEntry('itemLevel', '>') end}
+        }
+    }, 
+    {text="Item name", notCheckable=true, hasArrow = true, 
+        menuList={
+            {text = 'contains', notCheckable=true}, 
+            {text='does not contain', notCheckable=true}
+        }
+    }, 
+    {text="Bind type", notCheckable=true}
+}
+--]]
+
+function EasyScrap:setActiveFilter(filterID)
+    if not EasyScrap.scrapInProgress then
+        self.activeFilterID = filterID
+        if filterID == 0 then
+            UIDropDownMenu_SetText(EasyScrapFilterSelectionMenu, "Default")
+        else
+            UIDropDownMenu_SetText(EasyScrapFilterSelectionMenu, EasyScrap.saveData.customFilters[filterID].name)
+        end
+        
+        EasyScrap:clearQueue()
+        EasyScrap:filterScrappableItems()
+        EasyScrapItemFrame:updateContent()
+    else
+        DEFAULT_CHAT_FRAME:AddMessage('Easy Scrap: Cannot switch filters while scrapping items.')
+    end
+end
+
+function EasyScrap:generateFilterDropdown()
+    local t = {}
+    local entry = {}
+    entry.text = 'Default'
+    entry.notCheckable = true
+    entry.func = function() self:setActiveFilter(0) end
+    t[1] = entry
+    
+    for i = 1, #EasyScrap.saveData.customFilters do
+        entry = {}
+        entry.text = EasyScrap.saveData.customFilters[i].name
+        entry.notCheckable = true
+        entry.func = function() self:setActiveFilter(i) end
+        t[i+1] = entry
+    end
+    self.filterSelectionMenuTable = t
+    
+    if self.activeFilterID == 0 then
+        UIDropDownMenu_SetText(EasyScrapFilterSelectionMenu, "Default")
+    else
+        UIDropDownMenu_SetText(EasyScrapFilterSelectionMenu, EasyScrap.saveData.customFilters[self.activeFilterID].name)
+    end
 end
 
 --Scroll frame acting up because it always gets a weird yrange value

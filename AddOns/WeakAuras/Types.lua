@@ -1535,15 +1535,7 @@ WeakAuras.update_categories = {
   },
   {
     name = "trigger",
-    fields = {
-      "trigger",
-      "untrigger",
-      "disjunctive",
-      "additional_triggers",
-      "activeTriggerMode",
-      "numTriggers",
-      "customTriggerLogic"
-    },
+    fields = {"triggers"},
     label = L["Trigger"],
   },
   {
@@ -1597,6 +1589,7 @@ WeakAuras.update_categories = {
     fields = {
       "url",
       "desc",
+      "version",
     },
     label = L["Meta Data"],
   },
@@ -1610,24 +1603,26 @@ WeakAuras.internal_fields = {
   sortHybridTable = true,
   expanded = true,
   parent = true,
-  init_started = true,
 }
 
 WeakAuras.data_stub = {
   -- note: this is the minimal data stub which prevents false positives in WeakAuras.diff upon reimporting an aura.
   -- pending a refactor of other code which adds unnecessary fields, it is possible to shrink it
-  trigger = {
-    type = "aura",
-    names = {},
-    event = "Health",
-    subeventPrefix = "SPELL",
-    subeventSuffix = "_CAST_START",
-    spellIds = {},
-    unit = "player",
-    debuffType = "HELPFUL",
+  triggers = {
+    {
+      trigger = {
+        type = "aura",
+        names = {},
+        event = "Health",
+        subeventPrefix = "SPELL",
+        subeventSuffix = "_CAST_START",
+        spellIds = {},
+        unit = "player",
+        debuffType = "HELPFUL",
+      },
+      untrigger = {},
+    },
   },
-  numTriggers = 1,
-  untrigger = {},
   load = {
     size = {
       multi = {},
@@ -1661,3 +1656,78 @@ WeakAuras.data_stub = {
   conditions = {},
 }
 
+WeakAuras.difficulty_info = {
+  [1] = {
+    size = "party",
+    difficulty = "normal",
+  },
+  [2] = {
+    size = "party",
+    difficulty = "heroic",
+  },
+  [3] = {
+    size = "ten",
+    difficulty = "normal",
+  },
+  [4] = {
+    size = "twentyfive",
+    difficulty = "normal",
+  },
+  [5] = {
+    size = "ten",
+    difficulty = "heroic",
+  },
+  [6] = {
+    size = "twentyfive",
+    difficulty = "heroic",
+  },
+  [7] = {
+    size = "twentyfive",
+    difficulty = "lfr",
+  },
+  [8] = {
+    size = "party",
+    difficulty = "challenge",
+  },
+  [9] = {
+    size = "fortyman",
+    difficulty = "normal",
+  },
+  [11] = {
+    size = "scenario",
+    difficulty = "heroic",
+  },
+  [12] = {
+    size = "scenario",
+    difficulty = "normal",
+  },
+  nil, -- 13 is unused
+  [14] = {
+    size = "flexible",
+    difficulty = "normal",
+  },
+  [15] = {
+    size = "flexible",
+    difficulty = "heroic",
+  },
+  [16] = {
+    size = "twenty",
+    difficulty = "mythic",
+  },
+  [17] = {
+    size = "flexible",
+    difficulty = "lfr",
+  },
+  [23] = {
+    size = "party",
+    difficulty = "mythic",
+  },
+  [24] = {
+    size = "party",
+    difficulty = "timewalking",
+  },
+  [33] = {
+    size = "flexible",
+    difficulty = "timewalking",
+  },
+}

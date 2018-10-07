@@ -13,7 +13,7 @@ EasyScrap.parentFrame:SetScript('OnShow', function()
     EasyScrap.queueItems = {}
     EasyScrap:getScrappableItems()
     EasyScrap:filterScrappableItems()
-    --EasyScrap:resetQueue()
+    ----EasyScrap:resetQueue()
 
     EasyScrapItemFrame.switchContentState(2)
     checkNeedToQueue = false
@@ -27,6 +27,9 @@ EasyScrap.parentFrame:SetScript('OnShow', function()
         EasyScrap.updateOverlay:Show()
     else
         EasyScrap.updateOverlay:Hide()
+        EasyScrap.filterFrame:Hide()
+        EasyScrap.editFilterFrame:Hide()
+        EasyScrap.optionsFrame:Hide()
         EasyScrap.mainFrame:Show()
     end
 end)
@@ -52,9 +55,9 @@ EasyScrap.parentFrame:SetScript('OnEvent', function(self, event, ...)
     elseif event == 'SCRAPPING_MACHINE_SCRAPPING_FINISHED_BROKEN' then 
         if #EasyScrap.queueItems > 0 then
             if #EasyScrap.queueItems > 9 then
-                EasyScrap.queueItemsToAdd = 9
+                --EasyScrap.queueItemsToAdd = 9
             else
-                EasyScrap.queueItemsToAdd = #EasyScrap.queueItems
+                --EasyScrap.queueItemsToAdd = #EasyScrap.queueItems
             end
             C_Timer.After(0, function() EasyScrap:addQueueItems() end)
         end
@@ -109,7 +112,59 @@ EasyScrap.parentFrame:SetScript('OnEvent', function(self, event, ...)
                     --Reset ignore list
                     EasyScrap.itemIgnoreList = {}
                     EasyScrap.saveData.showWhatsNew = 6
-                end                    
+                end
+
+                if EasyScrap.saveData.addonVersion < 10 then
+                    EasyScrap.saveData.customFilters = {}
+                    EasyScrap.saveData.showWhatsNew = 10
+                end
+                
+                --Ignore functionality restored?
+                if EasyScrap.saveData.addonVersion < 11 then
+                    --Reset ignore list
+                    EasyScrap.itemIgnoreList = {}
+                    if EasyScrap.saveData.addonVersion == 10 then
+                        EasyScrap.saveData.showWhatsNew = 11
+                    end
+                end
+                
+                if EasyScrap.saveData.addonVersion < 13 then
+                    if EasyScrap.saveData.addonVersion == 12 then
+                        EasyScrap.saveData.showWhatsNew = 13
+                    end
+                end
+                
+                if EasyScrap.saveData.addonVersion < 14 then
+                    EasyScrap.saveData.showWhatsNew = 13
+                    if EasyScrap.saveData.addonVersion == 13 then
+                        EasyScrap.saveData.showWhatsNew = 14
+                    end
+                end
+                
+                --Oops we didn't reset the item ignore lists for alts since it's saved per character...
+                if not EasyScrap.itemIgnoreList.addonVersion then
+                    for itemID, t in pairs(EasyScrap.itemIgnoreList) do
+                        local c = 0
+                        for k, v in pairs(t) do
+                            if type(v) == 'string' then
+                                table.remove(EasyScrap.itemIgnoreList[itemID], k)                      
+                            else
+                                c = c + 1
+                            end
+                        end
+                        if c == 0 then EasyScrap.itemIgnoreList[itemID] = nil end --just had the old ignore data
+                        if c == 1 and EasyScrap.itemIgnoreList[itemID].isAzeriteArmor ~= nil then EasyScrap.itemIgnoreList[itemID] = nil end --if there's no item but isAzeriteArmor is set remove it since it's actually empty
+                    end
+                end
+                
+                if EasyScrap.saveData.addonSettings.defaultFilter > 0 then
+                    if EasyScrap.saveData.customFilters[EasyScrap.saveData.addonSettings.defaultFilter] then
+                        EasyScrap.activeFilterID = EasyScrap.saveData.addonSettings.defaultFilter
+                    else
+                        EasyScrap.saveData.addonSettings.defaultFilter = 0
+                        C_Timer.After(5, function() DEFAULT_CHAT_FRAME:AddMessage('Easy Scrap: Couldn\'t find your selected default filter, did you delete your addon setings?') end)
+                    end
+                end
             else
                 EasyScrap:initializeSaveData()        
             end
@@ -117,6 +172,7 @@ EasyScrap.parentFrame:SetScript('OnEvent', function(self, event, ...)
             EasyScrap.parentFrame:UnregisterEvent('ADDON_LOADED')
         end
     elseif event == 'PLAYER_LOGOUT' then
+        EasyScrap.itemIgnoreList.addonVersion = EasyScrap.addonVersion
         EasyScrap.saveData.addonVersion = EasyScrap.addonVersion
         EasyScrap_SaveData = EasyScrap.saveData
         EasyScrap_IgnoreList = EasyScrap.itemIgnoreList

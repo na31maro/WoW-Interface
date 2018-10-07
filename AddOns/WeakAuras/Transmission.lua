@@ -37,7 +37,7 @@ local event_types = WeakAuras.event_types;
 local status_types = WeakAuras.status_types;
 
 -- Local functions
-local encodeB64, decodeB64, tableSubtract, GenerateUniqueID
+local decodeB64, GenerateUniqueID
 local CompressDisplay, ShowTooltip, TableToString, StringToTable
 local RequestDisplay, TransmitError, TransmitDisplay
 
@@ -65,33 +65,6 @@ local B64tobyte = {
 
 -- This code is based on the Encode7Bit algorithm from LibCompress
 -- Credit goes to Galmok (galmok@gmail.com)
-local encodeB64Table = {};
-
-function encodeB64(str)
-  local B64 = encodeB64Table;
-  local remainder = 0;
-  local remainder_length = 0;
-  local encoded_size = 0;
-  local l=#str
-  local code
-  for i=1,l do
-    code = string.byte(str, i);
-    remainder = remainder + bit_lshift(code, remainder_length);
-    remainder_length = remainder_length + 8;
-    while(remainder_length) >= 6 do
-      encoded_size = encoded_size + 1;
-      B64[encoded_size] = bytetoB64[bit_band(remainder, 63)];
-      remainder = bit_rshift(remainder, 6);
-      remainder_length = remainder_length - 6;
-    end
-  end
-  if remainder_length > 0 then
-    encoded_size = encoded_size + 1;
-    B64[encoded_size] = bytetoB64[remainder];
-  end
-  return table.concat(B64, "", 1, encoded_size)
-end
-
 local decodeB64Table = {}
 
 function decodeB64(str)
@@ -120,27 +93,6 @@ function decodeB64(str)
   return table.concat(bit8, "", 1, decoded_size)
 end
 
-function tableSubtract(minuend, subtrahend)
-  local function recurse(minuend, subtrahend)
-    for i,v in pairs(subtrahend) do
-      if(minuend[i] ~= nil) then
-        if(type(minuend[i]) == "table" and type(v) == "table") then
-          if(recurse(minuend[i], v)) then
-            minuend[i] = nil;
-          end
-        else
-          if(minuend[i] == v) then
-            minuend[i] = nil;
-          end
-        end
-      end
-    end
-    return next(minuend) == nil
-  end
-  recurse(minuend, subtrahend);
-end
-
-
 function GenerateUniqueID()
   -- generates a unique random 11 digit number in base64
   local s = {}
@@ -155,15 +107,8 @@ function CompressDisplay(data)
   -- Those can contain lots of unnecessary data.
   -- Also we warn about any custom code, so removing unnecessary
   -- custom code prevents unnecessary warnings
-  for triggernum=0,(data.numTriggers or 9) do
-    local trigger, untrigger;
-    if(triggernum == 0) then
-      trigger = data.trigger;
-      untrigger = data.untrigger;
-    elseif(data.additional_triggers and data.additional_triggers[triggernum]) then
-      trigger = data.additional_triggers[triggernum].trigger;
-      untrigger = data.additional_triggers[triggernum].untrigger;
-    end
+  for triggernum, triggerData in ipairs(data.triggers) do
+    local trigger, untrigger = triggerData.trigger, triggerData.untrigger
 
     if (trigger and trigger.type ~= "custom") then
       trigger.custom = nil;
@@ -182,8 +127,6 @@ function CompressDisplay(data)
   copiedData.controlledChildren = nil;
   copiedData.parent = nil;
   local regionType = copiedData.regionType
-  tableSubtract(copiedData, WeakAuras.regionTypes[regionType].default)
-  tableSubtract(copiedData, WeakAuras.data_stub);
   copiedData.regionType = regionType
 
   return copiedData;
@@ -381,12 +324,16 @@ local function importPendingData()
   local indexMap = pendingData.indexMap
 
   -- cleanup the mess
-  WeakAuras.CloseImportExport()
   HideUIPanel(ItemRefTooltip) -- this also wipes pendingData as a side effect
   buttonAnchor:Hide()
   thumbnailAnchor.currentThumbnail:Hide()
   thumbnailAnchor.currentThumbnail = nil
-  if not imports then return end
+  if imports and WeakAuras.LoadOptions() then
+    WeakAuras.ShowOptions()
+  else
+    return
+  end
+  WeakAuras.CloseImportExport()
   WeakAuras.SetImporting(true)
 
   -- import parent/single aura
@@ -551,9 +498,6 @@ local function importPendingData()
     WeakAuras.ReloadGroupRegionOptions(parentData)
     WeakAuras.SortDisplayButtons()
   end
-  if not WeakAuras.IsOptionsOpen() then
-    WeakAuras.ShowOptions()
-  end
   WeakAuras.SetImporting(false)
   WeakAuras.PickDisplay(installedData[0].id)
 end
@@ -561,6 +505,9 @@ end
 ItemRefTooltip:HookScript("OnHide", function(self)
   buttonAnchor:Hide()
   wipe(pendingData)
+  if (ItemRefTooltip.WeakAuras_Desc_Box) then
+    ItemRefTooltip.WeakAuras_Desc_Box:Hide();
+  end
 end)
 
 importButton:SetScript("OnClick", function()
@@ -573,8 +520,9 @@ showCodeButton:SetScript("OnClick", function()
 end)
 
 
-local Compresser = LibStub:GetLibrary("LibCompress");
-local Encoder = Compresser:GetAddonEncodeTable()
+local Compresser = LibStub:GetLibrary("LibCompress")
+local LibDeflate = LibStub:GetLibrary("LibDeflate")
+local configForDeflate = {level = 9} -- the biggest bottleneck by far is in transmission and printing; so use maximal compression
 local Serializer = LibStub:GetLibrary("AceSerializer-3.0");
 local Comm = LibStub:GetLibrary("AceComm-3.0");
 
@@ -638,26 +586,41 @@ function HandleModifiedItemClick(link, ...)
 end
 
 function TableToString(inTable, forChat)
-  local serialized = Serializer:Serialize(inTable);
-  local compressed = Compresser:CompressHuffman(serialized);
+  local serialized = Serializer:Serialize(inTable)
+  local compressed = LibDeflate:CompressDeflate(serialized, configForDeflate)
+  -- prepend with "!" so that we know that it is not a legacy compression
+  -- also this way, old versions of weakauras will error out due to the "bad" encoding
+  local encoded = "!"
   if(forChat) then
-    return encodeB64(compressed);
+    encoded = encoded .. LibDeflate:EncodeForPrint(compressed)
   else
-    return Encoder:Encode(compressed);
+    encoded = encoded .. LibDeflate:EncodeForWoWAddonChannel(compressed)
   end
+  return encoded
 end
 
 function StringToTable(inString, fromChat)
-  local decoded;
+  -- if gsub strips off a ! at the beginning then we know that this is not a legacy encoding
+  local encoded, usesDeflate = inString:gsub("^%!", "")
+  local decoded
   if(fromChat) then
-    decoded = decodeB64(inString);
+    if usesDeflate == 1 then
+      decoded = LibDeflate:DecodeForPrint(encoded)
+    else
+      decoded = decodeB64(encoded)
+    end
   else
-    decoded = Encoder:Decode(inString);
+    decoded = LibDeflate:DecodeForWoWAddonChannel(encoded)
   end
 
-  local decompressed, errorMsg = Compresser:Decompress(decoded);
+  local decompressed, errorMsg = nil, "unknown compression method"
+  if usesDeflate == 1 then
+    decompressed = LibDeflate:DecompressDeflate(decoded)
+  else
+    decompressed, errorMsg = Compresser:Decompress(decoded)
+  end
   if not(decompressed) then
-    return "Error decompressing: "..errorMsg;
+    return "Error decompressing: " .. errorMsg
   end
 
   local success, deserialized = Serializer:Deserialize(decompressed);
@@ -682,9 +645,10 @@ function WeakAuras.DisplayToString(id, forChat)
     if(WeakAuras.transmitCache and WeakAuras.transmitCache[id]) then
       transmit.i = WeakAuras.transmitCache[id];
     end
-    if(data.trigger.type == "aura" and WeakAurasOptionsSaved and WeakAurasOptionsSaved.spellCache) then
+    local firstTrigger = data.triggers[1].trigger
+    if(firstTrigger.type == "aura" and WeakAurasOptionsSaved and WeakAurasOptionsSaved.spellCache) then
       transmit.a = {};
-      for i,v in pairs(data.trigger.names) do
+      for i,v in pairs(firstTrigger.names) do
         transmit.a[v] = WeakAuras.spellCache.GetIcon(v);
       end
     end
@@ -1029,11 +993,8 @@ end
 
 
 local function scamCheck(codes, data)
-  checkTrigger(codes, L["%s - 1. Trigger"]:format(data.id), data.trigger, data.untrigger);
-  if (data.additional_triggers) then
-    for i, v in ipairs(data.additional_triggers) do
-      checkTrigger(codes, L["%s - %i. Trigger"]:format(data.id, i+1), v.trigger, v.untrigger);
-    end
+  for i, v in ipairs(data.triggers) do
+    checkTrigger(codes, L["%s - %i. Trigger"]:format(data.id, i), v.trigger, v.untrigger);
   end
 
   if (data.actions) then
@@ -1050,8 +1011,8 @@ local function scamCheck(codes, data)
     checkAnimation(codes, L["%s - Finish"]:format(data.id), data.animation.finish);
   end
 
-  if(data.customTriggerLogic) then
-    checkTriggerLogic(codes,  L["%s - Trigger Logic"]:format(data.id), data.customTriggerLogic);
+  if(data.triggers.customTriggerLogic) then
+    checkTriggerLogic(codes,  L["%s - Trigger Logic"]:format(data.id), data.triggers.customTriggerLogic);
   end
 
   if(data.customText) then
@@ -1485,13 +1446,8 @@ function WeakAuras.ShowDisplayTooltip(data, children, icon, icons, import, compr
     else
       if not children and (not data.controlledChildren or #data.controlledChildren == 0) then
         tinsert(tooltip, {1, L["No Children"], 1, 1, 1})
-        for triggernum = 0, 9 do
-          local trigger;
-          if(triggernum == 0) then
-            trigger = data.trigger;
-          elseif(data.additional_triggers and data.additional_triggers[triggernum]) then
-            trigger = data.additional_triggers[triggernum].trigger;
-          end
+        for triggernum = 1, min(#data.triggers, 10) do
+          local trigger = data.triggers[triggernum].trigger
           if(trigger) then
             if(trigger.type == "aura") then
               for index, name in pairs(trigger.names) do
@@ -1599,7 +1555,7 @@ function WeakAuras.ShowDisplayTooltip(data, children, icon, icons, import, compr
     end
     descbox:SetPoint("BOTTOMLEFT", descboxframe, "BOTTOMLEFT", 8, 8);
     descbox:SetPoint("TOPRIGHT", descboxframe, "TOPRIGHT", -8, -8);
-    descbox:SetFont("Fonts\\FRIZQT__.TTF", 12);
+    descbox:SetFont(STANDARD_TEXT_FONT, 12);
     descbox:EnableMouse(true);
     descbox:SetAutoFocus(false);
     descbox:SetCountInvisibleLetters(false);
@@ -1659,10 +1615,6 @@ function WeakAuras.ShowDisplayTooltip(data, children, icon, icons, import, compr
       descbox:SetScript("OnMouseUp", nil);
     end
 
-    descbox:SetFocus();
-    if (alterdesc == "url") then
-      descbox:HighlightText();
-    end
     descbox:Show();
   elseif ItemRefTooltip.WeakAuras_Desc_Box then
     ItemRefTooltip.WeakAuras_Desc_Box:Hide()
@@ -1691,6 +1643,13 @@ function WeakAuras.ShowDisplayTooltip(data, children, icon, icons, import, compr
   end
   WeakAuras.GetData = RegularGetData or WeakAuras.GetData
   ShowTooltip(tooltip, linesFromTop, match and match.activeCategories)
+
+  if alterdesc then
+    ItemRefTooltip.WeakAuras_Desc_Box.descbox:SetFocus();
+    if (alterdesc == "url") then
+      ItemRefTooltip.WeakAuras_Desc_Box.descbox:HighlightText();
+    end
+  end
 end
 
 function WeakAuras.ImportString(str)
