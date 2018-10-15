@@ -1,0 +1,80 @@
+== BossNotesV1.7.0.23 ==
+Added BFA dungeons and world bosses. removed old raids, record spells not working atm
+
+== BossNotesV1.7.0.22 ==
+Added Antorus the Burning Throne
+
+== BossNotesV1.7.0.21 ==
+Fixed personal note error, added New Dungeon for 7.3
+
+== BossNotesV1.7.0.20 ==
+fixed errors on some menus
+
+== BossNotesV1.7.0.19 ==
+Argus Interface change you will get errors from other addons that have not updated. New dungeons and raid bosses will be added before week 3 when they come out
+
+== BossNotesV1.7.0.18 ==
+Fixed some boss IDS
+
+== BossNotesV1.7.0.17 ==
+Added Tomb of Sargeras
+
+
+
+== BossNotesV1.7.0.16 ==
+Npc should properly be filtered please email ids of npc that should not be recorded, and some clean up
+
+
+== BossNotesV1.7.0.15 ==
+Added Cathedral of Eternal Night Dungeon
+
+== BossNotesV1.7.0.14 ==
+Changed drop down menues so that que to dungeon is possible now please report any problems
+UPDATE FOR 7.2 New raid pending release
+
+== BossNotesV1.7.0.13 ==
+The Nighthold Added
+
+== BossNotesV1.7.0.12 ==
+Trial of Valor added
+
+
+
+== BossNotesV1.7.0.11 ==
+Added Return To kara and updated interface for new patch
+
+
+== BossNotesV1.7.0.9 ==
+update to version control message
+
+== BossNotesV1.7.0.8 ==
+MAJOR UPDATE added version control will let you know if its out of date.(needs testing please submit errors). Updated NPC ids
+
+== BossNotesV1.7.0.7 ==
+fixed lua error, and added trash ids for the arcway
+
+== BossNotesV1.7.0.6 ==
+Fixed Emote tracking, corrected some npc ids, and ignored some npc
+
+== BossNotesV1.7.0.5 ==
+Fixed Lua errors, added some npc to ignore, corrected boss ids. Please delete BossNotes lua files in the saved variables in your WTF folder wtf/[accountname]/SavedVariables/
+
+
+== 1.7.0.4 ==
+Fixed Errors on load 
+thanks elohel-Madoran for report!
+
+
+== 1.7.0.3 ==
+fixed errors onloading
+
+== 1.7.0.2 ==
+added Emerald Raid Bosses 
+added outdoor bosses
+
+== 1.7.0.1 ==
+fixed learning abilities 
+
+
+== 1.7.0.0 ==
+Added Legion dungeons Release. Some Dungeons pending tactics. Please Report any errors

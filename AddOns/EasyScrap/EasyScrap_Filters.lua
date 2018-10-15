@@ -742,7 +742,11 @@ filters['itemSlot'].filterFunction = function(itemIndex, filterIndex)
     if filterData[item.itemEquipLoc] or (item.itemEquipLoc == 'INVTYPE_ROBE' and filterData['INVTYPE_CHEST']) then 
         return true
     else
-        filters['itemSlot'].filterMessage = 'item slot is '..invTypes[item.itemEquipLoc]
+        if invTypes[item.itemEquipLoc] then
+            filters['itemSlot'].filterMessage = 'item slot is '..invTypes[item.itemEquipLoc]
+        else
+            filters['itemSlot'].filterMessage = 'item slot is unknown.'
+        end
         return false
     end
 end
