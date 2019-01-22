@@ -23,7 +23,7 @@ function EasyScrap:getScrappableItems()
             local texture, itemCount, locked, quality, readable, lootable, itemLink, isFiltered = GetContainerItemInfo(bag, i)
             local itemName, _, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemIcon, itemSellPrice, itemClassID, itemSubClassID, bindType, expacID, itemSetID, isCraftingReagent = GetItemInfo(itemLink)
             --table.insert(self.scrappableItems, {itemRef = itemRef, bag = bag, slot = i, itemLink = itemLink, itemTexture = texture, itemCount = itemCount, itemID = itemID, itemQuality = quality, itemName = string.match(itemLink, "%[(.+)%]")})
-            table.insert(self.scrappableItems, {itemRef = itemRef, bag = bag, slot = i, itemLink = itemLink, itemEquipLoc = itemEquipLoc, itemClassID = itemClassID, itemSubClassID = itemSubClassID, bindType = bindType, itemTexture = texture, itemCount = itemCount, itemID = itemID, itemQuality = quality, itemName = itemName, itemLevel = itemLevel})
+            table.insert(self.scrappableItems, {itemRef = itemRef, bag = bag, slot = i, itemLink = itemLink, itemSellPrice = itemSellPrice, itemEquipLoc = itemEquipLoc, itemClassID = itemClassID, itemSubClassID = itemSubClassID, bindType = bindType, itemTexture = texture, itemCount = itemCount, itemID = itemID, itemQuality = quality, itemName = itemName, itemLevel = itemLevel})
             itemRef = itemRef + 1
          end
       end
@@ -265,9 +265,7 @@ end
 
 function EasyScrap:getTrueAzeriteItemLevel(itemIndex)
     local item = self.scrappableItems[itemIndex]
-    local itemLocation = {}
-    itemLocation.bagID = item.bag
-    itemLocation.slotIndex = item.slot
+    local itemLocation = ItemLocation:CreateFromBagAndSlot(item.bag, item.slot)
     
     local tierInfo = C_AzeriteEmpoweredItem.GetAllTierInfo(itemLocation)
     if #tierInfo[#tierInfo].azeritePowerIDs == 1 then

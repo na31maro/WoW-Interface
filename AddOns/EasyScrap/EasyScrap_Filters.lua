@@ -146,6 +146,150 @@ filters['itemLevel'].filterFunction = function(itemIndex, filterIndex)
     return isMatch
 end
 
+
+--[[---------------------------------------------------------------------------------------------------------------------------------------
+ITEM VENDOR VALUE
+--]]---------------------------------------------------------------------------------------------------------------------------------------
+filters['sellPrice'] = {}
+filters['sellPrice'].menuText = 'Sell Price'
+filters['sellPrice'].data = {0, 999999}
+filters['sellPrice'].filterMessage = 'sell price is not within range.'
+
+f = createFilterFrame('Sell Price', 54)
+f.bodyText:SetText('Minimum sell price:')
+f.bodyText:SetPoint('TOPLEFT', 8, -14)
+f.bodyText2 = f:CreateFontString()
+f.bodyText2:SetFontObject("GameFontNormalSmall")
+f.bodyText2:SetPoint('TOPLEFT', 8, -36)
+f.bodyText2:SetTextColor(1, 1, 1)
+f.bodyText2:SetText("Maximum sell price: ")
+f.bodyText2:SetJustifyH("LEFT")
+
+
+local function getCoins(money)
+	local gold = math.floor(money / (COPPER_PER_SILVER * SILVER_PER_GOLD))
+	local silver = math.floor((money - (gold * COPPER_PER_SILVER * SILVER_PER_GOLD)) / COPPER_PER_SILVER)
+	local copper = money % COPPER_PER_SILVER
+	return gold, silver, copper
+end
+
+local function createSellValue(g,s,c)
+    local gold = g * (COPPER_PER_SILVER * SILVER_PER_GOLD)
+    local silver = s * (COPPER_PER_SILVER)
+    local copper = c
+    return gold+silver+copper
+end
+
+f.customData = {}
+f.customData[1] = CreateFrame('EditBox', nil, f, 'EasyScrapEditBoxTemplate')
+f.customData[1]:SetPoint('LEFT', f.bodyText, 'LEFT', 112, 0)
+f.customData[1]:SetWidth(20)
+f.customData[1]:SetMaxLetters(2)
+f.customData[1]:SetNumeric(true)
+f.customData[1].t = f.customData[1]:CreateTexture(nil, 'ARTWORK')
+f.customData[1].t:SetTexture([[Interface\MoneyFrame\UI-MoneyIcons]])
+f.customData[1].t:SetTexCoord(0,0.25,0,1)
+f.customData[1].t:SetSize(12, 12)
+f.customData[1].t:SetPoint('RIGHT', 15, 0)
+
+f.customData[2] = CreateFrame('EditBox', nil, f, 'EasyScrapEditBoxTemplate')
+f.customData[2]:SetPoint('LEFT', f.customData[1], 'RIGHT', 24, 0)
+f.customData[2]:SetMaxLetters(2)
+f.customData[2]:SetWidth(20)
+f.customData[2]:SetNumeric(true)
+f.customData[2].t = f.customData[2]:CreateTexture(nil, 'ARTWORK')
+f.customData[2].t:SetTexture([[Interface\MoneyFrame\UI-MoneyIcons]])
+f.customData[2].t:SetTexCoord(0.25,0.5,0,1)
+f.customData[2].t:SetSize(12, 12)
+f.customData[2].t:SetPoint('RIGHT', 15, 0)
+
+f.customData[3] = CreateFrame('EditBox', nil, f, 'EasyScrapEditBoxTemplate')
+f.customData[3]:SetPoint('LEFT', f.customData[2], 'RIGHT', 24, 0)
+f.customData[3]:SetMaxLetters(2)
+f.customData[3]:SetWidth(20)
+f.customData[3]:SetNumeric(true)
+f.customData[3].t = f.customData[3]:CreateTexture(nil, 'ARTWORK')
+f.customData[3].t:SetTexture([[Interface\MoneyFrame\UI-MoneyIcons]])
+f.customData[3].t:SetTexCoord(0.5,0.75,0,1)
+f.customData[3].t:SetSize(12, 12)
+f.customData[3].t:SetPoint('RIGHT', 15, 0)
+
+f.customData[4] = CreateFrame('EditBox', nil, f, 'EasyScrapEditBoxTemplate')
+f.customData[4]:SetPoint('LEFT', f.bodyText2, 'LEFT', 112, 0)
+f.customData[4]:SetMaxLetters(2)
+f.customData[4]:SetWidth(20)
+f.customData[4]:SetNumeric(true)
+f.customData[4].t = f.customData[4]:CreateTexture(nil, 'ARTWORK')
+f.customData[4].t:SetTexture([[Interface\MoneyFrame\UI-MoneyIcons]])
+f.customData[4].t:SetTexCoord(0,0.25,0,1)
+f.customData[4].t:SetSize(12, 12)
+f.customData[4].t:SetPoint('RIGHT', 15, 0)
+
+f.customData[5] = CreateFrame('EditBox', nil, f, 'EasyScrapEditBoxTemplate')
+f.customData[5]:SetPoint('LEFT', f.customData[4], 'RIGHT', 24, 0)
+f.customData[5]:SetMaxLetters(2)
+f.customData[5]:SetWidth(20)
+f.customData[5]:SetNumeric(true)
+f.customData[5].t = f.customData[5]:CreateTexture(nil, 'ARTWORK')
+f.customData[5].t:SetTexture([[Interface\MoneyFrame\UI-MoneyIcons]])
+f.customData[5].t:SetTexCoord(0.25,0.5,0,1)
+f.customData[5].t:SetSize(12, 12)
+f.customData[5].t:SetPoint('RIGHT', 15, 0)
+
+f.customData[6] = CreateFrame('EditBox', nil, f, 'EasyScrapEditBoxTemplate')
+f.customData[6]:SetPoint('LEFT', f.customData[5], 'RIGHT', 24, 0)
+f.customData[6]:SetMaxLetters(2)
+f.customData[6]:SetWidth(20)
+f.customData[6]:SetNumeric(true)
+f.customData[6].t = f.customData[6]:CreateTexture(nil, 'ARTWORK')
+f.customData[6].t:SetTexture([[Interface\MoneyFrame\UI-MoneyIcons]])
+f.customData[6].t:SetTexCoord(0.5,0.75,0,1)
+f.customData[6].t:SetSize(12, 12)
+f.customData[6].t:SetPoint('RIGHT', 15, 0)
+
+
+function f:populateData(data)
+    local g,s,c = getCoins(data[1])
+    self.customData[1]:SetText(g)
+    self.customData[2]:SetText(s)
+    self.customData[3]:SetText(c)
+    g,s,c = getCoins(data[2])
+    self.customData[4]:SetText(g)
+    self.customData[5]:SetText(s)
+    self.customData[6]:SetText(c)
+end
+
+function f:saveData(customFilterIndex)
+    local g = tonumber(self.customData[1]:GetText())
+    if not g then g = 0 end
+    local s = tonumber(self.customData[2]:GetText())
+    if not s then s = 0 end
+    local c = tonumber(self.customData[3]:GetText())
+    if not c then c = 0 end
+    local d1 = createSellValue(g,s,c)
+
+    g = tonumber(self.customData[4]:GetText())
+    if not g then g = 0 end
+    s = tonumber(self.customData[5]:GetText())
+    if not s then s = 0 end
+    c = tonumber(self.customData[6]:GetText())
+    if not c then c = 0 end
+    local d2 = createSellValue(g,s,c)
+    if d2 < d1 then d2 = d1 end
+    
+    EasyScrap.saveData.customFilters[customFilterIndex].rules[self.ruleIndex].data[1] = d1
+    EasyScrap.saveData.customFilters[customFilterIndex].rules[self.ruleIndex].data[2] = d2
+end
+
+filters['sellPrice'].frame = f
+
+filters['sellPrice'].filterFunction = function(itemIndex, filterIndex)
+    local item = EasyScrap.scrappableItems[itemIndex]
+    local filterData = EasyScrap.saveData.customFilters[EasyScrap.activeFilterID].rules[filterIndex].data
+
+    return (item.itemSellPrice >= filterData[1] and item.itemSellPrice <= filterData[2])
+end
+
 --[[---------------------------------------------------------------------------------------------------------------------------------------
 ITEMNAME
 --]]---------------------------------------------------------------------------------------------------------------------------------------
@@ -805,7 +949,18 @@ filters['transmogKnown'].frame = f
 filters['transmogKnown'].filterFunction = function(itemIndex, filterIndex)
     local item = EasyScrap.scrappableItems[itemIndex]
     local filterData = EasyScrap.saveData.customFilters[EasyScrap.activeFilterID].rules[filterIndex].data
+    
+    --If player has CanIMogIt we can use that
+    if CanIMogIt and CanIMogIt.PlayerKnowsTransmog then
+        if CanIMogIt:PlayerKnowsTransmog(item.itemLink) then --If this is false or nil for some reason we'll fallback to our own stuff
+            return true
+        end
+    end
  
+    if C_TransmogCollection.PlayerHasTransmog(item.itemID) then
+        return true
+    end
+    
     local z = C_TransmogCollection.GetItemInfo(item.itemLink)
     if not z then
         if item.itemClassID == LE_ITEM_CLASS_WEAPON or (item.itemClassID == LE_ITEM_CLASS_ARMOR and (item.itemSubClassID == LE_ITEM_ARMOR_CLOTH or item.itemSubClassID == LE_ITEM_ARMOR_LEATHER or item.itemSubClassID == LE_ITEM_ARMOR_MAIL or item.itemSubClassID == LE_ITEM_ARMOR_PLATE or item.itemSubClassID == LE_ITEM_ARMOR_SHIELD)) then 
@@ -816,6 +971,7 @@ filters['transmogKnown'].filterFunction = function(itemIndex, filterIndex)
             return true 
         end
     end
+
     local sources = C_TransmogCollection.GetAppearanceSources(z)
     if sources then
         for k,v in pairs(sources) do
@@ -892,8 +1048,9 @@ filters['itemName'].order = 9
 filters['itemQuality'].order = 10
 filters['itemSlot'].order = 11
 filters['itemType'].order = 12
-filters['transmogKnown'].order = 13
-filters['weaponType'].order = 14
+filters['transmogKnown'].order = 14
+filters['weaponType'].order = 15
+filters['sellPrice'].order = 13
 
 
 

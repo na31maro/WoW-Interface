@@ -123,8 +123,10 @@ local function CreateFrameSizer(frame, callback, position)
   return handle
 end
 
-local defaultWidth = 730
+local defaultWidth = 830
 local defaultHeight = 665
+local minWidth = 750
+local minHeight = 240
 
 function WeakAuras.CreateFrame()
   local WeakAuras_DropDownMenu = CreateFrame("frame", "WeakAuras_DropDownMenu", nil, "UIDropDownMenuTemplate");
@@ -146,7 +148,7 @@ function WeakAuras.CreateFrame()
   frame:EnableMouse(true);
   frame:SetMovable(true);
   frame:SetResizable(true);
-  frame:SetMinResize(610, 240);
+  frame:SetMinResize(minWidth, minHeight);
   frame:SetFrameStrata("DIALOG");
   frame.window = "default";
 
@@ -196,6 +198,8 @@ function WeakAuras.CreateFrame()
   if not(width and height) then
     width, height = defaultWidth, defaultHeight;
   end
+  width = max(width, minWidth)
+  height = max(height, minHeight)
   frame:SetWidth(width);
   frame:SetHeight(height);
 
@@ -377,7 +381,7 @@ function WeakAuras.CreateFrame()
   local container = AceGUI:Create("InlineGroup");
   container.frame:SetParent(frame);
   container.frame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -17, 12);
-  container.frame:SetPoint("TOPLEFT", frame, "TOPRIGHT", -423, -14);
+  container.frame:SetPoint("TOPLEFT", frame, "TOPRIGHT", -83 - WeakAuras.normalWidth * 340, -14);
   container.frame:Show();
   container.frame:SetClipsChildren(true);
   container.titletext:Hide();
@@ -707,7 +711,7 @@ function WeakAuras.CreateFrame()
         containerScroll:AddChild(simpleLabel);
 
         local button = AceGUI:Create("WeakAurasNewButton");
-        button:SetTitle('|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:0|t' .. L["From Template"]);
+        button:SetTitle(WeakAuras.newFeatureString .. L["From Template"]);
         button:SetDescription(L["Offer a guided way to create auras for your class"])
         button:SetIcon("Interface\\Icons\\INV_Misc_Book_06");
         button:SetClick(function()
@@ -900,6 +904,26 @@ function WeakAuras.CreateFrame()
     end
   end
 
+  frame.PickDisplayBatch = function(self, batchSelection)
+    for index, id in ipairs(batchSelection) do
+      local alreadySelected = false;
+      for _, v in pairs(tempGroup.controlledChildren) do
+        if(v == id) then
+          alreadySelected = true;
+          break;
+        end
+      end
+      if(not alreadySelected) then
+        WeakAuras.EnsureOptions(id);
+        displayButtons[id]:Pick();
+        tinsert(tempGroup.controlledChildren, id);
+      end
+    end
+    WeakAuras.ReloadTriggerOptions(tempGroup);
+    self:FillOptions(displayOptions[tempGroup.id]);
+    self.pickedDisplay = tempGroup;
+  end
+
   frame.RefreshPick = function(self)
     if(type(self.pickedDisplay) == "string") then
       WeakAuras.EnsureOptions(self.pickedDisplay);
@@ -907,6 +931,14 @@ function WeakAuras.CreateFrame()
     else
       WeakAuras.EnsureOptions(tempGroup.id);
       self:FillOptions(displayOptions[tempGroup.id]);
+    end
+  end
+
+  frame.RefillOptions = function(self)
+    if(type(self.pickedDisplay) == "string") then
+      self:FillOptions(displayOptions[frame.pickedDisplay]);
+    else
+      self:FillOptions(displayOptions[frame.pickedDisplay.id]);
     end
   end
 

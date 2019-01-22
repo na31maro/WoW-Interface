@@ -424,9 +424,7 @@
 		f:SetBackdropColor (0, 0, 0, 0.3)
 	
 		f:Hide()
-		
 
-		
 		--> members
 			f.MenuX = CONST_PLUGINWINDOW_MENU_X
 			f.MenuY = CONST_PLUGINWINDOW_MENU_Y
@@ -452,6 +450,19 @@
 		--> menu background
 			local menuBackground = CreateFrame ("frame", "$parentMenuFrame", f)
 			_detalhes:FormatBackground (menuBackground)
+			
+		--> statusbar
+			local statusBar = CreateFrame ("frame", nil, menuBackground)
+			statusBar:SetPoint ("topleft", menuBackground, "bottomleft", 0, 1)
+			statusBar:SetPoint ("topright", f, "bottomright", 0, 1)
+			statusBar:SetHeight (20)
+			_detalhes.gump:ApplyStandardBackdrop (statusBar)
+			statusBar:SetAlpha (1)
+			_detalhes.gump:BuildStatusbarAuthorInfo (statusBar)
+			--
+			local right_click_to_back = _detalhes.gump:CreateLabel (statusBar, "right click to close", 10, "gray")
+			right_click_to_back:SetPoint ("bottomright", statusBar, "bottomright", -1, 5)
+			right_click_to_back:SetAlpha (.4)
 
 			--> point
 			menuBackground:SetPoint ("topright", f, "topleft", -2, 0)
@@ -472,16 +483,16 @@
 			--
 		--> plugins menu title bar
 			local titlebar_plugins = CreateFrame ("frame", nil, menuBackground)
-			titlebar_plugins:SetPoint ("topleft", menuBackground, "topleft", 2, -3)
-			titlebar_plugins:SetPoint ("topright", menuBackground, "topright", -2, -3)
+			PixelUtil.SetPoint (titlebar_plugins, "topleft", menuBackground, "topleft", 2, -3)
+			PixelUtil.SetPoint (titlebar_plugins, "topright", menuBackground, "topright", -2, -3)
 			titlebar_plugins:SetHeight (f.TitleHeight)
 			titlebar_plugins:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\AddOns\Details\images\background]], tileSize = 64, tile = true})
 			titlebar_plugins:SetBackdropColor (.5, .5, .5, 1)
 			titlebar_plugins:SetBackdropBorderColor (0, 0, 0, 1)
 			--> title
 			local titleLabel = _detalhes.gump:NewLabel (titlebar_plugins, titlebar_plugins, nil, "titulo", "Plugins", "GameFontHighlightLeft", 12, {227/255, 186/255, 4/255})
-			titleLabel:SetPoint ("center", titlebar_plugins , "center")
-			titleLabel:SetPoint ("top", titlebar_plugins , "top", 0, -5)
+			PixelUtil.SetPoint (titleLabel, "center", titlebar_plugins , "center", 0, 0)
+			PixelUtil.SetPoint (titleLabel, "top", titlebar_plugins , "top", 0, -5)
 			
 		--> plugins menu title bar
 			local titlebar_tools = CreateFrame ("frame", nil, menuBackground)
@@ -491,8 +502,8 @@
 			titlebar_tools:SetBackdropBorderColor (0, 0, 0, 1)
 			--> title
 			local titleLabel = _detalhes.gump:NewLabel (titlebar_tools, titlebar_tools, nil, "titulo", "Tools", "GameFontHighlightLeft", 12, {227/255, 186/255, 4/255})
-			titleLabel:SetPoint ("center", titlebar_tools , "center")
-			titleLabel:SetPoint ("top", titlebar_tools , "top", 0, -5)
+			PixelUtil.SetPoint (titleLabel, "center", titlebar_tools , "center", 0, 0)
+			PixelUtil.SetPoint (titleLabel, "top", titlebar_tools , "top", 0, -5)
 		
 		--> scripts
 			f:SetScript ("OnShow", function()
@@ -617,7 +628,7 @@
 			--frame:SetScript ("OnHide", on_hide)
 			frame:HookScript ("OnHide", on_hide)
 			frame:ClearAllPoints()
-			frame:SetPoint ("topleft", f, "topleft", 0, 0)
+			PixelUtil.SetPoint (frame, "topleft", f, "topleft", 0, 0)
 			frame:Show()
 		end
 		
@@ -655,7 +666,7 @@
 			local addingTools = false
 			for index, button in ipairs (f.MenuButtons) do
 				button:ClearAllPoints()
-				button:SetPoint ("center", menuBackground, "center")
+				PixelUtil.SetPoint (button, "center", menuBackground, "center", 0, 0)
 
 				if (button.IsUtility) then
 					--> add -20 to add a gap between plugins and utilities
@@ -663,13 +674,13 @@
 					if (not addingTools) then
 						--> add the header
 						addingTools = true
-						titlebar_tools:SetPoint ("topleft", menuBackground, "topleft", 2, f.MenuY + ( (index-1) * -f.MenuButtonHeight ) - index - 20)
-						titlebar_tools:SetPoint ("topright", menuBackground, "topright", -2, f.MenuY + ( (index-1) * -f.MenuButtonHeight ) - index - 20)
+						PixelUtil.SetPoint (titlebar_tools, "topleft", menuBackground, "topleft", 2, f.MenuY + ( (index-1) * -f.MenuButtonHeight ) - index - 20)
+						PixelUtil.SetPoint (titlebar_tools, "topright", menuBackground, "topright", -2, f.MenuY + ( (index-1) * -f.MenuButtonHeight ) - index - 20)
 					end
 					
-					button:SetPoint ("top", menuBackground, "top", 0, f.MenuY + ( (index-1) * -f.MenuButtonHeight ) - index - 40)
+					PixelUtil.SetPoint (button, "top", menuBackground, "top", 0, f.MenuY + ( (index-1) * -f.MenuButtonHeight ) - index - 40)
 				else
-					button:SetPoint ("top", menuBackground, "top", 0, f.MenuY + ( (index-1) * -f.MenuButtonHeight ) - index)
+					PixelUtil.SetPoint (button, "top", menuBackground, "top", 0, f.MenuY + ( (index-1) * -f.MenuButtonHeight ) - index)
 				end
 			end
 			

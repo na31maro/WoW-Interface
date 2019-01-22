@@ -1368,3 +1368,13 @@ Change Log:
 * Added Battle for Azeroth spells (world)
 * Added BFA spells for Uldir
 
+4.46.10
+* Added Battle for Azeroth spells (world)
+
+4.46.11
+* Updated for patch 8.1
+* Added Battle for Azeroth spells (world)
+
+4.46.12
+* Added Battle for Azeroth spells (world)
+

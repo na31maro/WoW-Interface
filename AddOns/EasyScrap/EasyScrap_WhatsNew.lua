@@ -6,3 +6,4 @@ EasyScrap.whatsNewText[10] = '|cFFFF0000- YOUR IGNORE LIST HAS BEEN RESET!!!|r\n
 EasyScrap.whatsNewText[11] = '|cFFFF0000- YOUR IGNORE LIST HAS BEEN RESET!!!|r\n\n- Ignore function should now do a slightly better job at ignoring items.\n\n- Added option to set a custom filter as the default filter in the filters section.\n\n- Added Weapon Type filter.\n\n- Added experimental Transmog filter.'
 EasyScrap.whatsNewText[13] = '- Added duplicate filter\n\n- Added bonus stats filter\n\n- Added item slot filter\n\n - Added option to display |cff87a9fe'..ITEM_SCRAPABLE..'|r in tooltips when not at scrapper for items that can be scrapped.'
 EasyScrap.whatsNewText[14] = '- Added option to display |cff87a9fe'..ITEM_SCRAPABLE..'|r in tooltips when not at scrapper for items that can be scrapped.'
+EasyScrap.whatsNewText[18] = '- Added sell price filter'

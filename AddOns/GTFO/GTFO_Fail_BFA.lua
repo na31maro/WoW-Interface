@@ -291,6 +291,48 @@ GTFO.SpellID["274840"] = {
   sound = 3;
 };
 
+GTFO.SpellID["265752"] = {
+  --desc = "Devastator Cannon (War Machine)";
+  sound = 3;
+};
+
+GTFO.SpellID["274206"] = {
+  --desc = "Blood Wave (Grand Ma'da Ateena)";
+  sound = 3;
+};
+
+GTFO.SpellID["258094"] = {
+  --desc = "Breath of Vol'jamba (Vol'jamba)";
+  sound = 3;
+};
+
+GTFO.SpellID["269823"] = {
+  --desc = "Ball Lightning";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["283876"] = {
+  --desc = "High-Explosive Bomb (Base Cap'n Crankshot)";
+  sound = 3;
+};
+
+GTFO.SpellID["257971"] = {
+  --desc = "Leaping Thrash (Bajiatha)";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["287537"] = {
+  --desc = "Plague Breath (Ivus the Decayed)";
+  sound = 3;
+  tankSound = 0;
+};
+
+GTFO.SpellID["287537"] = {
+  --desc = "Plague Breath (Ivus the Decayed)";
+  sound = 3;
+};
 
 -- ***********************
 -- * Shrine of the Storm *
@@ -624,6 +666,7 @@ GTFO.SpellID["255741"] = {
   --desc = "Cleave (Scaled Krolusk Rider)";
   sound = 3;
   tankSound = 0;
+  test = true; -- Restrict to this NPC only
 };
 
 -- ********************

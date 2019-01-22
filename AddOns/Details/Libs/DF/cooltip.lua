@@ -277,8 +277,10 @@ function DF:CreateCoolTip()
 			tinsert (UISpecialFrames, "GameCooltipFrame1")
 			DF:CreateFlashAnimation (frame1)
 			
+			--removing the border makes the cooltip much more clear
 			if (DF.CreateBorder) then
 				DF:CreateBorder (frame1, .3, .1, .03)
+				frame1:SetBorderAlpha (0, 0, 0)
 			end
 		else
 			frame1 = GameCooltipFrame1
@@ -303,8 +305,10 @@ function DF:CreateCoolTip()
 			DF:CreateFlashAnimation (frame2)
 			frame2:SetClampedToScreen (true)
 			
+			--removing the border makes the cooltip much more clear
 			if (DF.CreateBorder) then
 				DF:CreateBorder (frame2, .3, .1, .03)
+				frame2:SetBorderAlpha (0, 0, 0)
 			end
 		else
 			frame2 = GameCooltipFrame2
@@ -1648,9 +1652,9 @@ function DF:CreateCoolTip()
 			if (CoolTip.Type == 2) then --> with bars
 				if (CoolTip.OptionsTable.MinWidth) then
 					local w = frame1.w + 34
-					frame1:SetWidth (math.max (w, CoolTip.OptionsTable.MinWidth))
+					PixelUtil.SetWidth (frame1, math.max (w, CoolTip.OptionsTable.MinWidth))
 				else
-					frame1:SetWidth (frame1.w + 34)
+					PixelUtil.SetWidth (frame1, frame1.w + 34)
 				end
 			else
 				--> width stability check
@@ -1662,22 +1666,24 @@ function DF:CreateCoolTip()
 				end
 				
 				if (CoolTip.OptionsTable.MinWidth) then
-					frame1:SetWidth (math.max (width, CoolTip.OptionsTable.MinWidth))
+					PixelUtil.SetWidth (frame1, math.max (width, CoolTip.OptionsTable.MinWidth))
 				else
-					frame1:SetWidth (width)
+					PixelUtil.SetWidth (frame1, width)
 				end
 			end
 		end
 		
 		if (CoolTip.OptionsTable.FixedHeight) then
-			frame1:SetHeight (CoolTip.OptionsTable.FixedHeight)
+			PixelUtil.SetHeight (frame1, CoolTip.OptionsTable.FixedHeight)
 		else
 			if (CoolTip.OptionsTable.AlignAsBlizzTooltip) then
-				frame1:SetHeight ( ((temp-10) * -1) + (CoolTip.OptionsTable.AlignAsBlizzTooltipFrameHeightOffset or 0))
+				PixelUtil.SetHeight (frame1, ((temp-10) * -1) + (CoolTip.OptionsTable.AlignAsBlizzTooltipFrameHeightOffset or 0))
+				
 			elseif (CoolTip.OptionsTable.IgnoreButtonAutoHeight) then
-				frame1:SetHeight ( (temp+spacing) * -1)
+				PixelUtil.SetHeight (frame1, (temp+spacing) * -1)
+				
 			else
-				frame1:SetHeight ( _math_max ( (frame1.hHeight * CoolTip.Indexes) + 8 + ((CoolTip.OptionsTable.ButtonsYMod or 0)*-1), 22 ))
+				PixelUtil.SetHeight (frame1, _math_max ( (frame1.hHeight * CoolTip.Indexes) + 8 + ((CoolTip.OptionsTable.ButtonsYMod or 0)*-1), 22 ))
 			end
 		end
 
@@ -1918,7 +1924,8 @@ function DF:CreateCoolTip()
 		
 		local anchor = CoolTip.OptionsTable.Anchor or CoolTip.Host
 		
-		frame1:SetPoint (CoolTip.OptionsTable.MyAnchor, anchor, CoolTip.OptionsTable.RelativeAnchor, 0 + moveX + CoolTip.OptionsTable.WidthAnchorMod, 10 + CoolTip.OptionsTable.HeightAnchorMod + moveY)
+		--frame1:SetPoint (CoolTip.OptionsTable.MyAnchor, anchor, CoolTip.OptionsTable.RelativeAnchor, 0 + moveX + CoolTip.OptionsTable.WidthAnchorMod, 10 + CoolTip.OptionsTable.HeightAnchorMod + moveY)
+		PixelUtil.SetPoint (frame1, CoolTip.OptionsTable.MyAnchor, anchor, CoolTip.OptionsTable.RelativeAnchor, 0 + moveX + CoolTip.OptionsTable.WidthAnchorMod, 10 + CoolTip.OptionsTable.HeightAnchorMod + moveY)
 		
 		if (not x_mod) then
 			--> check if cooltip is out of screen bounds
@@ -2711,6 +2718,14 @@ function DF:CreateCoolTip()
 				f:SetBackdropBorderColor (r, g, b, a)
 			end
 			
+			--[=[
+			f:SetBackdrop (nil)
+			
+			f.framebackgroundCenter:SetTexture (nil)
+			f.framebackgroundLeft:SetTexture (nil)
+			f.framebackgroundRight:SetTexture (nil)
+			f.frameWallpaper:SetTexture (nil)
+			--]=]
 		end
 		
 		function CoolTip:SetBannerImage (index, texturepath, width, height, anchor, texcoord, overlay)
@@ -3365,6 +3380,31 @@ function DF:CreateCoolTip()
 			self:SetBackdrop (2, preset2_backdrop, gray_table, black_table)
 		end
 	end
+	
+	function CoolTip:QuickTooltip (host, ...)
+		
+		CoolTip:Preset (2)
+		CoolTip:SetHost (host)
+		
+		for i = 1, select ("#", ...) do
+			local line = select (i, ...)
+			CoolTip:AddLine (line)
+		end
+		
+		CoolTip:ShowCooltip()
+	end
+	
+	function CoolTip:InjectQuickTooltip (host, ...)
+		host.CooltipQuickTooltip = {...}
+		host:HookScript ("OnEnter", function()
+			CoolTip:QuickTooltip (host, unpack (host.CooltipQuickTooltip))
+		end)
+		host:HookScript ("OnLeave", function()
+			CoolTip:Hide()
+		end)
+	end
+	
+	
 	
 	return CoolTip
 	

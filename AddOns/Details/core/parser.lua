@@ -140,15 +140,14 @@
 		[184709] = 218617, --warrior rampage
 		[201364] = 218617, --warrior rampage
 		[201363] = 218617, --warrior rampage
-		
 		[85384] = 96103, --warrior raging blow
 		[85288] = 96103, --warrior raging blow
-		
 		[163558] = 5308, --warrior execute
 		[217955] = 5308, --warrior execute
 		[217956] = 5308, --warrior execute
 		[217957] = 5308, --warrior execute
 		[224253] = 5308, --warrior execute
+		[199850] = 199658, --warrior whirlwind
 		
 		[222031] = 199547, --deamonhunter ChaosStrike
 		[200685] = 199552, --deamonhunter Blade Dance
@@ -156,19 +155,23 @@
 		[227518] = 201428, --deamonhunter Annihilation
 		[187727] = 178741, --deamonhunter Immolation Aura
 		[201789] = 201628, --deamonhunter Fury of the Illidari
+		[225921] = 225919, --deamonhunter Fracture talent
 		
 		[205164] = 205165, --death knight Crystalline Swords
 		
 		[193315] = 197834, --rogue Saber Slash
 		[202822] = 202823, --rogue greed
+		[280720] = 282449, --rogue Secret Technique
+		[280719] = 282449, --rogue Secret Technique
+		[27576] = 5374, --rogue mutilate
 		
 		[233496] = 233490, --warlock Unstable Affliction
 		[233497] = 233490, --warlock Unstable Affliction
 		[233498] = 233490, --warlock Unstable Affliction
 		[233499] = 233490, --warlock Unstable Affliction
 		
-		[280720] = 282449, --rogue Secret Technique
-		[280719] = 282449, --rogue Secret Technique
+		[261947] = 261977, --monk fist of the white tiger talent
+		
 	}
 	
 	local bitfield_debuffs_ids = _detalhes.BitfieldSwapDebuffsIDs
@@ -182,6 +185,7 @@
 		end
 	end
 	
+	--expose the override spells table to external scripts
 	_detalhes.OverridedSpellIds = override_spellId
 	
 	--> ignore soul link (damage from the warlock on his pet - current to demonology only)
@@ -212,6 +216,9 @@
 		--it is not useful for damage done or friendly fire
 		[SPELLID_WARLOCK_SOULLINK] = true,
 	}
+	
+	--> expose the ignore spells table to external scripts
+	_detalhes.SpellsToIgnore = damage_spells_to_ignore
 	
 	--> is parser allowed to replace spellIDs?
 		local is_using_spellId_override = false
@@ -589,8 +596,10 @@
 		if (absorbed) then
 			amount = absorbed + (amount or 0)
 		end
-		if (overkill and overkill > 0) then
-			amount = amount - overkill
+		if (_is_in_instance) then
+			if (overkill and overkill > 0) then
+				amount = amount - overkill
+			end
 		end
 		
 		if (este_jogador.grupo and not este_jogador.arena_enemy and not este_jogador.enemy) then --> source = friendly player and not an enemy player
@@ -3511,6 +3520,27 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 				local t = {esta_morte, time, este_jogador.nome, este_jogador.classe, _UnitHealthMax (alvo_name), minutos.."m "..segundos.."s",  ["dead"] = true, ["last_cooldown"] = este_jogador.last_cooldown, ["dead_at"] = decorrido}
 				
 				_table_insert (_current_combat.last_events_tables, #_current_combat.last_events_tables+1, t)
+				
+				--> check if this is a mythic+ run
+				local mythicLevel = C_ChallengeMode.GetActiveKeystoneInfo()
+				if (mythicLevel and type (mythicLevel) == "number" and mythicLevel >= 2) then --several checks to be future proof
+					--> more checks for integrity
+					if (_detalhes.tabela_overall and _detalhes.tabela_overall.last_events_tables) then
+						--> this is a mythi dungeon run, add the death to overall data
+						--> need to adjust the time of death, since this will show all deaths in the mythic run
+						--> first copy the table
+						local overallDeathTable = DetailsFramework.table.copy ({}, t)
+						
+						--> get the elapsed time
+						local decorrido = _GetTime() - _detalhes.tabela_overall:GetStartTime()
+						local minutos, segundos = _math_floor (decorrido/60), _math_floor (decorrido%60)
+						
+						overallDeathTable [6] = minutos.."m "..segundos.."s"
+						overallDeathTable.dead_at = decorrido
+						
+						_table_insert (_detalhes.tabela_overall.last_events_tables, #_detalhes.tabela_overall.last_events_tables + 1, overallDeathTable)
+					end
+				end
 
 				--> reseta a pool
 				last_events_cache [alvo_name] = nil
@@ -4799,7 +4829,7 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		print ("group damage", #_detalhes.cache_damage_group)
 		print ("group damage", #_detalhes.cache_healing_group)
 	end
-	
+
 	function _detalhes:GetActorsOnDamageCache()
 		return _detalhes.cache_damage_group
 	end

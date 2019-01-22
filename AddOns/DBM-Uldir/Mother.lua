@@ -1,13 +1,13 @@
 local mod	= DBM:NewMod(2167, "DBM-Uldir", nil, 1031)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision(("$Revision: 17939 $"):sub(12, -3))
+mod:SetRevision(("$Revision: 18139 $"):sub(12, -3))
 mod:SetCreatureID(135452)--136429 Chamber 01, 137022 Chamber 02, 137023 Chamber 03
 mod:SetEncounterID(2141)
+mod:DisableESCombatDetection()--ES breaks if you pull boss through door to skip trash. Then after that the trash bugs and continues to throw ES events even after mother is defeated
 mod:SetZone()
-mod:SetUsedIcons(8, 7, 6, 5, 4, 3, 2, 1)
 mod:SetHotfixNoticeRev(17778)
---mod:SetMinSyncRevision(16950)
+mod:SetMinSyncRevision(18111)
 mod.respawnTime = 25
 
 mod:RegisterCombat("combat")
@@ -15,7 +15,6 @@ mod:RegisterCombat("combat")
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 267787 268198 279669",
 	"SPELL_CAST_SUCCESS 267795 267945 267885 267878 269827 268089 277973 277961 277742",
-	"SPELL_SUMMON 268871",
 	"SPELL_AURA_APPLIED 267787 274205 269051 279662 279663",
 	"SPELL_AURA_APPLIED_DOSE 267787",
 	"SPELL_AURA_REMOVED 279662 279663"
@@ -43,9 +42,9 @@ local specWarnSpreadingEpidemic			= mod:NewSpecialWarningMoveAway(279663, nil, n
 local yellSpreadingEpidemic				= mod:NewYell(279663)
 
 --mod:AddTimerLine(Nexus)
-local timerSanitizingStrikeCD			= mod:NewNextTimer(23.1, 267787, nil, "Tank", nil, 5, nil, DBM_CORE_TANK_ICON)
+local timerSanitizingStrikeCD			= mod:NewNextTimer(23.1, 267787, 191540, "Tank", nil, 5, nil, DBM_CORE_TANK_ICON)--Short name "Strike"
 local timerPurifyingFlameCD				= mod:NewNextTimer(20.1, 267795, nil, nil, nil, 3, nil, DBM_CORE_DEADLY_ICON)
-local timerWindTunnelCD					= mod:NewNextTimer(39.8, 267945, nil, nil, nil, 2)
+local timerWindTunnelCD					= mod:NewNextTimer(39.5, 267945, nil, nil, nil, 2)
 local timerSurgicalBeamCD				= mod:NewCDSourceTimer(30, 269827, 143444, nil, nil, 3, nil, DBM_CORE_DEADLY_ICON)--Shortname "Laser"
 local timerCleansingFlameCD				= mod:NewCastSourceTimer(180, 268095, nil, nil, nil, 6)
 
@@ -56,10 +55,8 @@ local countdownSanitizingStrike			= mod:NewCountdown("Alt23", 267787, "Tank", ni
 local countdownSurgicalBeam				= mod:NewCountdown("AltTwo30", 269827, nil, nil, 3)
 
 mod:AddInfoFrameOption(268095, true)
-mod:AddSetIconOption("SetIconOnAdds", 268871, true, true)
 mod:AddRangeFrameOption(5, 272407)
 
-mod.vb.startIcon = 1
 mod.vb.phase = 1
 mod.vb.bossInICD = false
 mod.vb.nextLaser = 1--1 side 2 top
@@ -83,15 +80,6 @@ local function updateAllTimers(self, ICD)
 		countdownPurifyingFlame:Cancel()
 		countdownPurifyingFlame:Start(ICD)
 	end
-	--[[if timerSanitizingStrikeCD:GetRemaining() < ICD then
-		local elapsed, total = timerSanitizingStrikeCD:GetTime()
-		local extend = ICD - (total-elapsed)
-		DBM:Debug("timerSanitizingStrikeCD extended by: "..extend, 2)
-		timerSanitizingStrikeCD:Stop()
-		timerSanitizingStrikeCD:Update(elapsed, total+extend)
-		countdownSanitizingStrike:Cancel()
-		countdownSanitizingStrike:Start(ICD)
-	end--]]
 	if timerWindTunnelCD:GetRemaining() < ICD then
 		local elapsed, total = timerWindTunnelCD:GetTime()
 		local extend = ICD - (total-elapsed)
@@ -179,7 +167,6 @@ do
 end
 
 function mod:OnCombatStart(delay)
-	self.vb.startIcon = 1
 	self.vb.phase = 1
 	self.vb.bossInICD = false
 	self.vb.nextLaser = 1--1 side 2 top
@@ -244,7 +231,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 	elseif spellId == 267945 then--Global Id for winds
 		warnWindTunnel:Show()
 		timerWindTunnelCD:Start()--40 unless delayed by ICD
-		updateAllTimers(self, 6)
+		updateAllTimers(self, 5.6)
 	elseif spellId == 269827 or spellId == 277973 or spellId == 277961 or spellId == 277742 then
 		if self:IsMythic() then--All the things
 			specWarnSurgicalBeam:Show(DBM_CORE_BOTH)
@@ -286,17 +273,6 @@ function mod:SPELL_CAST_SUCCESS(args)
 		specWarnSurgicalBeam:Play("watchstep")--laserrun wasn't quite right, cause it says "on you" Needed "laser, run" not "laser on you, run"
 	elseif spellId == 268089 and self:AntiSpam(3, 1) then--End Cast of Cleansing Purge
 		warnCleansingPurgeFinish:Show(args.sourceName)
-	end
-end
-
-function mod:SPELL_SUMMON(args)
-	local spellId = args.spellId
-	if spellId == 268871 then
-		if self.Options.SetIconOnAdds then--136949 CID for dps Adds, 143065 CID Healer Adds(Viral Contagion), 143067 CID Tank Add (Resistant Bacterium)
-			self:ScanForMobs(args.sourceGUID, 2, self.vb.startIcon, 1, 0.2, 10, "SetIconOnAdds")
-		end
-		self.vb.startIcon = self.vb.startIcon + 1
-		if self.vb.startIcon == 9 then self.vb.startIcon = 1 end
 	end
 end
 

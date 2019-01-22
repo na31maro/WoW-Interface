@@ -33,12 +33,12 @@ local function GetNameForKeystone(keystoneMapID, keystoneLevel)
 end
 
 local function UpdatePartyKeystones()
-	if not IsAddOnLoaded("Blizzard_ChallengesUI") then return end
-
 	Mod:CheckCurrentKeystone()
 	if requestPartyKeystones then
 		Mod:SendPartyKeystonesRequest()
 	end
+
+	if not IsAddOnLoaded("Blizzard_ChallengesUI") then return end
 
 	local playerRealm = select(2, UnitFullName("player"))
 
@@ -97,15 +97,9 @@ local function UpdateFrame()
 	Mod.PartyFrame:Show()
 	Mod.KeystoneText:Show()
 
-	local currentAffixes = C_MythicPlus.GetCurrentAffixes()
-	if currentAffixes and #currentAffixes then
-		ChallengesFrame.WeeklyInfo.Child.Affixes[1]:ClearAllPoints()
-		ChallengesFrame.WeeklyInfo.Child.Affixes[1]:SetPoint("CENTER", ChallengesFrame.WeeklyInfo.Child.Label, "CENTER", 31 + (-31 * #currentAffixes), -45)
-	end
-
 	ChallengesFrame.WeeklyInfo.Child.WeeklyChest:ClearAllPoints()
 	ChallengesFrame.WeeklyInfo.Child.WeeklyChest:SetPoint("LEFT", 50, -30)
-	if ChallengesFrame.WeeklyInfo.Child.WeeklyChest:IsShown() then
+	if false and ChallengesFrame.WeeklyInfo.Child.WeeklyChest:IsShown() then
 		ChallengesFrame.WeeklyInfo.Child.RunStatus:SetWidth(240)
 	else
 		ChallengesFrame.WeeklyInfo.Child.RunStatus:SetWidth(240)
@@ -310,7 +304,7 @@ function Mod:CheckAffixes()
 		for index, affixes in ipairs(affixSchedule) do
 			local matches = 0
 			for _, affix in ipairs(currentAffixes) do
-				if affix == affixes[1] or affix == affixes[2] or affix == affixes[3] then
+				if affix.id == affixes[1] or affix.id == affixes[2] or affix.id == affixes[3] then
 					matches = matches + 1
 				end
 			end
@@ -386,9 +380,7 @@ function Mod:SendCurrentKeystone()
 		message = string.format("%d:%d", keystoneMapID, keystoneLevel)
 	end
 
-	if IsInGroup() then
-		self:SendAddOnComm(message, "PARTY")
-	end
+	self:SendAddOnComm(message, "PARTY")
 end
 
 function Mod:ReceiveAddOnComm(message, type, sender)
@@ -424,6 +416,10 @@ function Mod:CHALLENGE_MODE_COMPLETED()
 	self:SetPartyKeystoneRequest()
 end
 
+function Mod:CHALLENGE_MODE_UPDATED()
+	self:CheckCurrentKeystone()
+end
+
 function Mod:Startup()
 	self:RegisterAddOnLoaded("Blizzard_ChallengesUI")
 	self:RegisterEvent("GROUP_ROSTER_UPDATE", "SetPartyKeystoneRequest")
@@ -431,9 +427,9 @@ function Mod:Startup()
 	self:RegisterEvent("CHAT_MSG_LOOT")
 	self:RegisterEvent("CHALLENGE_MODE_COMPLETED")
 	self:RegisterEvent("CHALLENGE_MODE_START")
-	self:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE", "CheckCurrentKeystone")
-	self:RegisterEvent("CHALLENGE_MODE_LEADERS_UPDATE", "CheckCurrentKeystone")
-	self:RegisterEvent("CHALLENGE_MODE_MEMBER_INFO_UPDATED", "CheckCurrentKeystone")
+	self:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE", "CHALLENGE_MODE_UPDATED")
+	self:RegisterEvent("CHALLENGE_MODE_LEADERS_UPDATE", "CHALLENGE_MODE_UPDATED")
+	self:RegisterEvent("CHALLENGE_MODE_MEMBER_INFO_UPDATED", "CHALLENGE_MODE_UPDATED")
 	self:RegisterAddOnComm()
 	self:CheckCurrentKeystone()
 

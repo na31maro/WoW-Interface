@@ -1,5 +1,5 @@
 
-local dversion = 114
+local dversion = 131
 local major, minor = "DetailsFramework-1.0", dversion
 local DF, oldminor = LibStub:NewLibrary (major, minor)
 
@@ -19,6 +19,11 @@ local string_match = string.match
 
 SMALL_NUMBER = 0.000001
 ALPHA_BLEND_AMOUNT = 0.8400251
+
+DF.AuthorInfo = {
+	Name = "Tercioo",
+	Discord = "https://discord.gg/AGSzAZX",
+}
 
 --> will always give a very random name for our widgets
 local init_counter = math.random (1, 1000000)
@@ -233,25 +238,43 @@ function DF.table.dump (t, s, deep)
 	for i = 1, deep do
 		space = space .. "   "
 	end
+	
 	for key, value in pairs (t) do
 		local tpe = _type (value)
-		if (type (key) ~= "string") then
+		
+		if (type (key) == "function") then
+			key = "#function#"
+		elseif (type (key) == "table") then
+			key = "#table#"
+		end	
+		
+		if (type (key) ~= "string" and type (key) ~= "number") then
 			key = "unknown?"
-		end		
+		end
+		
 		if (tpe == "table") then
-			s = s .. space .. "[" .. key .. "] = |cFFa9ffa9table {|r\n"
+			if (type (key) == "number") then
+				s = s .. space .. "[" .. key .. "] = |cFFa9ffa9 {|r\n"
+			else
+				s = s .. space .. "[\"" .. key .. "\"] = |cFFa9ffa9 {|r\n"
+			end
 			s = s .. DF.table.dump (value, nil, deep+1)
-			s = s .. space .. "|cFFa9ffa9}|r\n"
+			s = s .. space .. "|cFFa9ffa9},|r\n"
+			
 		elseif (tpe == "string") then
-			s = s .. space .. "[" .. key .. "] = '|cFFfff1c1" .. value .. "|r'\n"
+			s = s .. space .. "[\"" .. key .. "\"] = \"|cFFfff1c1" .. value .. "|r\",\n"
+			
 		elseif (tpe == "number") then
-			s = s .. space .. "[" .. key .. "] = |cFFffc1f4" .. value .. "|r\n"
+			s = s .. space .. "[\"" .. key .. "\"] = |cFFffc1f4" .. value .. "|r,\n"
+			
 		elseif (tpe == "function") then
-			s = s .. space .. "[" .. key .. "] = function()\n"
+			s = s .. space .. "[\"" .. key .. "\"] = function()end,\n"
+			
 		elseif (tpe == "boolean") then
-			s = s .. space .. "[" .. key .. "] = |cFF99d0ff" .. (value and "true" or "false") .. "|r\n"
+			s = s .. space .. "[\"" .. key .. "\"] = |cFF99d0ff" .. (value and "true" or "false") .. "|r,\n"
 		end
 	end
+	
 	return s
 end
 
@@ -366,6 +389,35 @@ end
 function DF:SetFontColor (fontString, r, g, b, a)
 	r, g, b, a = DF:ParseColors (r, g, b, a)
 	fontString:SetTextColor (r, g, b, a)
+end
+
+function DF:SetFontShadow (fontString, r, g, b, a, x, y)
+	r, g, b, a = DF:ParseColors (r, g, b, a)
+	fontString:SetShadowColor (r, g, b, a)
+
+	local offSetX, offSetY = fontString:GetShadowOffset()
+	x = x or offSetX
+	y = y or offSetY
+	
+	fontString:SetShadowOffset (x, y)
+end
+
+function DF:AddClassColorToText (text, class)
+	if (type (class) ~= "string") then
+		return DF:RemoveRealName (text)
+		
+	elseif (class == "UNKNOW" or class == "PET") then
+		return DF:RemoveRealName (text)
+	end
+	
+	local color = RAID_CLASS_COLORS [class]
+	if (color) then
+		text = "|c" .. color.colorStr .. DF:RemoveRealName (text) .. "|r"
+	else
+		return DF:RemoveRealName (text)
+	end
+	
+	return text
 end
 
 function DF:GetFontSize (fontString)
@@ -664,6 +716,33 @@ end
 		
 		return true
 	end
+	
+	local colorTableMixin = {
+		GetColor = function (self)
+			return self.r, self.g, self.b, self.a
+		end,
+		
+		SetColor = function (self, r, g, b, a)
+			r, g, b, a = DF:ParseColors (r, g, b, a)
+			self.r = r or self.r
+			self.g = g or self.g
+			self.b = b or self.b
+			self.a = a or self.a
+		end,
+		
+		IsColorTable = true,
+	}
+	
+	function DF:CreateColorTable (r, g, b, a)
+		local t  = {
+			r = r or 1, 
+			g = g or 1, 
+			b = b or 1, 
+			a = a or 1,
+		}
+		DF:Mixin (t, colorTableMixin)
+		return t
+	end
 
 	function DF:IsHtmlColor (color)
 		return DF.alias_text_colors [color]
@@ -672,8 +751,12 @@ end
 	local tn = tonumber
 	function DF:ParseColors (_arg1, _arg2, _arg3, _arg4)
 		if (_type (_arg1) == "table") then
-			if (not _arg1[1] and _arg1.r) then
+			if (_arg1.IsColorTable) then
+				return _arg1:GetColor()
+				
+			elseif (not _arg1[1] and _arg1.r) then
 				_arg1, _arg2, _arg3, _arg4 = _arg1.r, _arg1.g, _arg1.b, _arg1.a
+				
 			else
 				_arg1, _arg2, _arg3, _arg4 = _unpack (_arg1)
 			end
@@ -828,7 +911,7 @@ end
 				end
 				
 				if (value_change_hook) then
-					slider:SetHook ("OnValueChanged", value_change_hook)
+					slider:SetHook ("OnValueChange", value_change_hook)
 				end
 				
 				--> hook list
@@ -1440,6 +1523,10 @@ function DF:SetHook (hookType, func)
 			error ("Details! Framework: unknown hook type for widget " .. self.WidgetType .. ": '" .. hookType .. "'.")
 		end
 	end
+end
+
+function DF:Error (errortext)
+	print ("|cFFFF2222Details! Framework Error|r:", errortext, self.GetName and self:GetName(), self.WidgetType, debugstack (2, 3, 0))
 end
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2075,16 +2162,16 @@ function DF:CreateBorder (parent, alpha1, alpha2, alpha3)
 	parent.SetLayerVisibility = SetLayerVisibility
 	
 	local border1 = parent:CreateTexture (nil, "background")
-	border1:SetPoint ("topleft", parent, "topleft", -1, 1)
-	border1:SetPoint ("bottomleft", parent, "bottomleft", -1, -1)
+	PixelUtil.SetPoint (border1, "topleft", parent, "topleft", -1, 1)
+	PixelUtil.SetPoint (border1, "bottomleft", parent, "bottomleft", -1, -1)
 	border1:SetColorTexture (0, 0, 0, alpha1 or default_border_color1)
 	local border2 = parent:CreateTexture (nil, "background")
-	border2:SetPoint ("topleft", parent, "topleft", -2, 2)
-	border2:SetPoint ("bottomleft", parent, "bottomleft", -2, -2)
+	PixelUtil.SetPoint (border2, "topleft", parent, "topleft", -2, 2)
+	PixelUtil.SetPoint (border2, "bottomleft", parent, "bottomleft", -2, -2)
 	border2:SetColorTexture (0, 0, 0, alpha2 or default_border_color2)
 	local border3 = parent:CreateTexture (nil, "background")
-	border3:SetPoint ("topleft", parent, "topleft", -3, 3)
-	border3:SetPoint ("bottomleft", parent, "bottomleft", -3, -3)
+	PixelUtil.SetPoint (border3, "topleft", parent, "topleft", -3, 3)
+	PixelUtil.SetPoint (border3, "bottomleft", parent, "bottomleft", -3, -3)
 	border3:SetColorTexture (0, 0, 0, alpha3 or default_border_color3)
 	
 	tinsert (parent.Borders.Layer1, border1)
@@ -2092,16 +2179,16 @@ function DF:CreateBorder (parent, alpha1, alpha2, alpha3)
 	tinsert (parent.Borders.Layer3, border3)
 	
 	local border1 = parent:CreateTexture (nil, "background")
-	border1:SetPoint ("topleft", parent, "topleft", 0, 1)
-	border1:SetPoint ("topright", parent, "topright", 1, 1)
+	PixelUtil.SetPoint (border1, "topleft", parent, "topleft", 0, 1)
+	PixelUtil.SetPoint (border1, "topright", parent, "topright", 1, 1)
 	border1:SetColorTexture (0, 0, 0, alpha1 or default_border_color1)
 	local border2 = parent:CreateTexture (nil, "background")
-	border2:SetPoint ("topleft", parent, "topleft", -1, 2)
-	border2:SetPoint ("topright", parent, "topright", 2, 2)
+	PixelUtil.SetPoint (border2, "topleft", parent, "topleft", -1, 2)
+	PixelUtil.SetPoint (border2, "topright", parent, "topright", 2, 2)
 	border2:SetColorTexture (0, 0, 0, alpha2 or default_border_color2)
 	local border3 = parent:CreateTexture (nil, "background")
-	border3:SetPoint ("topleft", parent, "topleft", -2, 3)
-	border3:SetPoint ("topright", parent, "topright", 3, 3)
+	PixelUtil.SetPoint (border3, "topleft", parent, "topleft", -2, 3)
+	PixelUtil.SetPoint (border3, "topright", parent, "topright", 3, 3)
 	border3:SetColorTexture (0, 0, 0, alpha3 or default_border_color3)
 	
 	tinsert (parent.Borders.Layer1, border1)
@@ -2109,16 +2196,16 @@ function DF:CreateBorder (parent, alpha1, alpha2, alpha3)
 	tinsert (parent.Borders.Layer3, border3)	
 	
 	local border1 = parent:CreateTexture (nil, "background")
-	border1:SetPoint ("topright", parent, "topright", 1, 0)
-	border1:SetPoint ("bottomright", parent, "bottomright", 1, -1)
+	PixelUtil.SetPoint (border1, "topright", parent, "topright", 1, 0)
+	PixelUtil.SetPoint (border1, "bottomright", parent, "bottomright", 1, -1)
 	border1:SetColorTexture (0, 0, 0, alpha1 or default_border_color1)
 	local border2 = parent:CreateTexture (nil, "background")
-	border2:SetPoint ("topright", parent, "topright", 2, 1)
-	border2:SetPoint ("bottomright", parent, "bottomright", 2, -2)
+	PixelUtil.SetPoint (border2, "topright", parent, "topright", 2, 1)
+	PixelUtil.SetPoint (border2, "bottomright", parent, "bottomright", 2, -2)
 	border2:SetColorTexture (0, 0, 0, alpha2 or default_border_color2)
 	local border3 = parent:CreateTexture (nil, "background")
-	border3:SetPoint ("topright", parent, "topright", 3, 2)
-	border3:SetPoint ("bottomright", parent, "bottomright", 3, -3)
+	PixelUtil.SetPoint (border3, "topright", parent, "topright", 3, 2)
+	PixelUtil.SetPoint (border3, "bottomright", parent, "bottomright", 3, -3)
 	border3:SetColorTexture (0, 0, 0, alpha3 or default_border_color3)
 	
 	tinsert (parent.Borders.Layer1, border1)
@@ -2126,16 +2213,16 @@ function DF:CreateBorder (parent, alpha1, alpha2, alpha3)
 	tinsert (parent.Borders.Layer3, border3)	
 	
 	local border1 = parent:CreateTexture (nil, "background")
-	border1:SetPoint ("bottomleft", parent, "bottomleft", 0, -1)
-	border1:SetPoint ("bottomright", parent, "bottomright", 0, -1)
+	PixelUtil.SetPoint (border1, "bottomleft", parent, "bottomleft", 0, -1)
+	PixelUtil.SetPoint (border1, "bottomright", parent, "bottomright", 0, -1)
 	border1:SetColorTexture (0, 0, 0, alpha1 or default_border_color1)
 	local border2 = parent:CreateTexture (nil, "background")
-	border2:SetPoint ("bottomleft", parent, "bottomleft", -1, -2)
-	border2:SetPoint ("bottomright", parent, "bottomright", 1, -2)
+	PixelUtil.SetPoint (border2, "bottomleft", parent, "bottomleft", -1, -2)
+	PixelUtil.SetPoint (border2, "bottomright", parent, "bottomright", 1, -2)
 	border2:SetColorTexture (0, 0, 0, alpha2 or default_border_color2)
 	local border3 = parent:CreateTexture (nil, "background")
-	border3:SetPoint ("bottomleft", parent, "bottomleft", -2, -3)
-	border3:SetPoint ("bottomright", parent, "bottomright", 2, -3)
+	PixelUtil.SetPoint (border3, "bottomleft", parent, "bottomleft", -2, -3)
+	PixelUtil.SetPoint (border3, "bottomright", parent, "bottomright", 2, -3)
 	border3:SetColorTexture (0, 0, 0, alpha3 or default_border_color3)
 	
 	tinsert (parent.Borders.Layer1, border1)
@@ -2144,6 +2231,9 @@ function DF:CreateBorder (parent, alpha1, alpha2, alpha3)
 	
 end
 
+function DF:CreateBorderSolid (parent, size)
+
+end
 
 function DF:CreateBorderWithSpread (parent, alpha1, alpha2, alpha3, size, spread)
 	
@@ -2160,24 +2250,28 @@ function DF:CreateBorderWithSpread (parent, alpha1, alpha2, alpha3, size, spread
 	parent.SetBorderColor = SetBorderColor
 	parent.SetLayerVisibility = SetLayerVisibility
 	
+	size = size or 1
+	local minPixels = 1
+	local spread = 0
+	
 	--left
 	local border1 = parent:CreateTexture (nil, "background")
-	border1:SetPoint ("topleft", parent, "topleft", -1 + spread, 1 + (-spread))
-	border1:SetPoint ("bottomleft", parent, "bottomleft", -1 + spread, -1 + spread)
 	border1:SetColorTexture (0, 0, 0, alpha1 or default_border_color1)
-	border1:SetWidth (size)
+	PixelUtil.SetPoint (border1, "topleft", parent, "topleft", -1 + spread, 1 + (-spread), 0, 0)
+	PixelUtil.SetPoint (border1, "bottomleft", parent, "bottomleft", -1 + spread, -1 + spread, 0, 0)
+	PixelUtil.SetWidth (border1, size, minPixels)
 	
 	local border2 = parent:CreateTexture (nil, "background")
-	border2:SetPoint ("topleft", parent, "topleft", -2 + spread, 2 + (-spread))
-	border2:SetPoint ("bottomleft", parent, "bottomleft", -2 + spread, -2 + spread)
+	PixelUtil.SetPoint (border2, "topleft", parent, "topleft", -2 + spread, 2 + (-spread))
+	PixelUtil.SetPoint (border2, "bottomleft", parent, "bottomleft", -2 + spread, -2 + spread)
 	border2:SetColorTexture (0, 0, 0, alpha2 or default_border_color2)
-	border2:SetWidth (size)
+	PixelUtil.SetWidth (border2, size, minPixels)
 	
 	local border3 = parent:CreateTexture (nil, "background")
-	border3:SetPoint ("topleft", parent, "topleft", -3 + spread, 3 + (-spread))
-	border3:SetPoint ("bottomleft", parent, "bottomleft", -3 + spread, -3 + spread)
+	PixelUtil.SetPoint (border3, "topleft", parent, "topleft", -3 + spread, 3 + (-spread))
+	PixelUtil.SetPoint (border3, "bottomleft", parent, "bottomleft", -3 + spread, -3 + spread)
 	border3:SetColorTexture (0, 0, 0, alpha3 or default_border_color3)
-	border3:SetWidth (size)
+	PixelUtil.SetWidth (border3, size, minPixels)
 	
 	tinsert (parent.Borders.Layer1, border1)
 	tinsert (parent.Borders.Layer2, border2)
@@ -2185,22 +2279,22 @@ function DF:CreateBorderWithSpread (parent, alpha1, alpha2, alpha3, size, spread
 	
 	--top
 	local border1 = parent:CreateTexture (nil, "background")
-	border1:SetPoint ("topleft", parent, "topleft", 0 + spread, 1 + (-spread))
-	border1:SetPoint ("topright", parent, "topright", 1 + (-spread), 1 + (-spread))
+	PixelUtil.SetPoint (border1, "topleft", parent, "topleft", 0 + spread, 1 + (-spread))
+	PixelUtil.SetPoint (border1, "topright", parent, "topright", 1 + (-spread), 1 + (-spread))
 	border1:SetColorTexture (0, 0, 0, alpha1 or default_border_color1)
-	border1:SetHeight (size)
+	PixelUtil.SetHeight (border1, size, minPixels)
 	
 	local border2 = parent:CreateTexture (nil, "background")
-	border2:SetPoint ("topleft", parent, "topleft", -1 + spread, 2 + (-spread))
-	border2:SetPoint ("topright", parent, "topright", 2 + (-spread), 2 + (-spread))
+	PixelUtil.SetPoint (border2, "topleft", parent, "topleft", -1 + spread, 2 + (-spread))
+	PixelUtil.SetPoint (border2, "topright", parent, "topright", 2 + (-spread), 2 + (-spread))
 	border2:SetColorTexture (0, 0, 0, alpha2 or default_border_color2)
-	border2:SetHeight (size)
+	PixelUtil.SetHeight (border2, size, minPixels)
 	
 	local border3 = parent:CreateTexture (nil, "background")
-	border3:SetPoint ("topleft", parent, "topleft", -2 + spread, 3 + (-spread))
-	border3:SetPoint ("topright", parent, "topright", 3 + (-spread), 3 + (-spread))
+	PixelUtil.SetPoint (border3, "topleft", parent, "topleft", -2 + spread, 3 + (-spread))
+	PixelUtil.SetPoint (border3, "topright", parent, "topright", 3 + (-spread), 3 + (-spread))
 	border3:SetColorTexture (0, 0, 0, alpha3 or default_border_color3)
-	border3:SetHeight (size)
+	PixelUtil.SetHeight (border3, size, minPixels)
 	
 	tinsert (parent.Borders.Layer1, border1)
 	tinsert (parent.Borders.Layer2, border2)
@@ -2208,44 +2302,44 @@ function DF:CreateBorderWithSpread (parent, alpha1, alpha2, alpha3, size, spread
 	
 	--right
 	local border1 = parent:CreateTexture (nil, "background")
-	border1:SetPoint ("topright", parent, "topright", 1 + (-spread), 0 + (-spread))
-	border1:SetPoint ("bottomright", parent, "bottomright", 1 + (-spread), -1 + spread)
+	PixelUtil.SetPoint (border1, "topright", parent, "topright", 1 + (-spread), 0 + (-spread))
+	PixelUtil.SetPoint (border1, "bottomright", parent, "bottomright", 1 + (-spread), -1 + spread)
 	border1:SetColorTexture (0, 0, 0, alpha1 or default_border_color1)
-	border1:SetWidth (size)
+	PixelUtil.SetWidth (border1, size, minPixels)
 	
 	local border2 = parent:CreateTexture (nil, "background")
-	border2:SetPoint ("topright", parent, "topright", 2 + (-spread), 1 + (-spread))
-	border2:SetPoint ("bottomright", parent, "bottomright", 2 + (-spread), -2 + spread)
+	PixelUtil.SetPoint (border2, "topright", parent, "topright", 2 + (-spread), 1 + (-spread))
+	PixelUtil.SetPoint (border2, "bottomright", parent, "bottomright", 2 + (-spread), -2 + spread)
 	border2:SetColorTexture (0, 0, 0, alpha2 or default_border_color2)
-	border2:SetWidth (size)
+	PixelUtil.SetWidth (border2, size, minPixels)
 	
 	local border3 = parent:CreateTexture (nil, "background")
-	border3:SetPoint ("topright", parent, "topright", 3 + (-spread), 2 + (-spread))
-	border3:SetPoint ("bottomright", parent, "bottomright", 3 + (-spread), -3 + spread)
+	PixelUtil.SetPoint (border3, "topright", parent, "topright", 3 + (-spread), 2 + (-spread))
+	PixelUtil.SetPoint (border3, "bottomright", parent, "bottomright", 3 + (-spread), -3 + spread)
 	border3:SetColorTexture (0, 0, 0, alpha3 or default_border_color3)
-	border3:SetWidth (size)
+	PixelUtil.SetWidth (border3, size, minPixels)
 	
 	tinsert (parent.Borders.Layer1, border1)
 	tinsert (parent.Borders.Layer2, border2)
 	tinsert (parent.Borders.Layer3, border3)	
 	
 	local border1 = parent:CreateTexture (nil, "background")
-	border1:SetPoint ("bottomleft", parent, "bottomleft", 0 + spread, -1 + spread)
-	border1:SetPoint ("bottomright", parent, "bottomright", 0 + (-spread), -1 + spread)
+	PixelUtil.SetPoint (border1, "bottomleft", parent, "bottomleft", 0 + spread, -1 + spread)
+	PixelUtil.SetPoint (border1, "bottomright", parent, "bottomright", 0 + (-spread), -1 + spread)
 	border1:SetColorTexture (0, 0, 0, alpha1 or default_border_color1)
-	border1:SetHeight (size)
+	PixelUtil.SetHeight (border1, size, minPixels)
 	
 	local border2 = parent:CreateTexture (nil, "background")
-	border2:SetPoint ("bottomleft", parent, "bottomleft", -1 + spread, -2 + spread)
-	border2:SetPoint ("bottomright", parent, "bottomright", 1 + (-spread), -2 + spread)
+	PixelUtil.SetPoint (border2, "bottomleft", parent, "bottomleft", -1 + spread, -2 + spread)
+	PixelUtil.SetPoint (border2, "bottomright", parent, "bottomright", 1 + (-spread), -2 + spread)
 	border2:SetColorTexture (0, 0, 0, alpha2 or default_border_color2)
-	border2:SetHeight (size)
+	PixelUtil.SetHeight (border2, size, minPixels)
 	
 	local border3 = parent:CreateTexture (nil, "background")
-	border3:SetPoint ("bottomleft", parent, "bottomleft", -2 + spread, -3 + spread)
-	border3:SetPoint ("bottomright", parent, "bottomright", 2 + (-spread), -3 + spread)
+	PixelUtil.SetPoint (border3, "bottomleft", parent, "bottomleft", -2 + spread, -3 + spread)
+	PixelUtil.SetPoint (border3, "bottomright", parent, "bottomright", 2 + (-spread), -3 + spread)
 	border3:SetColorTexture (0, 0, 0, alpha3 or default_border_color3)
-	border3:SetHeight (size)
+	PixelUtil.SetHeight (border3, size, minPixels)
 	
 	tinsert (parent.Borders.Layer1, border1)
 	tinsert (parent.Borders.Layer2, border2)
@@ -2441,6 +2535,33 @@ function DF:Dispatch (func, ...)
 	
 	return result1, result2, result3, result4
 end
+
+--[=[
+	DF:CoreDispatch (func, context, ...)
+	safe call a function making a error window with what caused, the context and traceback of the error
+	this func is only used inside the framework for sensitive calls where the func must run without errors
+	@func = the function which will be called
+	@context = what made the function be called
+	... parameters to pass in the function call
+--]=]
+function DF:CoreDispatch (context, func, ...)
+	if (type (func) ~= "function") then
+		local stack = debugstack(2)
+		local errortext = "D!Framework " .. context .. " error: invalid function to call\n====================\n" .. stack .. "\n====================\n"
+		error (errortext)
+	end
+	
+	local okay, result1, result2, result3, result4 = pcall (func, ...)
+	
+	if (not okay) then
+		local stack = debugstack (2)
+		local errortext = "D!Framework (" .. context .. ") error: " .. result1 .. "\n====================\n" .. stack .. "\n====================\n"
+		error (errortext)
+	end
+	
+	return result1, result2, result3, result4
+end
+
 
 --/run local a, b =32,3; local f=function(c,d) return c+d, 2, 3;end; print (xpcall(f,geterrorhandler(),a,b))
 function DF_CALC_PERFORMANCE()
@@ -2642,6 +2763,38 @@ DF.CLEncounterID = {
 function DF:GetCLEncounterIDs()
 	return DF.CLEncounterID
 end
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--> debug
+
+DF.DebugMixin = {
+
+	debug = true,
+
+	CheckPoint = function (self, checkPointName, ...)
+		print (self:GetName(), checkPointName, ...)
+	end,
+	
+	CheckVisibilityState = function (self, widget)
+		
+		self = widget or self
+		
+		local width, height = self:GetSize()
+		width = floor (width)
+		height = floor (height)
+		
+		local numPoints = self:GetNumPoints()
+		
+		print ("shown:", self:IsShown(), "visible:", self:IsVisible(), "alpha:", self:GetAlpha(), "size:", width, height, "points:", numPoints)
+	end,
+	
+	CheckStack = function (self)
+		local stack = debugstack()
+		Details:Dump (stack)
+	end,
+	
+}
 
 --doo elsee 
 --was doing double loops due to not enought height

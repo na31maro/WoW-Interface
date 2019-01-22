@@ -645,6 +645,7 @@ DF.CrowdControlSpells = {
 	[203123] = "DRUID", --Maim
 	[50259] = "DRUID", --Dazed (from Wild Charge)
 	[209753] = "DRUID", --Cyclone (from pvp talent)
+	[33786] = "DRUID", --Cyclone (from pvp talent - resto druid)
 	
 	[3355] = "HUNTER", --Freezing Trap
 	[19577] = "HUNTER", --Intimidation
@@ -661,6 +662,7 @@ DF.CrowdControlSpells = {
 	[118905] = "SHAMAN", --Static Charge (Capacitor Totem)
 	[51514] = "SHAMAN", --Hex
 	[64695] = "SHAMAN", --Earthgrab (talent)
+	[197214] = "SHAMAN", --Sundering (talent)
 	
 	[179057] = "DEMONHUNTER", --Chaos Nova
 	[217832] = "DEMONHUNTER", --Imprison

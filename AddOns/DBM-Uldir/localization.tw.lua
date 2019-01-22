@@ -24,8 +24,13 @@ L:SetWarningLocalization({
 	addsSoon		= "滑道已開啟 - 小怪來了"
 })
 
+L:SetTimerLocalization({
+	chuteTimer		= "下一次滑道(%s)"
+})
+
 L:SetOptionLocalization({
-	addsSoon		= "為滑道開啟和開始小怪準備出現顯示預先警告"
+	addsSoon		= "為滑道開啟和開始小怪準備出現顯示預先警告",
+	chuteTimer		= "為何時滑道開啟顯示計時器"
 })
 
 ---------------------------
@@ -54,12 +59,13 @@ L:SetMiscLocalization({
 L= DBM:GetModLocalization(2166)
 
 L:SetOptionLocalization({
-	ShowHighestFirst2	 =	"在訊息框架中從最高層數開始排序慢性感染(而非從最低)",
-	ShowOnlyParty		 =	"只顯示你隊伍中的慢性感染"
+	ShowHighestFirst3	 =	"在訊息框架中從最高層數開始排序慢性感染(而非從最低)",
+	ShowOnlyParty		 =	"只顯示你隊伍中的慢性感染",
+	SetIconsRegardless	 =	"無論Bigwig使用者是否為助理成員皆去標記團隊圖示(進階選項)"
 })
 
 L:SetMiscLocalization({
-	BWIconMsg			 =	"DBM交給Bigwig的升級成員去標記團隊圖示避免圖示混亂，確定他們有啟用或是降級他們去開啟DBM的標記"
+	BWIconMsg			 =	"DBM交給Bigwig的助理成員去標記團隊圖示避免圖示混亂，確定他們有啟用或是降級他們去開啟DBM的標記，或在維克提斯的選項中啟用覆蓋選項"
 })
 
 ---------------

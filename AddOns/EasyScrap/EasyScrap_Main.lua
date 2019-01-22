@@ -141,6 +141,12 @@ EasyScrap.parentFrame:SetScript('OnEvent', function(self, event, ...)
                     end
                 end
                 
+                if EasyScrap.saveData.addonVersion < 18 then
+                    if EasyScrap.saveData.addonVersion >= 14 then
+                        EasyScrap.saveData.showWhatsNew = 18
+                    end
+                end
+                
                 --Oops we didn't reset the item ignore lists for alts since it's saved per character...
                 if not EasyScrap.itemIgnoreList.addonVersion then
                     for itemID, t in pairs(EasyScrap.itemIgnoreList) do
