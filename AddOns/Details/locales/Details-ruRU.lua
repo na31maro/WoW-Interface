@@ -1128,13 +1128,6 @@ L["STRING_OPTIONS_SPELL_NOTFOUND"] = "Заклинание не найдено."
 L["STRING_OPTIONS_SPELL_REMOVE"] = "Удалить"
 L["STRING_OPTIONS_SPELL_RESET"] = "Сбросить"
 L["STRING_OPTIONS_SPELL_SPELLID"] = "ID заклинания"
-L["STRING_OPTIONS_SPELL_SPELLID_DESC"] = [=[ID - это уникальный номер для идентификации заклинаний в World of Warcraft.
-Есть много способов, чтобы получить эти числа:
-
-- В окне Details игрока, удерживайте клавишу Shift, а после наведите на полосы заклинаний.
-- Введите название заклинания в поле Id Заклинание, появиться подсказка с предложенными заклинаниями.
-- Веб-сайты сообщества большинство из которых имеют id заклинания в адресной ссылке.
-- Просмотр кэша заклинаний ниже:]=]
 L["STRING_OPTIONS_STRETCH"] = "Кнопка растягивания сверху"
 L["STRING_OPTIONS_STRETCH_DESC"] = "Расположить кнопку растягивания в верхней части окна."
 L["STRING_OPTIONS_STRETCHTOP"] = "Кнопка растягивать всегда поверх всех"
@@ -1509,6 +1502,7 @@ L["STRING_SEGMENTS_LIST_OVERALL"] = "в целом"
 L["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] = "Время в бою"
 L["STRING_SEGMENTS_LIST_TOTALTIME"] = "Общее время"
 L["STRING_SEGMENTS_LIST_TRASH"] = "мусор"
+L["STRING_SEGMENTS_LIST_WASTED_TIME"] = "Не в бою"
 L["STRING_SHIELD_HEAL"] = "Предотвращено"
 L["STRING_SHIELD_OVERHEAL"] = "Впустую"
 L["STRING_SHORTCUT_RIGHTCLICK"] = "правый щелчок, чтобы закрыть"

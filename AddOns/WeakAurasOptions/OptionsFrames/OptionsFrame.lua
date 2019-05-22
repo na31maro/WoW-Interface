@@ -176,6 +176,13 @@ function WeakAuras.CreateFrame()
 
     for id, data in pairs(WeakAuras.regions) do
       data.region:Collapse();
+      data.region:OptionsClosed()
+      if WeakAuras.clones[id] then
+        for cloneId, cloneRegion in pairs(WeakAuras.clones[id]) do
+          cloneRegion:Collapse()
+          cloneRegion:OptionsClosed()
+        end
+      end
     end
 
     WeakAuras.ResumeAllDynamicGroups();
@@ -630,9 +637,13 @@ function WeakAuras.CreateFrame()
   unloadedButton:SetViewDescription(L["Toggle the visibility of all non-loaded displays"]);
   frame.unloadedButton = unloadedButton;
 
-  frame.FillOptions = function(self, optionTable)
+  frame.FillOptions = function(self, optionTable, selected)
     AceConfig:RegisterOptionsTable("WeakAuras", optionTable);
     AceConfigDialog:Open("WeakAuras", container);
+    -- TODO: remove this once legacy aura trigger is removed
+    if selected then
+      container.content.obj.children[1]:SelectTab(selected)
+    end
     container:SetTitle("");
   end
 
@@ -652,21 +663,21 @@ function WeakAuras.CreateFrame()
     self:FillOptions(displayOptions[tempGroup.id]);
   end
 
-  frame.ClearPicks = function(self, except)
+  frame.ClearPicks = function(self, noHide)
     WeakAuras.PauseAllDynamicGroups();
 
     frame.pickedDisplay = nil;
     frame.pickedOption = nil;
     wipe(tempGroup.controlledChildren);
     for id, button in pairs(displayButtons) do
-      button:ClearPick();
+      button:ClearPick(noHide);
     end
-    newButton:ClearPick();
+    newButton:ClearPick(noHide);
     if(frame.addonsButton) then
-      frame.addonsButton:ClearPick();
+      frame.addonsButton:ClearPick(noHide);
     end
-    loadedButton:ClearPick();
-    unloadedButton:ClearPick();
+    loadedButton:ClearPick(noHide);
+    unloadedButton:ClearPick(noHide);
     container:ReleaseChildren();
     self.moversizer:Hide();
 
@@ -711,7 +722,7 @@ function WeakAuras.CreateFrame()
         containerScroll:AddChild(simpleLabel);
 
         local button = AceGUI:Create("WeakAurasNewButton");
-        button:SetTitle(WeakAuras.newFeatureString .. L["From Template"]);
+        button:SetTitle(L["From Template"]);
         button:SetDescription(L["Offer a guided way to create auras for your class"])
         button:SetIcon("Interface\\Icons\\INV_Misc_Book_06");
         button:SetClick(function()
@@ -810,16 +821,34 @@ function WeakAuras.CreateFrame()
     end
   end
 
-  frame.PickDisplay = function(self, id)
-    self:ClearPicks();
+  frame.PickDisplay = function(self, id, tab, noHide) -- TODO: remove tab parametter once legacy aura trigger is removed
+    self:ClearPicks(noHide)
     local data = WeakAuras.GetData(id);
 
     local function finishPicking()
       displayButtons[id]:Pick();
       self.pickedDisplay = id;
       local data = db.displays[id];
+      -- Expand parent + loaded/unloaded if needed
+      if data.parent then
+        if not displayButtons[data.parent]:GetExpanded() then
+          displayButtons[data.parent]:Expand()
+        end
+      end
+      if loaded[id] ~= nil then
+        -- Under loaded
+        if not loadedButton:GetExpanded() then
+          loadedButton:Expand()
+        end
+      else
+        -- Under Unloaded
+        if not unloadedButton:GetExpanded() then
+          unloadedButton:Expand()
+        end
+      end
+
       WeakAuras.ReloadTriggerOptions(data);
-      self:FillOptions(displayOptions[id]);
+      self:FillOptions(displayOptions[id], tab); -- TODO: remove tab parametter once legacy aura trigger is removed
       WeakAuras.regions[id].region:Collapse();
       WeakAuras.regions[id].region:Expand();
       self.moversizer:SetToRegion(WeakAuras.regions[id].region, db.displays[id]);

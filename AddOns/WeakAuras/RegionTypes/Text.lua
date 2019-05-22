@@ -106,6 +106,7 @@ local function modify(parent, region, data)
 
     text:SetWidth(data.fixedWidth);
     region:SetWidth(data.fixedWidth);
+    region.width = data.fixedWidth;
     SetText = function(textStr)
       if text:GetFont() then
         text:SetText(textStr);
@@ -116,8 +117,8 @@ local function modify(parent, region, data)
       if(region.height ~= height) then
         region.height = text:GetStringHeight();
         region:SetHeight(region.height);
-        if(data.parent and WeakAuras.regions[data.parent].region.ControlChildren) then
-          WeakAuras.regions[data.parent].region:ControlChildren();
+        if(data.parent and WeakAuras.regions[data.parent].region.PositionChildren) then
+          WeakAuras.regions[data.parent].region:PositionChildren();
         end
       end
     end
@@ -138,8 +139,8 @@ local function modify(parent, region, data)
         region.height = height;
         region:SetWidth(region.width);
         region:SetHeight(region.height);
-        if(data.parent and WeakAuras.regions[data.parent].region.ControlChildren) then
-          WeakAuras.regions[data.parent].region:ControlChildren();
+        if(data.parent and WeakAuras.regions[data.parent].region.PositionChildren) then
+          WeakAuras.regions[data.parent].region:PositionChildren();
         end
       end
     end

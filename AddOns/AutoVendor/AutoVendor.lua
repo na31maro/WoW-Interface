@@ -482,7 +482,8 @@ function AV:ShouldSell(link)
 		return false
 	end
 	
-	if itemQuality == 5 then
+	-- Don't sell legendary, artifact or heirloom items
+	if itemQuality and itemQuality > 4 then
 		return false
 	end
 	

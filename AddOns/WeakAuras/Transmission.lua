@@ -7,8 +7,11 @@ This file adds the following API to the WeakAuras object:
 DisplayToString(id, forChat)
 Converts the display id to a plain text string
 
-DisplayToTableString(id)
+DataToString(id)
 Converts the display id to a formatted table
+
+SerializeTable(data)
+Converts the table data to a formatted table
 
 ShowDisplayTooltip(data, children, icon, icons, import, compressed, alterdesc)
 Shows a tooltip frame for an aura, which allows for importing if import is true
@@ -252,7 +255,6 @@ radioButtons = {
 
 local radioButtonLabels = {
   L["Create a Copy"],
-  -- L["Replace Aura"],
   L["Update Auras"]
 }
 
@@ -727,14 +729,18 @@ local function recurseStringify(data, level, lines)
   end
 end
 
-function WeakAuras.DisplayToTableString(id)
+function WeakAuras.DataToString(id)
   local data = WeakAuras.GetData(id)
-  if(data) then
-    local lines = {"{"};
-    recurseStringify(data, 1, lines);
-    tinsert(lines, "}")
-    return table.concat(lines, "\n"):gsub("|", "||");
+  if data then
+    return WeakAuras.SerializeTable(data):gsub("|", "||")
   end
+end
+
+function WeakAuras.SerializeTable(data)
+  local lines = {"{"}
+  recurseStringify(data, 1, lines)
+  tinsert(lines, "}")
+  return table.concat(lines, "\n")
 end
 
 function WeakAuras.RefreshTooltipButtons()
@@ -1617,7 +1623,7 @@ function WeakAuras.ShowDisplayTooltip(data, children, matchInfo, icon, icons, im
       else
         data.desc = nil;
       end
-      WeakAuras.ShowDisplayTooltip(data, children, nil, nil, import, nil, "desc");
+      WeakAuras.ShowDisplayTooltip(data, children, nil, nil, nil, import, nil, "desc");
       if(WeakAuras.GetDisplayButton) then
         local button = WeakAuras.GetDisplayButton(data.id);
         if(button) then
@@ -1831,7 +1837,7 @@ Comm:RegisterComm("WeakAuras", function(prefix, message, distribution, sender)
           WeakAuras.PreAdd(child)
         end
       end
-      WeakAuras.ShowDisplayTooltip(data, children, icon, icons, sender, true)
+      WeakAuras.ShowDisplayTooltip(data, children, nil, icon, icons, sender, true)
     elseif(received.m == "dR") then
       --if(WeakAuras.linked[received.d]) then
       TransmitDisplay(received.d, sender);

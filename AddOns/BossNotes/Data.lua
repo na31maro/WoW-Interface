@@ -26,63 +26,6 @@ inLockdown = InCombatLockdown()
 local DEFAULT_COLOR = { r = 0.77,  g = 0.64, b = 0.0 }
 
 -- Filtered NPCs
-local FILTERED_NPC_IDS = {
-	[416] = true, --"Imp"
-	[510] = true,   -- Water Elemental
-	[2523] = true,  -- Searing Totem
-	[2630] = true,  -- Earthbind Totem\
-	[3527] = true,	--Healing Stream
-	[5929] = true,  -- Magma Totem
-	[5950] = true,  -- Flametongue Totem
-	[15438] = true, -- Greater Fire Elemental
-	[15439] = true, -- Fire Elemental Totem
-	[19668] = true, -- Shadowfiend
-	[24207] = true, -- Army of the Dead Ghoul
-	[26125] = true, -- Risen Ghoul
-	[27829] = true, -- Ebon Gargoyle
-	[27893] = true, -- Rune Weapon
-	[28017] = true, -- Bloodworm
-	[28306] = true, -- Anti-Magic Zone
-	[29264] = true, -- Spirit Wolf
-	[29998] = true, -- Desecrated Ground V
-	[31165] = true, -- Searing Totem X
-	[31185] = true, -- Healing Stream Totem IX
-	[31216] = true, -- Mirror Image
-	[31167] = true, -- Magma Totem VII
-	[32775] = true, -- Fire Nova Totem IX
-	[33753] = true, -- Desecrated Ground IV
-	[35642] = true, -- Jeeves
-	[46157] = true, -- Hand of Gul'dan
-	[46954] = true, -- Shadowy Apparition
-	[47244] = true,  -- Mirror Image
-	[53006] = true,	--Spirit Link totem
-	[55659] = true,	--wild imp
-	[59764] = true,	--Healing Tide Totem
-	[60561] = true,	--Earthgrab Totem
-	[61146] = true, --black ox
-	[63508] = true, --Xuen
-	[78001] = true,	--cloudburst totem
-	[78116] = true, --water elemental
-	[95255] = true,	--Earthquake Totem
-	[97369] = true,	--magma totem
-	[91245] = true,	--Lightning Surge Totem
-	[97285] = true,	--wind rush totem
-	[100099] = true,	--Voodoo Totem
-	[100820] = true, --"Spirit Wolf"
-	[100943] = true,	--Earthen Shield Totem
-	[102392] = true,	--Resonace Totem
-	[113845] = true,	--totem mastery
-	[104818] = true,	--Ancestral Protection Totem
-	[106317] = true,	--Storm totem
-	[106319] = true,	--Ember Totem
-	[106321] = true	--tailwind totem
-
-
-
-	
-	
-	
-}
 
 -- An empty table
 local EMPTY = { }
@@ -165,9 +108,6 @@ function BossNotes:GetOrLearnInstanceAndEncounter (npcId, npcName)
 		if not self.learningZone or self.learningZone ~= GetRealZoneText() then
 			return
 		end
-		if FILTERED_NPC_IDS[npcId] then
-			return
-		end
 		instance, encounter = BossNotes:GetSelection()
 		local key = self:GetContextKey(instance, encounter)
 		local instanceEncounter = self.db.global.instanceEncounters[key]
@@ -179,9 +119,6 @@ function BossNotes:GetOrLearnInstanceAndEncounter (npcId, npcName)
 			self.db.global.instanceEncounters[key] = instanceEncounter
 		end
 		if not instanceEncounter.npcIds[npcId] then
-		if FILTERED_NPC_IDS[npcId] then
-			return
-		end
 			self:Print(string.format(L["LEARNING"],
 					npcName, npcId, instanceEncounter.contextText))
 			instanceEncounter.npcIds[npcId] = npcName
@@ -202,17 +139,13 @@ function BossNotes:GetNpcIds (instance, encounter)
 		if npcIds then
 			for _, npcId in ipairs(npcIds) do
 				if not instanceEncounter.npcIds[npcId] then
-				if FILTERED_NPC_IDS[npcId] then
-				return
-				end
+
 				table.insert(mergedNpcIds, npcId)
 			end	
 			end
 		end
 		for npcId in pairs(instanceEncounter.npcIds) do
-		if FILTERED_NPC_IDS[npcId] then
-			return
-		end
+
 			table.insert(mergedNpcIds, npcId)
 			
 			end
@@ -457,6 +390,7 @@ local mousoverfactionbn
 local isPlayerbn = UnitIsPlayer("mouseover")
 local name = GetUnitName("mouseover", true)
 
+
 if inLockdown == 1 then
 return
 else
@@ -572,9 +506,7 @@ function BossNotes:CheckUnit (unit)
 	
 	-- Get the NPC ID
 	local npcId = self:GetNpcId(UnitGUID(unit))
-	if FILTERED_NPC_IDS[npcId] then
-				return
-				end
+
 	if not npcId then
 		return
 	end
@@ -588,26 +520,27 @@ end
 
 -- Returns the NPC ID of a GUID
 function BossNotes:GetNpcId (guid)
-
-if (guid == nil) then
-return
-else
+	if (guid == nil) then
+	return nil
+	end
 local type, zero, server_id, instance_id, zone_uid, npc_id, spawn_uid = strsplit("-", guid)
+
+	local unitType = type
+	if (unitType == "GameObject" or unitType == "Vehicle" or unitType == "Pet" or unitType == "Player") then
+		return nil
+	end
 	-- Check GUID
 	if not guid then
 		return nil
 	end
+
 	
-	-- Check unit type
-	local unitType = type
-	if (unitType == "Creature" and unitType == "Pet") then
-		return nil
-	end
-	if (unitType == "GameObject" or unitType == "Vehicle" or unitType == "Pet") then
-		return nil
-	end
+	-- Check unit type unitType == "Creature" and 
+
+
 	local guid = npc_id
 	-- Check unit NPC ID
+
 	return npc_id
-	end
+	
 end

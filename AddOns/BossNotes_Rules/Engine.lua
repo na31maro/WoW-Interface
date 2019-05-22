@@ -59,8 +59,8 @@ function BossNotesRulesEngine:OnEnable ()
 	self:RegisterEvent("PLAYER_FOCUS_CHANGED")
 	self:RegisterEvent("UNIT_ENTERED_VEHICLE")
 	self:RegisterEvent("UNIT_EXITED_VEHICLE")
-	self:RegisterEvent("PARTY_MEMBERS_CHANGED")
-	self:RegisterEvent("RAID_ROSTER_UPDATE")
+	self:RegisterEvent("GROUP_ROSTER_UPDATE")
+	--self:RegisterEvent("RAID_ROSTER_UPDATE")
 	self:RegisterEvent("PLAYER_REGEN_DISABLED")
 	self:RegisterEvent("PLAYER_REGEN_ENABLED")
 	self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
@@ -120,7 +120,7 @@ UNIT_PET                           player
 PLAYER_FOCUS_CHANGED               player
 UNIT_ENTERED_VEHICLE               player
 UNIT_EXITED_VEHICLE                player
-PARTY_MEMBERS_CHANGED              party
+GROUP_ROSTER_UPDATE              party
 RAID_ROSTER_UPDATE                 raid
 
 Finally, the begin of an encounter is detected by PLAYER_REGEN_DISABLED
@@ -182,19 +182,24 @@ function BossNotesRulesEngine:UNIT_EXITED_VEHICLE (message, unitId)
 	end
 end
 
-function BossNotesRulesEngine:PARTY_MEMBERS_CHANGED (message)
+function BossNotesRulesEngine:GROUP_ROSTER_UPDATE (message)
+local name, instanceType, difficultyID, difficultyName, maxPlayers, dynamicDifficulty, isDynamic, instanceMapID, instanceGroupSize = GetInstanceInfo()
 	for i = 1, MAX_PARTY_MEMBERS do
+	if(instanceType == "party") then
 		self:UpdateUnitIdAndTarget("party" .. tostring(i))
 		self:UpdateUnitIdAndTarget("partypet" .. tostring(i))
+		end
+	if(instanceType == "raid") then
+		
+		self:UpdateUnitIdAndTarget("raid" .. tostring(i))
+		self:UpdateUnitIdAndTarget("raidpet" .. tostring(i))
+		end
+	end
+	if (instanceType == nil) then
+	return
 	end
 end
 
-function BossNotesRulesEngine:RAID_ROSTER_UPDATE (message)
-	for i = 1, MAX_RAID_MEMBERS do
-		self:UpdateUnitIdAndTarget("raid" .. tostring(i))
-		self:UpdateUnitIdAndTarget("raidpet" .. tostring(i))
-	end
-end
 
 function BossNotesRulesEngine:PLAYER_REGEN_DISABLED (message)
 	self:BeginEncounter()
@@ -203,11 +208,9 @@ end
 function BossNotesRulesEngine:PLAYER_REGEN_ENABLED (message)
 	self:CheckEncounter()
 end
-
-function BossNotesRulesEngine:COMBAT_LOG_EVENT_UNFILTERED (message, timestamp,
-		event, hideCaster, sourceGuid, sourceName, sourceFlags,
-		sourceRaidFlags, destGuid, destName, destFlags, destRaidFlags, spellId)
-local timestamp, eventType, hideCaster, sourceGuid, sourceName, sourceFlags, sourceRaidFlags, destGuid, destName, destFlags, destRaidFlags, misc1, misc2, misc3, misc4, misc5, misc6, misc7 = CombatLogGetCurrentEventInfo(); 
+--message, timestamp, event, hideCaster, sourceGuid, sourceName, sourceFlags, sourceRaidFlags, destGuid, destName, destFlags, destRaidFlags, spellId
+function BossNotesRulesEngine:COMBAT_LOG_EVENT_UNFILTERED (...)
+local timestamp, event, hideCaster, sourceGuid, sourceName, sourceFlags, sourceRaidFlags, destGuid, destName, destFlags, destRaidFlags, spellId, misc2, misc3, misc4, misc5, misc6, misc7 = CombatLogGetCurrentEventInfo() 
 
 	-- This event needs to be processed efficiently due to its high
 	-- delivery frequency. To that end, processing is mostly limited
@@ -397,16 +400,18 @@ function BossNotesRulesEngine:CheckEncounter (timerCallback)
 	if self.inEncounter then
 		-- Test the encounter status on the player, then on the raid
 		-- or party.
+local name, instanceType, difficultyID, difficultyName, maxPlayers, dynamicDifficulty, isDynamic, instanceMapID, instanceGroupSize = GetInstanceInfo()
+--UnitInRaid("player")GetNumGroupMembers() > 0
 		local inEncounter = UnitAffectingCombat("player")
 		if not inEncounter then
-			if (UnitInRaid("player")) then
+			if (instanceType == "raid") then
 				for i = 1, MAX_RAID_MEMBERS do
 					if UnitAffectingCombat("raid" .. tostring(i)) then
 						inEncounter = true
 						break
 					end
 				end
-			elseif GetNumGroupMembers() > 0 then
+			elseif (instanceType == "party") then
 				for i = 1, MAX_PARTY_MEMBERS do
 					if UnitAffectingCombat("party" .. tostring(i)) then
 						inEncounter = true
@@ -1406,11 +1411,16 @@ end
 
 -- Sets a raid target.
 function BossNotesRulesEngine:SetRaidTarget (unitId, raidTarget)
-	if IsRaidLeader() or IsRaidOfficer() or not(UnitInRaid("player"))
-			and GetNumPartyMembers() > 0 then
+local targetIsLeader = UnitIsGroupLeader("player")
+local targetIsAssistant = UnitIsGroupAssistant("player")
+	if targetIsLeader == true or targetIsAssistant == true
+			or GetNumGroupMembers() > 0 then
 		SetRaidTarget(unitId, raidTarget)
+	
+	else
+	SetRaidTarget(unitId, raidTarget)
 	end
-end
+end	
 
 
 ----------------------------------------------------------------------

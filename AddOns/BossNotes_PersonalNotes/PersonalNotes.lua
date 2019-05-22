@@ -214,8 +214,8 @@ end
 
 -- Handles (re-)enabling of the addon
 function BossNotesPersonalNotes:OnEnable ()
-	self:RegisterEvent("RAID_ROSTER_UPDATE")
-	self:RegisterEvent("PARTY_MEMBERS_CHANGED", "RAID_ROSTER_UPDATE")
+	--self:RegisterEvent("RAID_ROSTER_UPDATE")
+	self:RegisterEvent("GROUP_ROSTER_UPDATE", "GROUP_ROSTER_UPDATE")
 	self:RegisterComm(BOSS_NOTES_PREFIX)
 	self:SecureHook("ChatEdit_InsertLink", "InsertLink")
 	BossNotes:RegisterProvider(BOSS_NOTES_PERSONAL_NOTES_PROVIDER, {
@@ -235,7 +235,7 @@ end
 -- Event handlers
 
 -- Handles RAID_ROSTER_UPDATE event
-function BossNotesPersonalNotes:RAID_ROSTER_UPDATE ()
+function BossNotesPersonalNotes:GROUP_ROSTER_UPDATE ()
 	-- Invalidate raid roster
 	table.wipe(self.members)
 	

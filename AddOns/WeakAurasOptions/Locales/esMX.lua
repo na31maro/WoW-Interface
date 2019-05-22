@@ -7,8 +7,6 @@ local L = WeakAuras.L
 -- WeakAuras/Options
 	--[[Translation missing --]]
 	L[" by "] = " by "
-	--[[Translation missing --]]
-	L[" Configuration"] = " Configuration"
 	L["-- Do not remove this comment, it is part of this trigger: "] = "-- No remover este comentario. Es parte de este desencadenador:"
 	--[[Translation missing --]]
 	L[" to version "] = " to version "
@@ -20,6 +18,8 @@ local L = WeakAuras.L
 	L["%s Color"] = "%s Color"
 	--[[Translation missing --]]
 	L["%s total auras"] = "%s total auras"
+	--[[Translation missing --]]
+	L["|cFFFF0000Duplicate Keys Found!|nPlease change the keys of the following options!|r"] = "|cFFFF0000Duplicate Keys Found!|nPlease change the keys of the following options!|r"
 	L["1 Match"] = "1 Coincidencia"
 	L["1. Text"] = "1. Texto"
 	L["1. Text Settings"] = "1. Preferencias del texto"
@@ -79,6 +79,8 @@ Si la duración de la animación es |cFF00CC0010%|r, y el disparador del aura es
 	--[[Translation missing --]]
 	L["Any of"] = "Any of"
 	L["Apply Template"] = "Aplicar plantilla"
+	--[[Translation missing --]]
+	L["Arc Length"] = "Arc Length"
 	L["Arcane Orb"] = "Orbe Arcano"
 	L["At a position a bit left of Left HUD position."] = "Un poco a la izquierda de la posición de la visualización frontal (HUD) a la izquierda"
 	L["At a position a bit left of Right HUD position"] = "Un poco a la izquierda de la posición de la visualización frontal (HUD) a la derecha"
@@ -148,6 +150,10 @@ Si la duración de la animación es |cFF00CC0010%|r, y el disparador del aura es
 	--[[Translation missing --]]
 	L["color"] = "color"
 	--[[Translation missing --]]
+	L["Column Height"] = "Column Height"
+	--[[Translation missing --]]
+	L["Column Space"] = "Column Space"
+	--[[Translation missing --]]
 	L["Combinations"] = "Combinations"
 	--[[Translation missing --]]
 	L["Combine Matches Per Unit"] = "Combine Matches Per Unit"
@@ -190,7 +196,11 @@ Si la duración de la animación es |cFF00CC0010%|r, y el disparador del aura es
 	L["Custom Configuration"] = "Custom Configuration"
 	L["Custom Function"] = "Función personalizada"
 	--[[Translation missing --]]
+	L["Custom Grow"] = "Custom Grow"
+	--[[Translation missing --]]
 	L["Custom Options"] = "Custom Options"
+	--[[Translation missing --]]
+	L["Custom Sort"] = "Custom Sort"
 	L["Custom Trigger"] = "Desencadenador personalizado"
 	L["Custom trigger event tooltip"] = [=[Escoje qué eventos quieres que revise el desencadenador personalizado.
 Múltiples eventos pueden ser especificados. Sepáralos con comas o espacios.
@@ -318,6 +328,8 @@ UNIT_POWER, UNIT_AURA PLAYER_TARGET_CHANGED]=]
 	--[[Translation missing --]]
 	L["Glow Type"] = "Glow Type"
 	L["Green Rune"] = "Runa verde"
+	--[[Translation missing --]]
+	L["Grid direction"] = "Grid direction"
 	L["Group"] = "Grupo"
 	L["Group (verb)"] = "Agrupar "
 	L["Group aura count description"] = [=[La cantidad de miembros del grupo o banda que deben estar afectados por las auras indicadas para la activación.
@@ -346,6 +358,8 @@ Con |cFF00CC00>= 0|r se activará siempre.]=]
 	L["Hawk"] = "Halcón"
 	L["Height"] = "Alto"
 	L["Hide"] = "Ocultar"
+	--[[Translation missing --]]
+	L["Hide Cooldown Text"] = "Hide Cooldown Text"
 	L["Hide on"] = "Ocultar en"
 	L["Hide this group's children"] = "Ocultar los dependientes de este grupo"
 	L["Hide When Not In Group"] = "Ocultar cuando no esté en grupo"
@@ -364,6 +378,8 @@ Con |cFF00CC00>= 0|r se activará siempre.]=]
 	L["Icon Settings"] = "Icon Settings"
 	--[[Translation missing --]]
 	L["If"] = "If"
+	--[[Translation missing --]]
+	L["If checked, then this separator will include text. Otherwise, it will be just a horizontal line."] = "If checked, then this separator will include text. Otherwise, it will be just a horizontal line."
 	--[[Translation missing --]]
 	L["If checked, then this space will span across multiple lines."] = "If checked, then this space will span across multiple lines."
 	--[[Translation missing --]]
@@ -404,7 +420,11 @@ Con |cFF00CC00>= 0|r se activará siempre.]=]
 	L["Left HUD position"] = "Posición izquierda de visualización frontal (HUD)"
 	L["Left Text"] = "Texto a la izquierda"
 	--[[Translation missing --]]
+	L["Legacy Aura Trigger"] = "Legacy Aura Trigger"
+	--[[Translation missing --]]
 	L["Length"] = "Length"
+	--[[Translation missing --]]
+	L["Limit"] = "Limit"
 	L["Load"] = "Cargar"
 	L["Loaded"] = "Cargado"
 	--[[Translation missing --]]
@@ -566,11 +586,21 @@ Sólo un valor coincidente puede ser escogido.]=]
 	L["Rotate Text"] = "Rotar texto"
 	L["Rotation"] = "Rotación"
 	L["Rotation Mode"] = "Modo de rotación"
+	--[[Translation missing --]]
+	L["Row Space"] = "Row Space"
+	--[[Translation missing --]]
+	L["Row Width"] = "Row Width"
 	L["Same"] = "Igual"
 	L["Scale"] = "Ajustar tamaño"
 	L["Search"] = "Buscar"
 	L["Select the auras you always want to be listed first"] = "Selecciona las auras que quieras que sean listadas primero"
 	L["Send To"] = "Enviar a"
+	--[[Translation missing --]]
+	L["Separator"] = "Separator"
+	--[[Translation missing --]]
+	L["Separator Text"] = "Separator Text"
+	--[[Translation missing --]]
+	L["Separator text"] = "Separator text"
 	L["Set Parent to Anchor"] = "Asignar grupo primario al anclaje"
 	L["Set tooltip description"] = "Establecer descripción de texto emergente"
 	--[[Translation missing --]]
@@ -579,7 +609,6 @@ Sólo un valor coincidente puede ser escogido.]=]
 	L["Settings"] = "Settings"
 	L["Shift-click to create chat link"] = "Shift-Clic para un crear un enlace de chat"
 	L["Show all matches (Auto-clone)"] = "Mostrar todas las coincidencias (Auto-clonación)"
-	L["Show Cooldown Text"] = "Mostrar el texto del tiempo de recarga"
 	--[[Translation missing --]]
 	L["Show Glow Effect"] = "Show Glow Effect"
 	--[[Translation missing --]]
@@ -674,6 +703,8 @@ Sólo un valor coincidente puede ser escogido.]=]
 	L["Then "] = "Then "
 	--[[Translation missing --]]
 	L["This adds %tooltip, %tooltip1, %tooltip2, %tooltip3 as text replacements."] = "This adds %tooltip, %tooltip1, %tooltip2, %tooltip3 as text replacements."
+	--[[Translation missing --]]
+	L["This aura has legacy aura trigger(s). Convert them to the new system to benefit from enhanced performance and features"] = "This aura has legacy aura trigger(s). Convert them to the new system to benefit from enhanced performance and features"
 	L["This display is currently loaded"] = "Esta aura está cargada"
 	L["This display is not currently loaded"] = "Esta aura no está cargada"
 	L["This region of type \"%s\" is not supported."] = "No soporta el tipo de región \"%s\"."

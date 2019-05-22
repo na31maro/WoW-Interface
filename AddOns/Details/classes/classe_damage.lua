@@ -3994,7 +3994,6 @@ function atributo_damage:MontaInfoDamageDone()
 	end
 	
 	--damage rank
-	--este_gump:SetTopRightTexts (text1, text2, size, color, font)	
 	local combat = instancia:GetShowingCombat()
 	local diff = combat:GetDifficulty()
 	local attribute, subattribute = instancia:GetDisplay()
@@ -4007,19 +4006,16 @@ function atributo_damage:MontaInfoDamageDone()
 			if (bestRank) then
 				--> discover which are the player position in the guild rank
 				local playerTable, onEncounter, rankPosition = _detalhes.storage:GetPlayerGuildRank (diff, combat:GetBossInfo().id, "damage", self.nome, true)
-				
-				local text1 = self.nome .. " on " .. combat:GetBossInfo().name .. ":"
-				local text2 = "Guild Rank: " .. (rankPosition or "x") .. " Best Dps: " .. _detalhes:ToK2 ((bestRank[1] or 0) / encounterTable.elapsed) .. " (" .. encounterTable.date:gsub (".*%s", "") .. ")"
-				
-				info:SetTopRightTexts (text1, text2, 9, "gray", font)
+				local text1 = self.nome .. " Guild Rank on " .. (combat:GetBossInfo().name or "") .. ": |cFFFFFF00" .. (rankPosition or "x") .. "|r Best Dps: |cFFFFFF00" .. _detalhes:ToK2 ((bestRank[1] or 0) / encounterTable.elapsed) .. "|r (" .. encounterTable.date:gsub (".*%s", "") .. ")"
+				info:SetStatusbarText (text1, 10, "gray")
 			else
-				info:SetTopRightTexts()
+				info:SetStatusbarText()
 			end
 		else
-			info:SetTopRightTexts()
+			info:SetStatusbarText()
 		end
 	else
-		info:SetTopRightTexts()
+		info:SetStatusbarText()
 	end
 	
 	--> add pets
@@ -4713,30 +4709,37 @@ function atributo_damage:MontaDetalhesDamageDone (spellid, barra, instancia)
 		end
 	
 	--> multistrike
-		if (esta_magia.m_amt > 0) then
-		
-			local normal_hits = esta_magia.m_amt
-			local normal_dmg = esta_magia.m_dmg
+		--[=[
+			if (esta_magia.m_amt > 0) then
 			
-			local media_normal = normal_dmg/normal_hits
-			local T = (meu_tempo*normal_dmg)/esta_magia.total
-			local P = media/media_normal*100
-			T = P*T/100
-			
-			data[#data+1] = t4
-			multistrike_table.p = esta_magia.m_amt/total_hits*100
+				local normal_hits = esta_magia.m_amt
+				local normal_dmg = esta_magia.m_dmg
+				
+				local media_normal = normal_dmg/normal_hits
+				local T = (meu_tempo*normal_dmg)/esta_magia.total
+				local P = media/media_normal*100
+				T = P*T/100
+				
+				data[#data+1] = t4
+				multistrike_table.p = esta_magia.m_amt/total_hits*100
 
-			t4[1] = esta_magia.m_amt
-			t4[2] = multistrike_table
-			t4[3] = Loc ["STRING_MULTISTRIKE_HITS"]
-			t4[4] = "On Critical: " .. esta_magia.m_crit
-			t4[5] = "On Normals: " .. (esta_magia.m_amt - esta_magia.m_crit)
-			t4[6] = Loc ["STRING_AVERAGE"] .. ": " .. _detalhes:comma_value (esta_magia.m_dmg/esta_magia.m_amt)
-			t4[7] = Loc ["STRING_DPS"] .. ": " .. _detalhes:comma_value (esta_magia.m_dmg/T)
-			t4[8] = esta_magia.m_amt .. " / " .. _cstr ("%.1f", esta_magia.m_amt/total_hits*100) .. "%"
+				t4[1] = esta_magia.m_amt
+				t4[2] = multistrike_table
+				t4[3] = Loc ["STRING_MULTISTRIKE_HITS"]
+				t4[4] = "On Critical: " .. esta_magia.m_crit
+				t4[5] = "On Normals: " .. (esta_magia.m_amt - esta_magia.m_crit)
+				t4[6] = Loc ["STRING_AVERAGE"] .. ": " .. _detalhes:comma_value (esta_magia.m_dmg/esta_magia.m_amt)
+				t4[7] = Loc ["STRING_DPS"] .. ": " .. _detalhes:comma_value (esta_magia.m_dmg/T)
+				t4[8] = esta_magia.m_amt .. " / " .. _cstr ("%.1f", esta_magia.m_amt/total_hits*100) .. "%"
 
-		end
-		
+			end
+		--]=]
+
+	--_detalhes:BuildPlayerDetailsSpellChart()
+	--DetailsPlayerDetailSmallChart.ShowChart (_detalhes.janela_info.grupos_detalhes [5].bg, info.instancia.showing, info.instancia.showing.cleu_events, self.nome, false, spellid, 1, 2, 3, 4, 5, 6, 7, 8, 15)
+	
+	--> spell damage chart
+	--events: 1 2 3 4 5 6 7 8 15
 		
 	
 	_table_sort (data, _detalhes.Sort1)
@@ -4749,6 +4752,89 @@ function atributo_damage:MontaDetalhesDamageDone (spellid, barra, instancia)
 		gump:HidaDetalheInfo (i)
 	end
 	
+end
+
+function _detalhes:BuildPlayerDetailsSpellChart()
+	local playerDetailSmallChart = DetailsPlayerDetailSmallChart
+	
+	if (not playerDetailSmallChart) then
+	
+		playerDetailSmallChart = CreateFrame ("frame", "DetailsPlayerDetailSmallChart", info)
+		DetailsFramework:ApplyStandardBackdrop (playerDetailSmallChart)
+		playerDetailSmallChart.Lines = {}
+		
+		for i = 1, 200 do
+			local texture = playerDetailSmallChart:CreateTexture (nil, "artwork")
+			texture:SetColorTexture (1, 1, 1, 1)
+			tinsert (playerDetailSmallChart.Lines, texture)
+		end
+		
+		--_detalhes.janela_info.grupos_detalhes [index]
+		function playerDetailSmallChart.ShowChart (parent, combatObject, cleuData, playerName, targetName, spellId, ...)
+			local tokenIdList = {}
+			local eventList = {}
+			
+			--build the list of tokens
+			for i = 1, select ("#", ... ) do
+				local tokenId = select (i, ...)
+				tokenIdList [tokenId] = true
+			end
+			
+			--check which lines can be added
+			local index = 1
+			local peakValue = 0
+			
+			for i = 1, cleuData.n -1 do
+				local event = cleuData [i]
+				if (event [2]) then --index 2 = token
+					local playerNameFilter = playerName and playerName == event [3]
+					local targetNameFilter = targetName and targetName == event [4]
+					local spellIdFilter = spellId and spellId == event [5]
+					
+					if (playerNameFilter or targetNameFilter or spellIdFilter) then
+						eventList [index] = cleuData [i]
+						if (peakValue < cleuData [i] [6]) then
+							peakValue = cleuData [i] [6]
+						end
+						index = index + 1
+					end
+				end
+			end
+
+			--200 lines, adjust the mini chart
+			playerDetailSmallChart:SetPoint ("topleft", parent, "topleft")
+			playerDetailSmallChart:SetPoint ("bottomright", parent, "bottomright")
+			
+			--update lines
+			local width = playerDetailSmallChart:GetWidth()
+			local combatTime = combatObject:GetCombatTime()
+			local secondsPerBar = combatTime / 200
+			local barWidth = width / 200
+			local barHeight = playerDetailSmallChart:GetHeight()
+			
+			local currentTime = eventList [1][1]
+			local currentIndex = 1
+			local eventAmount = #eventList
+			
+			for i = 1, #playerDetailSmallChart.Lines do
+				playerDetailSmallChart.Lines [i]:SetWidth (width / 200)
+				playerDetailSmallChart.Lines [i]:SetHeight (1)
+				
+				for o = currentIndex, eventAmount do
+					if (eventList [o][1] <= currentTime + secondsPerBar or eventList [o][1] >= currentTime) then
+						playerDetailSmallChart.Lines [i]:SetPoint ("bottomleft", playerDetailSmallChart, "bottomleft", barWidth  * (i - 1), 0)
+						playerDetailSmallChart.Lines [i]:SetWidth (barWidth)
+						playerDetailSmallChart.Lines [i]:SetHeight (eventList [o][6] / peakValue * barHeight)
+					else
+						currentIndex = o
+						break
+					end
+				end
+				
+				currentTime = currentTime + secondsPerBar
+			end
+		end
+	end
 end
 
 function atributo_damage:MontaTooltipDamageTaken (esta_barra, index)
@@ -5048,10 +5134,18 @@ end
 					shadow.end_time = time()
 				end
 
+			shadow.boss_fight_component = actor.boss_fight_component or shadow.boss_fight_component
+			shadow.fight_component = actor.fight_component or shadow.fight_component
+			shadow.grupo = actor.grupo or shadow.grupo
+			
 			--check if need to restore meta tables and indexes for this actor
 			if (not no_refresh) then
 				_detalhes.refresh:r_atributo_damage (actor, shadow)
 			end
+			
+			--a refer�ncia do .owner pode ter sido apagada?
+			--os 2 segmentos foram juntados por�m a refer�ncia do owner de um pet criado ali em cima deve ser nula?
+			--teria que analisar se o novo objecto � de um pet e colocar a refer�ncia do owner no pet novamente, ou pelo menos verificar se a refer�ncia � valida
 			
 			--> tempo decorrido (captura de dados)
 				local end_time = actor.end_time
@@ -5063,9 +5157,19 @@ end
 				shadow.start_time = shadow.start_time - tempo
 			
 			--> pets (add unique pet names)
-			for _, petName in _ipairs (actor.pets) do
-				DetailsFramework.table.addunique (shadow.pets, petName)
-			end
+				for _, petName in _ipairs (actor.pets) do
+					local hasPet = false
+					for i = 1, #shadow.pets do
+						if (shadow.pets[i] == petName) then
+							hasPet = true
+							break
+						end
+					end
+					
+					if (not hasPet) then
+						shadow.pets [#shadow.pets+1] = petName
+					end
+				end
 			
 			--> total de dano (captura de dados)
 				shadow.total = shadow.total + actor.total				
@@ -5170,6 +5274,21 @@ atributo_damage.__add = function (tabela1, tabela2)
 	--> soma o damage_from
 		for nome, _ in _pairs (tabela2.damage_from) do 
 			tabela1.damage_from [nome] = true
+		end
+	
+		--> pets (add unique pet names)
+		for _, petName in _ipairs (tabela2.pets) do
+			local hasPet = false
+			for i = 1, #tabela1.pets do
+				if (tabela1.pets[i] == petName) then
+					hasPet = true
+					break
+				end
+			end
+			
+			if (not hasPet) then
+				tabela1.pets [#tabela1.pets+1] = petName
+			end
 		end
 	
 	--> soma os containers de alvos

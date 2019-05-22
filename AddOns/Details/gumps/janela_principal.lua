@@ -2411,12 +2411,16 @@ local icon_frame_create_animation = function()
 end
 
 local icon_frame_on_click_down = function (self)
-	self:GetParent():GetParent().icone_classe:SetPoint ("left", self:GetParent():GetParent(), "left", 1, -1)
+	local instanceID = self.instance_id
+	local instanceObject = Details:GetInstance (instanceID)
+	self:GetParent():GetParent().icone_classe:SetPoint ("left", self:GetParent():GetParent(), "left", instanceObject.row_info.icon_offset[1] + 1, instanceObject.row_info.icon_offset[2] + -1)
 end
 
 local icon_frame_on_click_up = function (self, button)
 
-	self:GetParent():GetParent().icone_classe:SetPoint ("left", self:GetParent():GetParent(), "left")
+	local instanceID = self.instance_id
+	local instanceObject = Details:GetInstance (instanceID)
+	self:GetParent():GetParent().icone_classe:SetPoint ("left", self:GetParent():GetParent(), "left", instanceObject.row_info.icon_offset[1], instanceObject.row_info.icon_offset[2])
 
 	if (button == "LeftButton") then
 		--> open the rank panel
@@ -3038,9 +3042,9 @@ local hide_click_func = function()
 	--empty
 end
 
-function _detalhes:InstanceAlert (msg, icon, time, clickfunc, doflash)
+function _detalhes:InstanceAlert (msg, icon, time, clickfunc, doflash, forceAlert)
 	
-	if (_detalhes.streamer_config.no_alerts) then
+	if (not forceAlert and _detalhes.streamer_config.no_alerts) then
 		return
 	end
 	
@@ -3726,7 +3730,7 @@ function gump:CriaJanelaPrincipal (ID, instancia, criando)
 	
 		if (instancia.isLocked) then
 			instancia.isLocked = not instancia.isLocked
-			lockFunctionOnClick (baseframe.lock_button)
+			lockFunctionOnClick (baseframe.lock_button, nil, nil, true)
 		end
 	
 		gump:Fade (baseframe.lock_button, -1, 3.0)
@@ -4085,6 +4089,7 @@ function gump:CriaNovaBarra (instancia, index)
 	icon_frame:SetPoint ("topleft", icone_classe, "topleft")
 	icon_frame:SetPoint ("bottomright", icone_classe, "bottomright")
 	icon_frame:SetFrameLevel (new_row.statusbar:GetFrameLevel()+1)
+	icon_frame.instance_id = instancia.meu_id
 	icon_frame.row = new_row
 	new_row.icon_frame = icon_frame
 	
@@ -4603,6 +4608,8 @@ function _detalhes:InstanceRefreshRows (instancia)
 		end
 		
 		local icon_force_grayscale = self.row_info.icon_grayscale
+		
+		local icon_offset_x, icon_offset_y = unpack (self.row_info.icon_offset)
 	
 	--custom right text
 		local custom_right_text_enabled = self.row_info.textR_enable_custom_text
@@ -4663,7 +4670,7 @@ function _detalhes:InstanceRefreshRows (instancia)
 				row.icone_classe:Hide()
 			else
 				row.icone_classe:ClearAllPoints()
-				row.icone_classe:SetPoint ("left", row, "left")
+				row.icone_classe:SetPoint ("left", row, "left", icon_offset_x, icon_offset_y)
 				row.icone_classe:Show()
 				
 				if (start_after_icon) then
@@ -4695,7 +4702,7 @@ function _detalhes:InstanceRefreshRows (instancia)
 			else
 			
 				row.icone_classe:ClearAllPoints()
-				row.icone_classe:SetPoint ("right", row, "right")
+				row.icone_classe:SetPoint ("right", row, "right", icon_offset_x, icon_offset_y)
 				row.icone_classe:Show()
 				
 				if (start_after_icon) then
@@ -5167,6 +5174,12 @@ function _detalhes:InstanceColor (red, green, blue, alpha, no_save, change_statu
 
 --	print (self.skin, self.meu_id)
 	local skin = _detalhes.skins [self.skin]
+	if (not skin) then --the skin isn't available any more
+		Details:Msg ("Skin " .. (self.skin or "?") .. " not found, changing to 'Minimalistic'.")
+		Details:Msg ("Recommended to change the skin in the option panel > Skin Selection.")
+		skin = _detalhes.skins ["Minimalistic"]
+		self.skin = "Minimalistic"
+	end
 	
 	--[[
 	self.baseframe.rodape.esquerdo:SetVertexColor (red, green, blue)
@@ -6162,6 +6175,7 @@ local build_segment_list = function (self, elapsed)
 		local dungeon_run_id = false
 		
 		--> history table (segments container)
+		local isMythicDungeon = false
 		for i = _detalhes.segments_amount, 1, -1 do
 			
 			if (i <= fill) then
@@ -6176,6 +6190,16 @@ local build_segment_list = function (self, elapsed)
 					--print (thisCombat.is_boss.name, thisCombat.instance_type, _detalhes:GetRaidIcon (thisCombat.is_boss.mapid), thisCombat.is_boss.ej_instance_id)
 
 					if (thisCombat.is_mythic_dungeon_segment) then
+					
+						if (not isMythicDungeon) then
+							--GameCooltip:AddLine ("$div", nil, nil, -5, -13)
+							isMythicDungeon = thisCombat.is_mythic_dungeon_run_id
+						else
+							if (isMythicDungeon ~= thisCombat.is_mythic_dungeon_run_id) then
+							--	GameCooltip:AddLine ("$div", nil, nil, -5, -13)
+								isMythicDungeon = thisCombat.is_mythic_dungeon_run_id
+							end
+						end
 					
 						local mythicDungeonInfo = thisCombat:GetMythicDungeonInfo()
 					
@@ -6208,11 +6232,12 @@ local build_segment_list = function (self, elapsed)
 								
 							else
 								if (segmentID == "trashoverall") then
-									--CoolTip:AddLine (encounterName .. " (" .. Loc ["STRING_SEGMENTS_LIST_TRASH"] .. ")", _detalhes.gump:IntegerToTimer (combat_time), 1, dungeon_color, "gray")
-									CoolTip:AddLine ((encounterName or Loc ["STRING_UNKNOW"]) .. " (" .. Loc ["STRING_SEGMENTS_LIST_TRASH"] .. ")", _detalhes.gump:IntegerToTimer (endedAt - startedAt), 1, dungeon_color, "gray")
+									local trashIcon = "|TInterface\\AddOns\\Details\\images\\icons:16:16:0:0:512:512:14:58:98:160|t"
+									CoolTip:AddLine (trashIcon .. "" .. (encounterName or Loc ["STRING_UNKNOW"]) .. " (" .. Loc ["STRING_SEGMENTS_LIST_TRASH"] .. ")", _detalhes.gump:IntegerToTimer (endedAt - startedAt), 1, dungeon_color, "gray")
 									CoolTip:AddLine ((encounterName or Loc ["STRING_UNKNOW"]) .. " (" .. Loc ["STRING_SEGMENTS_LIST_TRASH"] .. ")", nil, 2, "white", "white")
 								else
-									CoolTip:AddLine ((encounterName or Loc ["STRING_UNKNOW"]) .. " (" .. Loc ["STRING_SEGMENTS_LIST_BOSS"] .. ")", _detalhes.gump:IntegerToTimer (combat_time), 1, dungeon_color, "gray")
+									local skull = "|TInterface\\AddOns\\Details\\images\\icons:16:16:0:0:512:512:496:512:0:16|t"
+									CoolTip:AddLine (skull .. "" .. (encounterName or Loc ["STRING_UNKNOW"]) .. " (" .. Loc ["STRING_SEGMENTS_LIST_BOSS"] .. ")", _detalhes.gump:IntegerToTimer (combat_time), 1, dungeon_color, "gray")
 									CoolTip:AddLine ((encounterName or Loc ["STRING_UNKNOW"]) .. " (" .. Loc ["STRING_SEGMENTS_LIST_BOSS"] .. ")", nil, 2, "white", "white")
 								end
 								CoolTip:AddIcon ([[Interface\AddOns\Details\images\icons]], "main", "left", 14, 10, 479/512, 510/512, 24/512, 51/512)
@@ -6236,11 +6261,25 @@ local build_segment_list = function (self, elapsed)
 							if (segmentID == "trashoverall") then
 								CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] .. ":",  _detalhes.gump:IntegerToTimer (decorrido), 2, "white", "white")
 								local totalRealTime = endedAt - startedAt
-								CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_TOTALTIME"] .. ":", _detalhes.gump:IntegerToTimer (endedAt - startedAt) .. " [|cFFFF3300" .. _detalhes.gump:IntegerToTimer (totalRealTime - decorrido) .. "|r]", 2, "white", "white")
+								local wasted = totalRealTime - decorrido
+								
+								--wasted time
+								CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_WASTED_TIME"] .. ":", "|cFFFF3300" .. _detalhes.gump:IntegerToTimer (wasted) .. " (" .. floor (wasted / totalRealTime * 100) .. "%)|r", 2, "white", "white")
+								CoolTip:AddStatusBar (100, 2, 0, 0, 0, 0.35, false, false, "Skyline")
+								
+								CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_TOTALTIME"] .. ":", _detalhes.gump:IntegerToTimer (endedAt - startedAt), 2, "white", "white")
+								
 							elseif (isMythicOverallSegment) then
 								CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] .. ":",  _detalhes.gump:IntegerToTimer (decorrido), 2, "white", "white")
 								local totalRealTime = endedAt - startedAt
-								CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_TOTALTIME"] .. ":", _detalhes.gump:IntegerToTimer (totalRealTime) .. " [|cFFFF3300" .. _detalhes.gump:IntegerToTimer (totalRealTime - decorrido) .. "|r]", 2, "white", "white")
+								local wasted = totalRealTime - decorrido
+								
+								--wasted time
+								CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_WASTED_TIME"] .. ":", "|cFFFF3300" .. _detalhes.gump:IntegerToTimer (wasted) .. " (" .. floor (wasted / totalRealTime * 100) .. "%)|r", 2, "white", "white")
+								CoolTip:AddStatusBar (100, 2, 0, 0, 0, 0.35, false, false, "Skyline")
+								
+								CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_TOTALTIME"] .. ":", _detalhes.gump:IntegerToTimer (totalRealTime), 2, "white", "white")
+								
 							else
 								CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_COMBATTIME"] .. ":",  _detalhes.gump:IntegerToTimer (decorrido), 2, "white", "white")
 							end
@@ -6252,6 +6291,7 @@ local build_segment_list = function (self, elapsed)
 							CoolTip:AddLine (Loc ["STRING_SEGMENT_START"] .. ":", thisCombat.data_inicio, 2, "white", "white")
 							CoolTip:AddLine (Loc ["STRING_SEGMENT_END"] .. ":", thisCombat.data_fim or "in progress", 2, "white", "white")
 							
+							CoolTip:AddStatusBar (100, 1, .3, .3, .3, 0.2, false, false, "Skyline")
 						else
 							--> the combat has mythic dungeon tag but doesn't have a mythic dungeon table information
 							--> so this is a trash cleanup segment
@@ -6279,7 +6319,8 @@ local build_segment_list = function (self, elapsed)
 						segment_info_added = true
 						
 					elseif (thisCombat.is_boss and thisCombat.is_boss.name) then
-					
+						
+						isMythicDungeon = false
 						local try_number = thisCombat.is_boss.try_number
 						local combat_time = thisCombat:GetCombatTime()
 					
@@ -6353,6 +6394,7 @@ local build_segment_list = function (self, elapsed)
 						end
 					
 					elseif (thisCombat.is_pvp) then
+						isMythicDungeon = false
 						CoolTip:AddLine (thisCombat.is_pvp.name, _, 1, battleground_color)
 						enemy = thisCombat.is_pvp.name
 						CoolTip:AddIcon ([[Interface\AddOns\Details\images\icons]], "main", "left", 16, 12, 0.251953125, 0.306640625, 0.205078125, 0.248046875)
@@ -6368,6 +6410,7 @@ local build_segment_list = function (self, elapsed)
 						end
 					
 					elseif (thisCombat.is_arena) then
+						isMythicDungeon = false
 						CoolTip:AddLine (thisCombat.is_arena.name, _, 1, "yellow")
 						enemy = thisCombat.is_arena.name
 						CoolTip:AddIcon ([[Interface\AddOns\Details\images\icons]], "main", "left", 16, 12, 0.251953125, 0.306640625, 0.205078125, 0.248046875)
@@ -6382,6 +6425,7 @@ local build_segment_list = function (self, elapsed)
 							--CoolTip:SetWallpaper (2, _detalhes.tooltip.menus_bg_texture, _detalhes.tooltip.menus_bg_coords, _detalhes.tooltip.menus_bg_color, true)
 						end
 					else
+						isMythicDungeon = false
 						enemy = thisCombat.enemy
 						if (enemy) then
 							CoolTip:AddLine (thisCombat.enemy .." (#"..i..")", _, 1, "yellow")
@@ -6513,13 +6557,27 @@ local build_segment_list = function (self, elapsed)
 					
 					if (segmentID == "trashoverall") then
 						local totalRealTime = endedAt - startedAt
+						local wasted = totalRealTime - decorrido
+						
 						CoolTip:AddLine (Loc["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] .. ":",  _detalhes.gump:IntegerToTimer (decorrido), 2, "white", "white")
+						
+						--wasted time
+						CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_WASTED_TIME"] .. ":", "|cFFFF3300" .. _detalhes.gump:IntegerToTimer (wasted) .. " (" .. floor (wasted / totalRealTime * 100) .. "%)|r", 2, "white", "white")
+						CoolTip:AddStatusBar (100, 2, 0, 0, 0, 0.35, false, false, "Skyline")
+						
 						CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_TOTALTIME"] .. ":", _detalhes.gump:IntegerToTimer (endedAt - startedAt) .. " [|cFFFF3300" .. _detalhes.gump:IntegerToTimer (totalRealTime - decorrido) .. "|r]", 2, "white", "white")
 						
 					elseif (isMythicOverallSegment) then
 						CoolTip:AddLine (Loc["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] .. ":",  _detalhes.gump:IntegerToTimer (decorrido), 2, "white", "white")
 						local totalRealTime = endedAt - startedAt
-						CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_TOTALTIME"] .. ":", _detalhes.gump:IntegerToTimer (totalRealTime) .. " [|cFFFF3300" .. _detalhes.gump:IntegerToTimer (totalRealTime - decorrido) .. "|r]", 2, "white", "white")
+						local wasted = totalRealTime - decorrido
+						
+						
+						CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_TOTALTIME"] .. ":", _detalhes.gump:IntegerToTimer (totalRealTime), 2, "white", "white")
+						
+						--wasted time
+						CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_WASTED_TIME"] .. ":", "|cFFFF3300" .. _detalhes.gump:IntegerToTimer (wasted) .. " (" .. floor (wasted / totalRealTime * 100) .. "%)|r", 2, "white", "white")
+						CoolTip:AddStatusBar (100, 2, 0, 0, 0, 0.35, false, false, "Skyline")
 						
 					else
 						CoolTip:AddLine (Loc ["STRING_SEGMENTS_LIST_COMBATTIME"] .. ":",  _detalhes.gump:IntegerToTimer (decorrido), 2, "white", "white")
@@ -6789,6 +6847,57 @@ end
 function _detalhes:RefreshMicroDisplays()
 	_detalhes.StatusBar:UpdateOptions (self)
 end
+
+
+--from weakauras, list of functions to block on scripts
+--source https://github.com/WeakAuras/WeakAuras2/blob/520951a4b49b64cb49d88c1a8542d02bbcdbe412/WeakAuras/AuraEnvironment.lua#L66
+local blockedFunctions = {
+	-- Lua functions that may allow breaking out of the environment
+	getfenv = true,
+	getfenv = true,
+	loadstring = true,
+	pcall = true,
+	xpcall = true,
+	getglobal = true,
+	
+	-- blocked WoW API
+	SendMail = true,
+	SetTradeMoney = true,
+	AddTradeMoney = true,
+	PickupTradeMoney = true,
+	PickupPlayerMoney = true,
+	TradeFrame = true,
+	MailFrame = true,
+	EnumerateFrames = true,
+	RunScript = true,
+	AcceptTrade = true,
+	SetSendMailMoney = true,
+	EditMacro = true,
+	SlashCmdList = true,
+	DevTools_DumpCommand = true,
+	hash_SlashCmdList = true,
+	CreateMacro = true,
+	SetBindingMacro = true,
+	GuildDisband = true,
+	GuildUninvite = true,
+	securecall = true,
+	
+	--additional
+	setmetatable = true,
+}
+
+--function filter
+local functionFilter = setmetatable ({}, {__index = function (env, key)
+	if (key == "_G") then
+		return env
+		
+	elseif (blockedFunctions [key]) then
+		return nil
+		
+	else	
+		return _G [key]
+	end
+end})
 
 function _detalhes:ChangeSkin (skin_name)
 
@@ -7070,22 +7179,39 @@ function _detalhes:ChangeSkin (skin_name)
 	--> set the scale
 		self:SetWindowScale()
 	
-	-->: refresh lock buttons
+	--> refresh lock buttons
 		self:RefreshLockedState()
 	
+	--> clear any control sscript running in this instance
+	self.bgframe:SetScript ("OnUpdate", nil)
+	self.bgframe.skin_script = nil
+	
+	--> check if the skin has control scripts to run
 	if (not just_updating or _detalhes.initializing) then
-		if (this_skin.callback) then
-			this_skin:callback (self, just_updating)
+		local callbackFunc = this_skin.callback
+		if (callbackFunc) then
+			setfenv (callbackFunc, functionFilter)
+			local okey, result = pcall (callbackFunc, this_skin, self, just_updating)
+			if (not okey) then
+				_detalhes:Msg ("|cFFFF9900error on skin callback function|r:", result)
+			end
 		end
 		
 		if (this_skin.control_script) then
-			if (this_skin.control_script_on_start) then
-				this_skin:control_script_on_start (self)
+			local onStartScript = this_skin.control_script_on_start
+			if (onStartScript) then
+				setfenv (onStartScript, functionFilter)
+				local okey, result = pcall (onStartScript, this_skin, self)
+				if (not okey) then
+					_detalhes:Msg ("|cFFFF9900error on skin control on start function|r:", result)
+				end
 			end
-			self.bgframe:SetScript ("OnUpdate", this_skin.control_script)
+			
+			local controlFunc = this_skin.control_script
+			setfenv (controlFunc, functionFilter)
+			self.bgframe:SetScript ("OnUpdate", controlFunc)
 			self.bgframe.skin_script = true
 			self.bgframe.skin = this_skin
-			--self.bgframe.skin_script_instance = true
 		end
 	end
 

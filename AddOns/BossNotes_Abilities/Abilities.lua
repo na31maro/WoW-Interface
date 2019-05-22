@@ -364,26 +364,25 @@ end
 -- Events
 
 -- Handles a combat log event
-function BossNotesAbilities:COMBAT_LOG_EVENT_UNFILTERED (timestamp,
-		event, hideCaster, sourceGuid, sourceName, sourceFlags,
-		sourceRaidFlags, destGuid, destName, destFlags, destRaidFlags, ...)
-local timestamp, eventType, hideCaster, sourceGuid, sourceName, sourceFlags, sourceRaidFlags, destGuid, destName, destFlags, destRaidFlags, misc1, misc2, misc3, misc4, misc5, misc6, misc7 = CombatLogGetCurrentEventInfo(); 
+function BossNotesAbilities:COMBAT_LOG_EVENT_UNFILTERED (...)
+--
+local timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, _SpellID, Spell_Name, _Auras= CombatLogGetCurrentEventInfo()
+	local usage = EVENT_USAGES[type]
 
-	-- Check event
-	local usage = EVENT_USAGES[event]
-	local suffix = EVENT_SUFFIXES[event]
+	local suffix = EVENT_SUFFIXES[type]
 	
-	-- Check unit affiliation
 	if bit.band(sourceFlags, COMBATLOG_OBJECT_AFFILIATION_MASK) ~= COMBATLOG_OBJECT_AFFILIATION_OUTSIDER then
 		return
 	end
 
 	-- Check unit NPC ID
-	local npcId = BossNotes:GetNpcId(sourceGuid)
+	local npcId = BossNotes:GetNpcId(sourceGUID)
 	if not npcId then
+
 		return
 	end
-	if FILTERED_NPC_IDS[npcId] then
+	if (FILTERED_NPC_IDS[npcId] == true) then
+
 				return
 	end
 	-- Get (or learn) instance and encounter
@@ -410,9 +409,9 @@ local timestamp, eventType, hideCaster, sourceGuid, sourceName, sourceFlags, sou
 		self.db.global.npcs[npcId] = npc
 	end
 	
-	-- Track spell
-	local spellId = select(1, ...)
-	local spellName = select(2, ...)
+	-- Track spellselect(12, CombatLogGetCurrentEventInfo())
+	local spellId = _SpellID
+	local spellName = Spell_Name
 	local spell = npc.spells[spellId]
 	if not spell then
 		-- Do not track a spell unless it matches one of the usage patterns.
@@ -434,7 +433,7 @@ local timestamp, eventType, hideCaster, sourceGuid, sourceName, sourceFlags, sou
 	if usage then
 		if usage == BOSS_NOTES_ABILITIES_AURA then
 			usage = 0
-			local auraType = select(4, ...)
+			local auraType = _Auras
 			if auraType == "BUFF" then
 				usage = BOSS_NOTES_ABILITIES_BUFF
 			elseif auraType == "DEBUFF" then
@@ -475,13 +474,10 @@ function BossNotesAbilities:OnTooltipSetUnit (gameTooltip)
 	
 	if self.db.global.tooltipInfo then 
 		local npcId = BossNotes:GetNpcId(UnitGUID("mouseover"))
-		
+	
 		if npcId then
-		
+
 			local npc = self.db.global.npcs[npcId]
-			if FILTERED_NPC_IDS[npcId] then
-				return
-				end
 			if npc then
 				-- Get current dungeon difficulty bit
 				local _, instanceType = GetInstanceInfo()
@@ -512,6 +508,8 @@ function BossNotesAbilities:OnTooltipSetUnit (gameTooltip)
 					end
 				end)
 				gameTooltip:AddLine(abilities, 0.91, 0.44, 0.0)
+				gameTooltip:AddLine("\nNpcID:"..npcId.."", 0.95, 0.95, 0.96)
+
 			end
 		end
 	end

@@ -334,6 +334,19 @@ GTFO.SpellID["287537"] = {
   sound = 3;
 };
 
+GTFO.SpellID["284949"] = {
+  --desc = "Warden's Prison (Sira Moonwarden)";
+  applicationOnly = true;
+  sound = 1;
+};
+
+GTFO.SpellID["288949"] = {
+  --desc = "Crash Override (Shredmaster Blix)";
+  sound = 3;
+};
+
+
+
 -- ***********************
 -- * Shrine of the Storm *
 -- ***********************
@@ -386,6 +399,13 @@ GTFO.SpellID["267385"] = {
   --desc = "Tentacle Slam (Vol'zith the Whisperer)";
   sound = 3;
 };
+
+GTFO.SpellID["265495"] = {
+  --desc = "Static Orb";
+  sound = 3;
+  test = true;
+};
+
 
 -- ******************
 -- * Waycrest Manor *
@@ -443,6 +463,24 @@ GTFO.SpellID["265352"] = {
   applicationOnly = true;
   sound = 3;
 };
+
+GTFO.SpellID["288922"] = {
+  --desc = "Call Meteor (Aman)";
+  sound = 3;
+};
+
+GTFO.SpellID["288951"] = {
+  --desc = "Burning (Burninator Mark V)";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["288716"] = {
+  --desc = "Fire Fall (Conflagros)";
+  sound = 3;
+};
+
+
 
 -- ************
 -- * Freehold *
@@ -519,6 +557,11 @@ GTFO.SpellID["258199"] = {
 
 GTFO.SpellID["257902"] = {
   --desc = "Shell Bounce (Ludwig Von Tortollan)";
+  sound = 3;
+};
+
+GTFO.SpellID["258352"] = {
+  --desc = "Grapeshot (Captain Eudora)";
   sound = 3;
 };
 
@@ -748,6 +791,12 @@ GTFO.SpellID["258986"] = {
   sound = 3;
 };
 
+GTFO.SpellID["277072"] = {
+  --desc = "Corrupted Gold (Corrupted Gold)";
+  applicationOnly = true;
+  sound = 3;
+};
+
 -- ***************
 -- * King's Rest *
 -- ***************
@@ -970,4 +1019,227 @@ GTFO.SpellID["267700"] = {
   applicationOnly = true;
   sound = 3;
 };
+
+--- *************************
+--- * Battle for Dazar'alor *
+--- *************************
+
+GTFO.SpellID["290045"] = {
+  --desc = "Spear Swipe (Rastari Enforcer)";
+  sound = 3;
+  tankSound = 0;
+};
+
+GTFO.SpellID["283617"] = {
+  --desc = "Wave of Light (Ra'wani Kanae)";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["283651"] = {
+  --desc = "Blinding Faith (Zandalari Crusader)";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["284388"] = {
+  --desc = "Phoenix Strike (Anathos Firecaller)";
+  sound = 3;
+};
+
+GTFO.SpellID["284028"] = {
+  --desc = "Multi-Sided Strike";
+  sound = 3;
+};
+
+GTFO.SpellID["282545"] = {
+  --desc = "Deathly Echo (Grong the Revenant)";
+  sound = 3;
+};
+
+GTFO.SpellID["287556"] = {
+  --desc = "Soul Barrage (Vengeful Shrieker)";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["283609"] = {
+  --desc = "Crush (Yalat's Bulwark)";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["283610"] = {
+  --desc = "Crush (Yalat's Bulwark)";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["286040"] = {
+  --desc = "Gold Burst (Spirit of Gold)";
+  sound = 3;
+};
+
+GTFO.SpellID["283574"] = {
+  --desc = "Volatile Charge (The Hand of In'zashi)";
+  sound = 3;
+};
+
+GTFO.SpellID["287640"] = {
+  --desc = "Volatile Charge (The Hand of In'zashi)";
+  sound = 3;
+};
+
+GTFO.SpellID["283557"] = {
+  --desc = "Volatile Charge (The Hand of In'zashi)";
+  sound = 4;
+  ignoreSelfInflicted = true;
+};
+
+GTFO.SpellID["289238"] = {
+  --desc = "Static Lightning (Echo of Akunda)";
+  sound = 3;
+};
+
+GTFO.SpellID["282444"] = {
+  --desc = "Lacerating Claws (Kimbul's Aspect)";
+  sound = 3;
+  tankSound = 0;
+  applicationOnly = true;
+};
+
+GTFO.SpellID["282411"] = {
+  --desc = "Thundering Storm (Akunda's Aspect)";
+  sound = 3;
+};
+
+GTFO.SpellID["282636"] = {
+  --desc = "Krag'wa's Wrath (Krag'wa)";
+  sound = 3;
+};
+
+GTFO.SpellID["289672"] = {
+  --desc = "Croak Slam (Echo of Krag'wa)";
+  sound = 3;
+};
+
+GTFO.SpellID["286838"] = {
+  --desc = "Static Orb (Akunda's Aspect)";
+  sound = 3;
+  applicationOnly = true;
+};
+
+GTFO.SpellID["282135"] = {
+  --desc = "Crawling Hex (Gonk's Aspect)";
+  applicationOnly = true;
+  sound = 3;
+  specificMobs = { 0 };
+};
+
+GTFO.SpellID["288842"] = {
+  --desc = "Throw Goods (Furious Merchant)";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["287147"] = {
+  --desc = "Dread Reaping (King Rhst)";
+  sound = 3;
+};
+
+
+GTFO.SpellID["286742"] = {
+  --desc = "Necrotic Smash (Phantom of Rage)";
+  sound = 3;
+};
+
+GTFO.SpellID["285044"] = {
+  --desc = "Toad Toxin (Plague Toad)";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["288207"] = {
+  --desc = "Cannon Fire (Seafarers' Cannon)";
+  sound = 3;
+};
+
+GTFO.SpellID["287891"] = {
+  --desc = "Sheep Shrapnel (High Tinker Mekkatorque)";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["282205"] = {
+  --desc = "Blast Off (High Tinker Mekkatorque)";
+  sound = 3;
+};
+
+GTFO.SpellID["285125"] = {
+  --desc = "Sea Swell (Laminaria)";
+  sound = 3;
+};
+
+GTFO.SpellID["284374"] = {
+  --desc = "Magma Trap (Anathos Firecaller)";
+  sound = 3;
+};
+
+GTFO.SpellID["288325"] = {
+  --desc = "Glacial Shards (Lady Jaina Proudmoore)";
+  sound = 3;
+};
+
+GTFO.SpellID["288534"] = {
+  --desc = "Blistering Tornado (Lady Jaina Proudmoore)";
+  sound = 3;
+};
+
+GTFO.SpellID["287490"] = {
+  --desc = "Frozen Solid (Lady Jaina Proudmoore)";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["290030"] = {
+  --desc = "Bombard (Lady Jaina Proudmoore)";
+  sound = 3;
+};
+
+GTFO.SpellID["285177"] = {
+  --desc = "Freezing Blast (Lady Jaina Proudmoore)";
+  sound = 3;
+};
+
+GTFO.SpellID["287585"] = {
+  --desc = "Avalanche (Lady Jaina Proudmoore)";
+  sound = 3;
+};
+
+GTFO.SpellID["288218"] = {
+  --desc = "Broadside (Lady Jaina Proudmoore)";
+  sound = 3;
+};
+
+GTFO.SpellID["289937"] = {
+  --desc = "Thundering Slam (Rastari Punisher)";
+  applicationOnly = true;
+  sound = 3;
+  tankSound = 0;
+};
+
+--- **********************
+--- * Crucible of Storms *
+--- **********************
+
+-- TODO: Oceanic Essence (Restless Cabal)
+-- TODO: Cerebral Assault (Zaxasj the Speaker)
+-- TODO: Void Crash (Fa'thuul the Feared)
+-- TODO: Unstable Resonance (Uu'nat)
+-- TODO: Touch of the End (Uu'nat) [Tanks only, others avoid]
+-- TODO: Oblivion Tears (Uu'nat) [Complicated mechanic, needs testing, able to soak at specific times]
+-- TODO: Void Crash (Uu'nat)
+-- TODO: Maddening Eyes of N'Zoth (Uu'nat)
+-- TODO: Piercing Gaze of N'Zoth (Uu'nat) [Stackable debuff, affliction only]
+-- TODO: Unknowable Terror (Uu'nat) ???
 

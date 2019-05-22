@@ -1,7 +1,7 @@
-## Interface: 80000
+## Interface: 80100
 ## Title: Immersion
 ## Notes: Immersive replacement for quest & gossip
-## Version: 1.0.8
+## Version: 1.1.0
 ## Author: Sebastian Lindfors
 ## SavedVariables: ImmersionSetup
 ## OptionalDeps: ConsolePort

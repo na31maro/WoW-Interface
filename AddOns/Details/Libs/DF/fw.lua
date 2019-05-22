@@ -1,5 +1,5 @@
 
-local dversion = 131
+local dversion = 148
 local major, minor = "DetailsFramework-1.0", dversion
 local DF, oldminor = LibStub:NewLibrary (major, minor)
 
@@ -87,6 +87,9 @@ local embed_functions = {
 	"GetNpcIdFromGuid",
 	"ShowFeedbackPanel",
 	"SetAsOptionsPanel",
+	"GetPlayerRole",
+	"GetCharacterTalents",
+	"GetCharacterPvPTalents",
 	
 	"CreateDropDown",
 	"CreateButton",
@@ -134,6 +137,8 @@ local embed_functions = {
 	"CreateGlowOverlay",
 	"CreateAnts",
 	"CreateFrameShake",
+	"RegisterScriptComm",
+	"SendScriptComm",
 }
 
 DF.WidgetFunctions = {
@@ -208,11 +213,13 @@ end
 --> copy from table2 to table1 overwriting values
 function DF.table.copy (t1, t2)
 	for key, value in pairs (t2) do 
-		if (type (value) == "table") then
-			t1 [key] = t1 [key] or {}
-			DF.table.copy (t1 [key], t2 [key])
-		else
-			t1 [key] = value
+		if (key ~= "__index") then
+			if (type (value) == "table") then
+				t1 [key] = t1 [key] or {}
+				DF.table.copy (t1 [key], t2 [key])
+			else
+				t1 [key] = value
+			end
 		end
 	end
 	return t1
@@ -351,6 +358,22 @@ function DF:CommaValue (value)
 	--source http://richard.warburton.it
 	local left, num, right = string_match (value, '^([^%d]*%d)(%d*)(.-)$')
 	return left .. (num:reverse():gsub ('(%d%d%d)','%1,'):reverse()) .. right
+end
+
+function DF:GroupIterator (func, ...)
+	if (IsInRaid()) then
+		for i = 1, GetNumGroupMembers() do
+			DF:QuickDispatch (func, "raid" .. i, ...)
+		end
+	
+	elseif (IsInGroup()) then
+		for i = 1, GetNumGroupMembers() - 1 do
+			DF:QuickDispatch (func, "party" .. i, ...)
+		end
+	
+	else
+		DF:QuickDispatch (func, "player", ...)
+	end
 end
 
 function DF:IntegerToTimer (value)
@@ -2760,11 +2783,97 @@ DF.CLEncounterID = {
 	{ID = 2122, Name = "G'huun"},
 }
 
+function DF:GetPlayerRole()
+	local assignedRole = UnitGroupRolesAssigned ("player")
+	if (assignedRole == "NONE") then
+		local spec = GetSpecialization()
+		return spec and GetSpecializationRole (spec) or "NONE"
+	end
+	return assignedRole
+end
+
 function DF:GetCLEncounterIDs()
 	return DF.CLEncounterID
 end
 
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--> delta seconds reader
+
+if (not DetailsFrameworkDeltaTimeFrame) then
+	CreateFrame ("frame", "DetailsFrameworkDeltaTimeFrame", UIParent)
+end
+
+local deltaTimeFrame = DetailsFrameworkDeltaTimeFrame
+deltaTimeFrame:SetScript ("OnUpdate", function (self, deltaTime)
+	self.deltaTime = deltaTime
+end)
+
+function GetWorldDeltaSeconds()
+	return deltaTimeFrame.deltaTime
+end
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--> build the global script channel for scripts communication
+--send and retrieve data sent by othe users in scripts
+--Usage:
+--DetailsFramework:RegisterScriptComm (ID, function(sourcePlayerName, ...) end)
+--DetailsFramework:SendScriptComm (ID, ...)
+
+	local aceComm = LibStub:GetLibrary ("AceComm-3.0")
+	local LibAceSerializer = LibStub:GetLibrary ("AceSerializer-3.0")
+	local LibDeflate = LibStub:GetLibrary ("LibDeflate")
+	
+	DF.RegisteredScriptsComm = DF.RegisteredScriptsComm or {}
+	
+	function DF.OnReceiveScriptComm (...)
+		local prefix, encodedString, channel, commSource = ...
+		
+		local decodedString = LibDeflate:DecodeForWoWAddonChannel (encodedString)
+		if (decodedString) then
+			local uncompressedString = LibDeflate:DecompressDeflate (decodedString)
+			if (uncompressedString) then
+				local data = {LibAceSerializer:Deserialize (uncompressedString)}
+				if (data[1]) then
+					local ID = data[2]
+					if (ID) then
+						local sourceName = data[4]
+						if (Ambiguate (sourceName, "none") == commSource) then
+							local func = DF.RegisteredScriptsComm [ID]
+							if (func) then
+								DF:Dispatch (func, commSource, select (5, unpack (data))) --this use xpcall
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+	
+	function DF:RegisterScriptComm (ID, func)
+		if (ID) then
+			if (type (func) == "function") then
+				DF.RegisteredScriptsComm [ID] = func
+			else
+				DF.RegisteredScriptsComm [ID] = nil
+			end
+		end
+	end
+	
+	function DF:SendScriptComm (ID, ...)
+		if (DF.RegisteredScriptsComm [ID]) then
+			local sourceName = UnitName ("player") .. "-" .. GetRealmName()
+			local data = LibAceSerializer:Serialize (ID, UnitGUID ("player"), sourceName, ...)
+			data = LibDeflate:CompressDeflate (data, {level = 9})
+			data = LibDeflate:EncodeForWoWAddonChannel (data)
+			aceComm:SendCommMessage ("_GSC", data, "PARTY")
+		end
+	end
+	
+	if (aceComm and LibAceSerializer and LibDeflate) then
+		aceComm:RegisterComm ("_GSC", DF.OnReceiveScriptComm)
+	end
+	
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --> debug
 

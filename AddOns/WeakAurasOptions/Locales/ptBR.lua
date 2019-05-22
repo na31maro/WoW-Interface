@@ -7,8 +7,6 @@ local L = WeakAuras.L
 -- WeakAuras/Options
 	--[[Translation missing --]]
 	L[" by "] = " by "
-	--[[Translation missing --]]
-	L[" Configuration"] = " Configuration"
 	L["-- Do not remove this comment, it is part of this trigger: "] = "-- Não remova este comentário, ele é parte deste gatilho:"
 	--[[Translation missing --]]
 	L[" to version "] = " to version "
@@ -18,6 +16,8 @@ local L = WeakAuras.L
 	L["%i Matches"] = "%i resultados"
 	L["%s Color"] = "%s Cor"
 	L["%s total auras"] = "%s auras totais"
+	--[[Translation missing --]]
+	L["|cFFFF0000Duplicate Keys Found!|nPlease change the keys of the following options!|r"] = "|cFFFF0000Duplicate Keys Found!|nPlease change the keys of the following options!|r"
 	L["1 Match"] = "1 resultado"
 	L["1. Text"] = "1. Texto"
 	L["1. Text Settings"] = "1. Configurações do texto"
@@ -71,6 +71,8 @@ WeakAuras → Opções → Opções ]=]
 	L["Any of"] = "Qualquer"
 	--[[Translation missing --]]
 	L["Apply Template"] = "Apply Template"
+	--[[Translation missing --]]
+	L["Arc Length"] = "Arc Length"
 	--[[Translation missing --]]
 	L["Arcane Orb"] = "Arcane Orb"
 	--[[Translation missing --]]
@@ -165,6 +167,10 @@ WeakAuras → Opções → Opções ]=]
 	--[[Translation missing --]]
 	L["color"] = "color"
 	--[[Translation missing --]]
+	L["Column Height"] = "Column Height"
+	--[[Translation missing --]]
+	L["Column Space"] = "Column Space"
+	--[[Translation missing --]]
 	L["Combinations"] = "Combinations"
 	--[[Translation missing --]]
 	L["Combine Matches Per Unit"] = "Combine Matches Per Unit"
@@ -213,7 +219,11 @@ WeakAuras → Opções → Opções ]=]
 	--[[Translation missing --]]
 	L["Custom Function"] = "Custom Function"
 	--[[Translation missing --]]
+	L["Custom Grow"] = "Custom Grow"
+	--[[Translation missing --]]
 	L["Custom Options"] = "Custom Options"
+	--[[Translation missing --]]
+	L["Custom Sort"] = "Custom Sort"
 	L["Custom Trigger"] = "Gatilho personalizado"
 	--[[Translation missing --]]
 	L["Custom trigger event tooltip"] = "Custom trigger event tooltip"
@@ -363,6 +373,8 @@ WeakAuras → Opções → Opções ]=]
 	--[[Translation missing --]]
 	L["Green Rune"] = "Green Rune"
 	--[[Translation missing --]]
+	L["Grid direction"] = "Grid direction"
+	--[[Translation missing --]]
 	L["Group"] = "Group"
 	--[[Translation missing --]]
 	L["Group (verb)"] = "Group (verb)"
@@ -384,6 +396,8 @@ WeakAuras → Opções → Opções ]=]
 	L["Height"] = "Altura"
 	--[[Translation missing --]]
 	L["Hide"] = "Hide"
+	--[[Translation missing --]]
+	L["Hide Cooldown Text"] = "Hide Cooldown Text"
 	--[[Translation missing --]]
 	L["Hide on"] = "Hide on"
 	--[[Translation missing --]]
@@ -411,6 +425,8 @@ WeakAuras → Opções → Opções ]=]
 	L["Icon Settings"] = "Icon Settings"
 	--[[Translation missing --]]
 	L["If"] = "If"
+	--[[Translation missing --]]
+	L["If checked, then this separator will include text. Otherwise, it will be just a horizontal line."] = "If checked, then this separator will include text. Otherwise, it will be just a horizontal line."
 	--[[Translation missing --]]
 	L["If checked, then this space will span across multiple lines."] = "If checked, then this space will span across multiple lines."
 	--[[Translation missing --]]
@@ -455,7 +471,11 @@ WeakAuras → Opções → Opções ]=]
 	L["Left HUD position"] = "Left HUD position"
 	L["Left Text"] = "Texto à esquerda"
 	--[[Translation missing --]]
+	L["Legacy Aura Trigger"] = "Legacy Aura Trigger"
+	--[[Translation missing --]]
 	L["Length"] = "Length"
+	--[[Translation missing --]]
+	L["Limit"] = "Limit"
 	--[[Translation missing --]]
 	L["Load"] = "Load"
 	L["Loaded"] = "Carrregar"
@@ -651,6 +671,10 @@ WeakAuras → Opções → Opções ]=]
 	L["Rotation"] = "Rotação"
 	--[[Translation missing --]]
 	L["Rotation Mode"] = "Rotation Mode"
+	--[[Translation missing --]]
+	L["Row Space"] = "Row Space"
+	--[[Translation missing --]]
+	L["Row Width"] = "Row Width"
 	L["Same"] = "Mesmo"
 	--[[Translation missing --]]
 	L["Scale"] = "Scale"
@@ -658,6 +682,12 @@ WeakAuras → Opções → Opções ]=]
 	--[[Translation missing --]]
 	L["Select the auras you always want to be listed first"] = "Select the auras you always want to be listed first"
 	L["Send To"] = "Enviar para"
+	--[[Translation missing --]]
+	L["Separator"] = "Separator"
+	--[[Translation missing --]]
+	L["Separator Text"] = "Separator Text"
+	--[[Translation missing --]]
+	L["Separator text"] = "Separator text"
 	--[[Translation missing --]]
 	L["Set Parent to Anchor"] = "Set Parent to Anchor"
 	--[[Translation missing --]]
@@ -669,8 +699,6 @@ WeakAuras → Opções → Opções ]=]
 	--[[Translation missing --]]
 	L["Shift-click to create chat link"] = "Shift-click to create chat link"
 	L["Show all matches (Auto-clone)"] = "Mostrar todas as correspondências"
-	--[[Translation missing --]]
-	L["Show Cooldown Text"] = "Show Cooldown Text"
 	--[[Translation missing --]]
 	L["Show Glow Effect"] = "Show Glow Effect"
 	--[[Translation missing --]]
@@ -785,6 +813,8 @@ WeakAuras → Opções → Opções ]=]
 	L["Then "] = "Then "
 	--[[Translation missing --]]
 	L["This adds %tooltip, %tooltip1, %tooltip2, %tooltip3 as text replacements."] = "This adds %tooltip, %tooltip1, %tooltip2, %tooltip3 as text replacements."
+	--[[Translation missing --]]
+	L["This aura has legacy aura trigger(s). Convert them to the new system to benefit from enhanced performance and features"] = "This aura has legacy aura trigger(s). Convert them to the new system to benefit from enhanced performance and features"
 	--[[Translation missing --]]
 	L["This display is currently loaded"] = "This display is currently loaded"
 	--[[Translation missing --]]

@@ -605,6 +605,15 @@ DF.CrowdControlSpells = {
 
 	[118] = "MAGE", --Polymorph
 	[61305] = "MAGE", --Polymorph (black cat)
+	[28271] = "MAGE", --Polymorph Turtle
+	[161354] = "MAGE", --Polymorph Monkey
+	[161353] = "MAGE", --Polymorph Polar Bear Cub
+	[126819] = "MAGE", --Polymorph Porcupine
+	[277787] = "MAGE", --Polymorph Direhorn
+	[61721] = "MAGE", --Polymorph Rabbit
+	[28272] = "MAGE", --Polymorph Pig
+	[277792] = "MAGE", --Polymorph Bumblebee
+	
 	[82691] = "MAGE", --Ring of Frost (debuff spellid)
 	[122] = "MAGE", --Frost Nova
 	[157997] = "MAGE", --Ice Nova
@@ -668,6 +677,7 @@ DF.CrowdControlSpells = {
 	[217832] = "DEMONHUNTER", --Imprison
 	[200166] = "DEMONHUNTER", --Metamorphosis
 	[207685] = "DEMONHUNTER", --Sigil of Misery
+	[211881] = "DEMONHUNTER", -- Fel Eruption
 }
 
 DF.SpecIds = {

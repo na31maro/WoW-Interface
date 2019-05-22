@@ -56,8 +56,6 @@ GetTriggerConditions(data, triggernum)
 Returns potential conditions that this trigger provides.
 ]]--
 
--- luacheck: globals GTFO DBM BigWigsLoader CombatLogGetCurrentEventInfo
-
 -- Lua APIs
 local tinsert, tconcat, wipe = table.insert, table.concat, wipe
 local tostring, pairs, type = tostring, pairs, type
@@ -365,6 +363,13 @@ local function RunOverlayFuncs(event, state)
   state.changed = changed or state.changed;
 end
 
+local function callFunctionForActivateEvent(func, trigger, fallback)
+  if not func then
+    return fallback
+  end
+  local ok, value = xpcall(func, geterrorhandler(), trigger)
+  return ok and value or fallback
+end
 
 function WeakAuras.ActivateEvent(id, triggernum, data, state)
   local changed = state.changed or false;
@@ -396,9 +401,9 @@ function WeakAuras.ActivateEvent(id, triggernum, data, state)
     state.inverse = nil;
     state.autoHide = autoHide;
   elseif (data.durationFunc) then
-    local arg1, arg2, arg3, inverse = data.durationFunc(data.trigger);
-    arg1 = type(arg1) == "number" and arg1 or 0;
-    arg2 = type(arg2) == "number" and arg2 or 0;
+    local ok, arg1, arg2, arg3, inverse = xpcall(data.durationFunc, geterrorhandler(), data.trigger);
+    arg1 = ok and type(arg1) == "number" and arg1 or 0;
+    arg2 = ok and type(arg2) == "number" and arg2 or 0;
 
     if(type(arg3) == "string") then
       if (state.durationFunc ~= data.durationFunc) then
@@ -476,10 +481,12 @@ function WeakAuras.ActivateEvent(id, triggernum, data, state)
       state.total = nil;
     end
   end
-  local name = data.nameFunc and data.nameFunc(data.trigger) or state.name;
-  local icon = data.iconFunc and data.iconFunc(data.trigger) or state.icon;
-  local texture = data.textureFunc and data.textureFunc(data.trigger) or state.texture;
-  local stacks = data.stacksFunc and data.stacksFunc(data.trigger) or state.stacks;
+
+  local name = callFunctionForActivateEvent(data.nameFunc, data.trigger, state.name)
+  local icon = callFunctionForActivateEvent(data.iconFunc, data.trigger, state.icon)
+  local texture = callFunctionForActivateEvent(data.textureFunc, data.trigger, state.texture)
+  local stacks = callFunctionForActivateEvent(data.stacksFunc, data.trigger, state.stacks)
+
   if (state.name ~= name) then
     state.name = name;
     changed = true;
@@ -873,8 +880,6 @@ function GenericTrigger.Add(data, region)
               end
             end
 
-
-
             triggerFuncStr = ConstructFunction(event_prototypes[trigger.event], trigger);
 
             statesParameter = event_prototypes[trigger.event].statesParameter;
@@ -902,6 +907,18 @@ function GenericTrigger.Add(data, region)
 
             if (event_prototypes[trigger.event].automaticrequired) then
               trigger.unevent = "auto";
+            elseif event_prototypes[trigger.event].timedrequired then
+              if type(event_prototypes[trigger.event].timedrequired) == "function" then
+                if event_prototypes[trigger.event].timedrequired(trigger) then
+                  trigger.unevent = "timed"
+                else
+                  if not(WeakAuras.eventend_types[trigger.unevent]) then
+                    trigger.unevent = "timed"
+                  end
+                end
+              else
+                trigger.unevent = "timed"
+              end
             elseif event_prototypes[trigger.event].automatic then
               if not(WeakAuras.autoeventend_types[trigger.unevent]) then
                 trigger.unevent = "auto"
@@ -1371,15 +1388,9 @@ do
 
   local spells = {};
   local spellKnown = {};
-  local spellsRune = {}
-  local spellCdDurs = {};
-  local spellCdExps = {};
-  local spellCdDursRune = {};
-  local spellCdExpsRune = {};
+
   local spellCharges = {};
   local spellChargesMax = {};
-  local spellCdHandles = {};
-  local spellCdRuneHandles = {};
 
   local items = {};
   local itemCdDurs = {};
@@ -1404,6 +1415,139 @@ do
   local gcdSpellName;
   local gcdSpellIcon;
   local gcdEndCheck;
+
+  local function GetRuneDuration()
+    local runeDuration = -100;
+    for id, _ in pairs(runes) do
+      local startTime, duration = GetRuneCooldown(id);
+      duration = duration or 0;
+      runeDuration = duration > 0 and duration or runeDuration
+    end
+    return runeDuration
+  end
+
+  local function CheckGCD()
+    local event;
+    local startTime, duration = GetSpellCooldown(61304);
+    if(duration and duration > 0) then
+      if not(gcdStart) then
+        event = "GCD_START";
+      elseif(gcdStart ~= startTime) then
+        event = "GCD_CHANGE";
+      end
+      gcdStart, gcdDuration = startTime, duration;
+      local endCheck = startTime + duration + 0.1;
+      if(gcdEndCheck ~= endCheck) then
+        gcdEndCheck = endCheck;
+        timer:ScheduleTimerFixed(CheckGCD, duration + 0.1);
+      end
+    else
+      if(gcdStart) then
+        event = "GCD_END"
+      end
+      gcdStart, gcdDuration = nil, nil;
+      gcdSpellName, gcdSpellIcon = nil, nil;
+      gcdEndCheck = 0;
+    end
+    if(event) then
+      WeakAuras.ScanEvents(event);
+    end
+  end
+
+  local RecheckHandles = {
+    expirationTime = {},
+    handles = {},
+    Recheck = function(self, id)
+      self.handles[id] = nil
+      self.expirationTime[id] = nil
+      CheckGCD();
+      WeakAuras.CheckSpellCooldown(id, GetRuneDuration())
+    end,
+    Schedule = function(self, expirationTime, id)
+      if (not self.expirationTime[id] or expirationTime < self.expirationTime[id]) and expirationTime > 0 then
+        if self.handles[id] then
+          timer:CancelTimer(self.handles[id])
+          self.handles[id] = nil
+          self.expirationTime[id] = nil
+        end
+
+        local duration = expirationTime - GetTime()
+        if duration > 0 then
+          self.handles[id] = timer:ScheduleTimerFixed(self.Recheck, duration, self, id)
+          self.expirationTime[id] = expirationTime
+        end
+      end
+    end
+  }
+
+  local function FetchSpellCooldown(self, id)
+    if self.duration[id] and self.expirationTime[id] then
+      return self.expirationTime[id] - self.duration[id], self.duration[id]
+    end
+    return 0, 0
+  end
+
+  local function HandleSpell(self, id, startTime, duration)
+    local changed = false
+    local nowReady = false
+    local time = GetTime()
+    if self.expirationTime[id] and self.expirationTime[id] <= time and self.expirationTime[id] ~= 0 then
+      self.duration[id] = 0
+      self.expirationTime[id] = 0
+      changed = true
+      nowReady = true
+    end
+    local endTime = startTime + duration;
+    if endTime <= time then
+      startTime = 0
+      duration = 0
+      endTime = 0
+    end
+    if duration > 0 and startTime == gcdStart and duration == gcdDuration then
+      -- GCD cooldown, this could mean that the spell reset!
+      if self.expirationTime[id] and self.expirationTime[id] > startTime + duration and self.expirationTime[id] ~= 0 then
+        self.duration[id] = 0
+        self.expirationTime[id] = 0
+        changed = true
+        nowReady = true
+      end
+      RecheckHandles:Schedule(endTime, id)
+      return changed, nowReady
+    end
+
+    if self.duration[id] ~= duration then
+      self.duration[id] = duration
+      changed = true
+    end
+
+    if self.expirationTime[id] ~= endTime then
+      self.expirationTime[id] = endTime
+      changed = true
+      nowReady = endTime == 0
+    end
+
+    RecheckHandles:Schedule(endTime, id)
+    return changed, nowReady
+  end
+
+  local function CreateSpellCDHandler()
+    local cd = {
+      duration = {},
+      expirationTime = {},
+      handles = {}, -- Share handles, and use lowest time to schedule
+      HandleSpell = HandleSpell,
+      FetchSpellCooldown = FetchSpellCooldown
+    }
+    return cd
+  end
+
+  local spellCds = CreateSpellCDHandler();
+  local spellCdsRune = CreateSpellCDHandler();
+  local spellCdsOnlyCooldown = CreateSpellCDHandler();
+  local spellCdsOnlyCooldownRune = CreateSpellCDHandler();
+  local spellCdsCharges = CreateSpellCDHandler();
+
+  local spellIds = {}
 
   function WeakAuras.InitCooldownReady()
     cdReadyFrame = CreateFrame("FRAME");
@@ -1454,27 +1598,23 @@ do
     end
   end
 
-  function WeakAuras.GetSpellCooldown(id, ignoreRuneCD, showgcd, ignoreSpellKnown)
+  function WeakAuras.GetSpellCooldown(id, ignoreRuneCD, showgcd, ignoreSpellKnown, track)
     if (not spellKnown[id] and not ignoreSpellKnown) then
       return;
     end
     local startTime, duration, gcdCooldown;
-    if (ignoreRuneCD) then
-      if (spellsRune[id] and spellCdExpsRune[id] and spellCdDursRune[id]) then
-        startTime = spellCdExpsRune[id] - spellCdDursRune[id]
-        duration = spellCdDursRune[id];
+    if track == "charges" then
+      startTime, duration = spellCdsCharges:FetchSpellCooldown(id)
+    elseif track == "cooldown" then
+      if ignoreRuneCD then
+        startTime, duration = spellCdsOnlyCooldownRune:FetchSpellCooldown(id)
       else
-        startTime = 0;
-        duration = 0;
+        startTime, duration = spellCdsOnlyCooldown:FetchSpellCooldown(id)
       end
+    elseif (ignoreRuneCD) then
+      startTime, duration = spellCdsRune:FetchSpellCooldown(id)
     else
-      if(spells[id] and spellCdExps[id] and spellCdDurs[id]) then
-        startTime = spellCdExps[id] - spellCdDurs[id];
-        duration = spellCdDurs[id];
-      else
-        startTime = 0;
-        duration = 0;
-      end
+      startTime, duration = spellCds:FetchSpellCooldown(id)
     end
 
     if (showgcd) then
@@ -1534,35 +1674,6 @@ do
     WeakAuras.ScanEvents("RUNE_COOLDOWN_READY", id);
   end
 
-  local function SpellCooldownRuneFinished(id)
-    spellCdRuneHandles[id] = nil;
-    spellCdDursRune[id] = nil;
-    spellCdExpsRune[id] = nil;
-
-    local charges, maxCharges = WeakAuras.GetSpellCooldownUnified(id);
-    local chargesDifference = (charges or 0) - (spellCharges[id] or 0)
-    if (chargesDifference ~= 0 ) then
-      WeakAuras.ScanEvents("SPELL_CHARGES_CHANGED", id, chargesDifference, charges or 0);
-    end
-    spellCharges[id] = charges
-    spellChargesMax[id] = maxCharges;
-    WeakAuras.ScanEvents("SPELL_COOLDOWN_READY", id, nil);
-  end
-
-  local function SpellCooldownFinished(id)
-    spellCdHandles[id] = nil;
-    spellCdDurs[id] = nil;
-    spellCdExps[id] = nil;
-    local charges, maxCharges = WeakAuras.GetSpellCooldownUnified(id);
-    local chargesDifference =  (charges or 0) - (spellCharges[id] or 0)
-    if (chargesDifference ~= 0 ) then
-      WeakAuras.ScanEvents("SPELL_CHARGES_CHANGED", id, chargesDifference, charges or 0);
-    end
-    spellCharges[id] = charges
-    spellChargesMax[id] = maxCharges;
-    WeakAuras.ScanEvents("SPELL_COOLDOWN_READY", id, nil);
-  end
-
   local function ItemCooldownFinished(id)
     itemCdHandles[id] = nil;
     itemCdDurs[id] = nil;
@@ -1576,34 +1687,6 @@ do
     itemSlotsCdDurs[id] = nil;
     itemSlotsCdExps[id] = nil;
     WeakAuras.ScanEvents("ITEM_SLOT_COOLDOWN_READY", id);
-  end
-
-  local function CheckGCD()
-    local event;
-    local startTime, duration = GetSpellCooldown(61304);
-    if(duration and duration > 0) then
-      if not(gcdStart) then
-        event = "GCD_START";
-      elseif(gcdStart ~= startTime) then
-        event = "GCD_CHANGE";
-      end
-      gcdStart, gcdDuration = startTime, duration;
-      local endCheck = startTime + duration + 0.1;
-      if(gcdEndCheck ~= endCheck) then
-        gcdEndCheck = endCheck;
-        timer:ScheduleTimerFixed(CheckGCD, duration + 0.1);
-      end
-    else
-      if(gcdStart) then
-        event = "GCD_END"
-      end
-      gcdStart, gcdDuration = nil, nil;
-      gcdSpellName, gcdSpellIcon = nil, nil;
-      gcdEndCheck = 0;
-    end
-    if(event) then
-      WeakAuras.ScanEvents(event);
-    end
   end
 
   function WeakAuras.CheckRuneCooldown()
@@ -1657,56 +1740,67 @@ do
   end
 
   function WeakAuras.GetSpellCooldownUnified(id, runeDuration)
-    local charges, maxCharges, startTimeCharges, durationCharges
-    local startTime, duration, enabled = GetSpellCooldown(id)
-    -- Spells can return both information via GetSpellCooldown and GetSpellCharges
-    -- E.g. Rune of Power see Github-Issue: #1060
-    -- So if GetSpellCooldown returned a cooldown, use that one. Otherwise check GetSpellCharges
-    if duration and duration <= 1 or (duration == gcdDuration and startTime == gcdStart) then
-      charges, maxCharges, startTimeCharges, durationCharges = GetSpellCharges(id);
-    end
+    local startTimeCooldown, durationCooldown, enabled = GetSpellCooldown(id)
+    local charges, maxCharges, startTimeCharges, durationCharges = GetSpellCharges(id);
 
-    local cooldownBecauseRune = false;
-    if (charges == nil) then -- charges is nil if the spell has no charges. Or in other words GetSpellCharges is the wrong api
-      local basecd = GetSpellBaseCooldown(id);
-      if (enabled == 0) then
-        startTime, duration = 0, 0
-      end
+    startTimeCooldown = startTimeCooldown or 0;
+    durationCooldown = durationCooldown or 0;
 
-      local spellcount = GetSpellCount(id);
-      -- GetSpellCount returns 0 for all spells that have no spell counts, so we only use that information if
-      -- either the spell count is greater than 0
-      -- or we have a ability without a base cooldown
-      -- Checking the base cooldown is not enough though, since some abilities have no base cooldown, but can still be on cooldown
-      -- e.g. Raging Blow that gains a cooldown with a talent
-      if (spellcount > 0) then
-        charges = spellcount;
-      end
+    startTimeCharges = startTimeCharges or 0;
+    durationCharges = durationCharges or 0;
 
-      local onNonGCDCD = duration and startTime and duration > 0 and (duration ~= gcdDuration or startTime ~= gcdStart);
-
-      if ((basecd and basecd > 0) or onNonGCDCD) then
-        cooldownBecauseRune = runeDuration and duration and abs(duration - runeDuration) < 0.001;
-      else
-        charges = spellcount;
-        startTime = 0;
-        duration = 0;
-      end
-    elseif (charges == maxCharges) then
-      startTime, duration = 0, 0;
-    else
-      startTime, duration = startTimeCharges, durationCharges
-    end
-
-    startTime = startTime or 0;
-    duration = duration or 0;
     -- WORKAROUND Sometimes the API returns very high bogus numbers causing client freeezes, discard them here. WowAce issue #1008
-    if (duration > 604800) then
-      duration = 0;
-      startTime = 0;
+    if (durationCooldown > 604800) then
+      durationCooldown = 0;
+      startTimeCooldown = 0;
     end
 
-    return charges, maxCharges, startTime, duration, cooldownBecauseRune;
+    -- Default to GetSpellCharges
+    local unifiedCooldownBecauseRune, cooldownBecauseRune = false, false;
+    if (enabled == 0) then
+      startTimeCooldown, durationCooldown = 0, 0
+    end
+
+    local onNonGCDCD = durationCooldown and startTimeCooldown and durationCooldown > 0 and (durationCooldown ~= gcdDuration or startTimeCooldown ~= gcdStart);
+    if (onNonGCDCD) then
+      cooldownBecauseRune = runeDuration and durationCooldown and abs(durationCooldown - runeDuration) < 0.001;
+      unifiedCooldownBecauseRune = cooldownBecauseRune
+    end
+
+    local startTime, duration = startTimeCooldown, durationCooldown
+    if (charges == nil) then
+      -- charges is nil if the spell has no charges.
+      -- Nothing to do in that case
+    elseif (charges == maxCharges) then
+      -- At max charges,
+      startTime, duration = 0, 0;
+      startTimeCharges, durationCharges = 0, 0
+    else
+      -- Spells can return both information via GetSpellCooldown and GetSpellCharges
+      -- E.g. Rune of Power see Github-Issue: #1060
+      -- So if GetSpellCooldown returned a cooldown, use that one, if it's a "significant" cooldown
+      --  Otherwise check GetSpellCharges
+      -- A few abilities have a minor cooldown just to prevent the user from triggering it multiple times,
+      -- ignore them since pratically no one wants to see them
+      if duration and duration <= 1.5 or (duration == gcdDuration and startTime == gcdStart) then
+        startTime, duration = startTimeCharges, durationCharges
+        unifiedCooldownBecauseRune = false
+      end
+    end
+
+    local spellcount = GetSpellCount(id);
+    local basecd = GetSpellBaseCooldown(id);
+    -- GetSpellCount returns 0 for all spells that have no spell counts, so we only use that information if
+    -- either the spell count is greater than 0
+    -- or we have a ability without a base cooldown
+    -- Checking the base cooldown is not enough though, since some abilities have no base cooldown, but can still be on cooldown
+    -- e.g. Raging Blow that gains a cooldown with a talent
+    if (charges == nil and not onNonGCDCD and (spellcount > 0 or not basecd or basecd == 0)) then
+      charges = spellcount;
+    end
+
+    return charges, maxCharges, startTime, duration, unifiedCooldownBecauseRune,
+           startTimeCooldown, durationCooldown, cooldownBecauseRune, startTimeCharges, durationCharges;
   end
 
   function WeakAuras.CheckSpellKnown()
@@ -1719,79 +1813,56 @@ do
     end
   end
 
+  function WeakAuras.CheckSpellCooldown(id, runeDuration)
+    local charges, maxCharges, startTime, duration, unifiedCooldownBecauseRune,
+          startTimeCooldown, durationCooldown, cooldownBecauseRune, startTimeCharges, durationCharges
+          = WeakAuras.GetSpellCooldownUnified(id, runeDuration);
+
+    local time = GetTime();
+    local remaining = startTime + duration - time;
+
+    local chargesChanged = spellCharges[id] ~= charges;
+    local chargesDifference = (charges or 0) - (spellCharges[id] or 0)
+    spellCharges[id] = charges;
+    spellChargesMax[id] = maxCharges;
+
+    local changed = false
+    local spellId = select(7, GetSpellInfo(id))
+    if spellIds[id] ~= spellId then
+      spellIds[id] = spellId
+      changed = true
+      chargesChanged = true
+    end
+
+    changed = spellCds:HandleSpell(id, startTime, duration) or changed
+    if not unifiedCooldownBecauseRune then
+      changed = spellCdsRune:HandleSpell(id, startTime, duration) or changed
+    end
+    local cdChanged, nowReady = spellCdsOnlyCooldown:HandleSpell(id, startTimeCooldown, durationCooldown)
+    changed = cdChanged or changed
+    if not cooldownBecauseRune then
+      changed = spellCdsOnlyCooldownRune:HandleSpell(id, startTimeCooldown, durationCooldown) or changed
+    end
+    local chargeChanged, chargeNowReady = spellCdsCharges:HandleSpell(id, startTimeCharges, durationCharges)
+    changed = chargeChanged or changed
+    nowReady = chargeNowReady or nowReady
+
+    if nowReady then
+      WeakAuras.ScanEvents("SPELL_COOLDOWN_READY", id);
+    end
+
+    if changed or chargesChanged then
+      WeakAuras.ScanEvents("SPELL_COOLDOWN_CHANGED", id);
+    end
+
+    if (chargesDifference ~= 0 ) then
+      WeakAuras.ScanEvents("SPELL_CHARGES_CHANGED", id, chargesDifference, charges or 0);
+    end
+  end
+
   function WeakAuras.CheckSpellCooldows(runeDuration)
     for id, _ in pairs(spells) do
-      local charges, maxCharges, startTime, duration, cooldownBecauseRune = WeakAuras.GetSpellCooldownUnified(id, runeDuration);
-
-      local time = GetTime();
-      local remaining = startTime + duration - time;
-
-      local chargesChanged = spellCharges[id] ~= charges;
-      local chargesDifference =  (charges or 0) - (spellCharges[id] or 0)
-      if (chargesDifference ~= 0 ) then
-        WeakAuras.ScanEvents("SPELL_CHARGES_CHANGED", id, chargesDifference, charges or 0);
-      end
-      spellCharges[id] = charges;
-      spellChargesMax[id] = maxCharges;
-
-      if(duration > 0 and (duration ~= gcdDuration or startTime ~= gcdStart)) then
-        -- On non-GCD cooldown
-        local endTime = startTime + duration;
-
-        if not(spellCdExps[id]) then
-          -- New cooldown
-          spellCdDurs[id] = duration;
-          spellCdExps[id] = endTime;
-          spellCdHandles[id] = timer:ScheduleTimerFixed(SpellCooldownFinished, endTime - time, id);
-          if (spellsRune[id] and not cooldownBecauseRune ) then
-            spellCdDursRune[id] = duration;
-            spellCdExpsRune[id] = endTime;
-            spellCdRuneHandles[id] = timer:ScheduleTimerFixed(SpellCooldownRuneFinished, endTime - time, id);
-          end
-          WeakAuras.ScanEvents("SPELL_COOLDOWN_STARTED", id);
-        elseif(spellCdExps[id] ~= endTime or chargesChanged) then
-          -- Cooldown is now different
-          if(spellCdHandles[id]) then
-            timer:CancelTimer(spellCdHandles[id]);
-          end
-
-          spellCdDurs[id] = duration;
-          spellCdExps[id] = endTime;
-          if (maxCharges == nil or charges + 1 == maxCharges) then
-            spellCdHandles[id] = timer:ScheduleTimerFixed(SpellCooldownFinished, endTime - time, id);
-          end
-          if (spellsRune[id] and not cooldownBecauseRune ) then
-            spellCdDursRune[id] = duration;
-            spellCdExpsRune[id] = endTime;
-
-            if(spellCdRuneHandles[id]) then
-              timer:CancelTimer(spellCdRuneHandles[id]);
-            end
-            spellCdRuneHandles[id] = timer:ScheduleTimerFixed(SpellCooldownRuneFinished, endTime - time, id);
-          end
-          WeakAuras.ScanEvents("SPELL_COOLDOWN_CHANGED", id);
-        end
-      else
-        if(spellCdExps[id]) then
-          local endTime = startTime + duration;
-          if (duration == WeakAuras.gcdDuration() and startTime == gcdStart and spellCdExps[id] > endTime or duration == 0) then
-            -- CheckCooldownReady caught the spell cooldown before the timer callback
-            -- This happens if a proc resets the cooldown
-            if(spellCdHandles[id]) then
-              timer:CancelTimer(spellCdHandles[id]);
-            end
-            SpellCooldownFinished(id);
-
-            if(spellCdRuneHandles[id]) then
-              timer:CancelTimer(spellCdRuneHandles[id]);
-            end
-            SpellCooldownRuneFinished(id);
-          end
-        end
-        if (chargesChanged) then
-          WeakAuras.ScanEvents("SPELL_COOLDOWN_CHANGED", id);
-        end
-      end
+      WeakAuras.CheckSpellCooldown(id, runeDuration)
     end
   end
 
@@ -1951,7 +2022,6 @@ do
     if not id or id == 0 then return end
 
     if (ignoreRunes) then
-      spellsRune[id] = true;
       for i = 1, 6 do
         WeakAuras.WatchRuneCooldown(i);
       end
@@ -1961,35 +2031,24 @@ do
       return;
     end
     spells[id] = true;
+    spellIds[id] = select(7, GetSpellInfo(id))
     spellKnown[id] = WeakAuras.IsSpellKnownIncludingPet(id);
 
-    local charges, maxCharges, startTime, duration = WeakAuras.GetSpellCooldownUnified(id);
+    local charges, maxCharges, startTime, duration, unifiedCooldownBecauseRune,
+          startTimeCooldown, durationCooldown, cooldownBecauseRune, startTimeCharges, durationCharges
+          = WeakAuras.GetSpellCooldownUnified(id, GetRuneDuration());
+
     spellCharges[id] = charges;
     spellChargesMax[id] = maxCharges;
-
-    if(duration > 0 and (duration ~= gcdDuration or startTime ~= gcdStart)) then
-      local time = GetTime();
-      local endTime = startTime + duration;
-      spellCdDurs[id] = duration;
-      spellCdExps[id] = endTime;
-      local runeDuration = -100;
-      for id, _ in pairs(runes) do
-        local startTime, duration = GetRuneCooldown(id);
-        startTime = startTime or 0;
-        duration = duration or 0;
-        runeDuration = duration > 0 and duration or runeDuration
-      end
-      if (duration ~= runeDuration and ignoreRunes) then
-        spellCdDursRune[id] = duration;
-        spellCdExpsRune[id] = endTime;
-        if not(spellCdRuneHandles[id]) then
-          spellCdRuneHandles[id] = timer:ScheduleTimerFixed(SpellCooldownRuneFinished, endTime - time, id);
-        end
-      end
-      if not(spellCdHandles[id]) then
-        spellCdHandles[id] = timer:ScheduleTimerFixed(SpellCooldownFinished, endTime - time, id);
-      end
+    spellCds:HandleSpell(id, startTime, duration)
+    if not unifiedCooldownBecauseRune then
+      spellCdsRune:HandleSpell(id, startTime, duration)
     end
+    spellCdsOnlyCooldown:HandleSpell(id, startTimeCooldown, durationCooldown)
+    if not cooldownBecauseRune then
+      spellCdsOnlyCooldownRune:HandleSpell(id, startTimeCooldown, durationCooldown)
+    end
+    spellCdsCharges:HandleSpell(id, startTimeCharges, durationCharges)
   end
 
   function WeakAuras.WatchItemCooldown(id)
@@ -2077,6 +2136,36 @@ do
   function WeakAuras.SpellActivationActive(id)
     return spellActivationSpellsCurrent[id];
   end
+end
+
+local watchUnitChange
+local unitChangeGUIDS
+
+function WeakAuras.WatchUnitChange(unit)
+  unit = string.upper(unit)
+  if not watchUnitChange then
+    watchUnitChange = CreateFrame("FRAME");
+    WeakAuras.frames["Unit Change Frame"] = watchUnitChange;
+    watchUnitChange:RegisterEvent("PLAYER_TARGET_CHANGED")
+    watchUnitChange:RegisterEvent("PLAYER_FOCUS_CHANGED");
+    watchUnitChange:RegisterEvent("UNIT_TARGET");
+    watchUnitChange:RegisterEvent("INSTANCE_ENCOUNTER_ENGAGE_UNIT");
+    watchUnitChange:RegisterEvent("GROUP_ROSTER_UPDATE");
+
+    watchUnitChange:SetScript("OnEvent", function(self, event)
+      WeakAuras.StartProfileSystem("generictrigger");
+      for unit, guid in pairs(unitChangeGUIDS) do
+        local newGuid = UnitGUID(unit) or ""
+        if guid ~= newGuid then
+          WeakAuras.ScanEvents("UNIT_CHANGED_" .. unit)
+          unitChangeGUIDS[unit] = newGuid
+        end
+      end
+      WeakAuras.StopProfileSystem("generictrigger");
+    end)
+  end
+  unitChangeGUIDS = unitChangeGUIDS or {}
+  unitChangeGUIDS[unit] = UnitGUID(unit) or ""
 end
 
 function WeakAuras.GetEquipmentSetInfo(itemSetName, partial)
@@ -2387,13 +2476,13 @@ do
 
     local v = bars[id];
     local bestMatch;
-    if (addon and addon ~= v.addon) then
+    if (addon ~= "" and addon ~= v.addon) then
       return false;
     end
     if (spellId ~= "" and spellId ~= v.spellId) then
       return false;
     end
-    if (text) then
+    if (text ~= "") then
       if(textOperator == "==") then
         if (v.text ~= text) then
           return false;
@@ -2634,72 +2723,37 @@ end
 function GenericTrigger.CanHaveDuration(data, triggernum)
   local trigger = data.triggers[triggernum].trigger
 
-  if(
-    (
-    (
-    trigger.type == "event"
-    or trigger.type == "status"
-    )
-    and (
-    (
-    trigger.event
-    and WeakAuras.event_prototypes[trigger.event]
-    and (WeakAuras.event_prototypes[trigger.event].durationFunc
-    or WeakAuras.event_prototypes[trigger.event].canHaveDuration)
-    )
-    or (
-    trigger.unevent == "timed"
-    and trigger.duration
-    )
-    )
-    and not trigger.use_inverse
-    )
-    or (
-    trigger.type == "custom"
-    and (
-    (
-    trigger.custom_type == "event"
-    and trigger.custom_hide == "timed"
-    and trigger.duration
-    )
-    or (
-    trigger.customDuration
-    and trigger.customDuration ~= ""
-    )
-    or trigger.custom_type == "stateupdate"
-    )
-    )
-    ) then
-    if(
-      (
-      trigger.type == "event"
-      or trigger.type == "status"
-      )
-      and trigger.event
-      and WeakAuras.event_prototypes[trigger.event]
-      and WeakAuras.event_prototypes[trigger.event].durationFunc
-      ) then
-      if(type(WeakAuras.event_prototypes[trigger.event].init) == "function") then
-        WeakAuras.event_prototypes[trigger.event].init(trigger);
+  if (trigger.type == "event" or trigger.type == "status") then
+    if trigger.event and WeakAuras.event_prototypes[trigger.event] then
+      if WeakAuras.event_prototypes[trigger.event].durationFunc then
+        if(type(WeakAuras.event_prototypes[trigger.event].init) == "function") then
+          WeakAuras.event_prototypes[trigger.event].init(trigger);
+        end
+        local current, maximum, custom = WeakAuras.event_prototypes[trigger.event].durationFunc(trigger);
+        current = type(current) ~= "number" and current or 0
+        maximum = type(maximum) ~= "number" and maximum or 0
+        if(custom) then
+          return {current = current, maximum = maximum};
+        else
+          return "timed";
+        end
+      elseif WeakAuras.event_prototypes[trigger.event].canHaveDuration then
+        return WeakAuras.event_prototypes[trigger.event].canHaveDuration
       end
-      local current, maximum, custom = WeakAuras.event_prototypes[trigger.event].durationFunc(trigger);
-      current = type(current) ~= "number" and current or 0
-      maximum = type(maximum) ~= "number" and maximum or 0
-      if(custom) then
-        return {current = current, maximum = maximum};
-      else
-        return "timed";
-      end
-    elseif trigger.event
-      and WeakAuras.event_prototypes[trigger.event]
-      and WeakAuras.event_prototypes[trigger.event].canHaveDuration then
-      return WeakAuras.event_prototypes[trigger.event].canHaveDuration
-    else
+    end
+    if trigger.unevent == "timed" and trigger.duration then
+      return "timed"
+    end
+  elseif (trigger.type == "custom") then
+    if trigger.custom_type == "event" and trigger.custom_hide == "timed" and trigger.duration then
+      return "timed";
+    elseif (trigger.customDuration and trigger.customDuration ~= "") then
+      return "timed";
+    elseif (trigger.custom_type == "stateupdate") then
       return "timed";
     end
-  else
-    return false;
   end
+  return false
 end
 
 --- Returns a table containing the names of all overlays
@@ -2977,6 +3031,8 @@ function GenericTrigger.GetTriggerConditions(data, triggernum)
             end
             if (v.operator_types_without_equal) then
               result[v.name].operator_types_without_equal = true;
+            elseif (v.operator_types_only_equal) then
+              result[v.name].operator_types_only_equal = true;
             end
           end
         end

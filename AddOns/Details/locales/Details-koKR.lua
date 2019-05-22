@@ -1121,12 +1121,6 @@ L["STRING_OPTIONS_SPELL_NOTFOUND"] = "주문을 찾을 수 없습니다."
 L["STRING_OPTIONS_SPELL_REMOVE"] = "삭제"
 L["STRING_OPTIONS_SPELL_RESET"] = "초기화"
 L["STRING_OPTIONS_SPELL_SPELLID"] = "주문 ID"
-L["STRING_OPTIONS_SPELL_SPELLID_DESC"] = [=[ID는 월드 오브 워크래프트 내에서 주문을 식별하기 위한 고유 숫자입니다. 숫자를 알아내는 여러가지 방법입니다:
-
-- 플레이어 상세 내역 창에서 주문 바 위에 마우스 커서를 올리고 쉬프트 키를 누릅니다.
-- 주문Id 입력창에 주문 이름을 입력하면 입력한 주문의 툴팁이 표시됩니다.
-- 대부분의 커뮤니티 웹사이트 링크 주소에 주문ID가 있습니다.
-- 아래의 주문 캐쉬에서 찾아봅니다:]=]
 L["STRING_OPTIONS_STRETCH"] = "상단 면에 늘리기 버튼 배치"
 L["STRING_OPTIONS_STRETCH_DESC"] = "창의 상단에 늘리기 버튼을 배치합니다."
 L["STRING_OPTIONS_STRETCHTOP"] = "늘리기 버튼 항상 위에"
@@ -1499,6 +1493,8 @@ L["STRING_SEGMENTS_LIST_OVERALL"] = "종합"
 L["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] = "전투 참여 시간"
 L["STRING_SEGMENTS_LIST_TOTALTIME"] = "전체 시간"
 L["STRING_SEGMENTS_LIST_TRASH"] = "일반몹"
+--[[Translation missing --]]
+--[[ L["STRING_SEGMENTS_LIST_WASTED_TIME"] = ""--]] 
 L["STRING_SHIELD_HEAL"] = "막음"
 L["STRING_SHIELD_OVERHEAL"] = "낭비됨"
 L["STRING_SHORTCUT_RIGHTCLICK"] = "오른쪽 클릭으로 닫기"

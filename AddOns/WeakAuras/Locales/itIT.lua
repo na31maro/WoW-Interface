@@ -5,209 +5,132 @@ end
 local L = WeakAuras.L
 
 -- WeakAuras
---[[Translation missing --]]
-L["   • %d auras added"] = "   • %d auras added"
---[[Translation missing --]]
-L["   • %d auras deleted"] = "   • %d auras deleted"
---[[Translation missing --]]
-L["   • %d auras modified"] = "   • %d auras modified"
-L["!="] = "!="
---[[Translation missing --]]
-L["%s - %i. Trigger"] = "%s - %i. Trigger"
---[[Translation missing --]]
-L["%s - Alpha Animation"] = "%s - Alpha Animation"
---[[Translation missing --]]
-L["%s - Color Animation"] = "%s - Color Animation"
---[[Translation missing --]]
-L["%s - Condition Custom Chat"] = "%s - Condition Custom Chat"
---[[Translation missing --]]
-L["%s - Custom Text"] = "%s - Custom Text"
---[[Translation missing --]]
-L["%s - Finish"] = "%s - Finish"
---[[Translation missing --]]
-L["%s - Finish Action"] = "%s - Finish Action"
---[[Translation missing --]]
-L["%s - Finish Custom Text"] = "%s - Finish Custom Text"
---[[Translation missing --]]
-L["%s - Init Action"] = "%s - Init Action"
---[[Translation missing --]]
-L["%s - Main"] = "%s - Main"
---[[Translation missing --]]
-L["%s - Rotate Animation"] = "%s - Rotate Animation"
---[[Translation missing --]]
-L["%s - Scale Animation"] = "%s - Scale Animation"
---[[Translation missing --]]
-L["%s - Start"] = "%s - Start"
---[[Translation missing --]]
-L["%s - Start Action"] = "%s - Start Action"
---[[Translation missing --]]
-L["%s - Start Custom Text"] = "%s - Start Custom Text"
---[[Translation missing --]]
-L["%s - Translate Animation"] = "%s - Translate Animation"
---[[Translation missing --]]
-L["%s - Trigger Logic"] = "%s - Trigger Logic"
---[[Translation missing --]]
-L["%s Duration Function"] = "%s Duration Function"
---[[Translation missing --]]
-L["%s Icon Function"] = "%s Icon Function"
---[[Translation missing --]]
-L["%s Name Function"] = "%s Name Function"
---[[Translation missing --]]
-L["%s Overlay Color"] = "%s Overlay Color"
+L["   • %d auras added"] = "   • %d aure aggiunte"
+L["   • %d auras deleted"] = " • %d aure cancellate"
+L["   • %d auras modified"] = "• %d aure modificate"
+L["%s - %i. Trigger"] = "%s - %i. Innesco"
+L["%s - Alpha Animation"] = "%s - Animazione  Alpha"
+L["%s - Color Animation"] = "%s - Animazione Colore"
+L["%s - Condition Custom Chat"] = "%s - Condizioni Chat Personalizzata"
+L["%s - Custom Text"] = "%s - Testo Personalizzato"
+L["%s - Finish"] = "%s - Fine"
+L["%s - Finish Action"] = "%s - Azione Finale"
+L["%s - Finish Custom Text"] = "%s - Testo Personalizzato Finale"
+L["%s - Init Action"] = "%s - Azione Iniziale"
+L["%s - Main"] = "%s - Principale"
+L["%s - Rotate Animation"] = "%s - Animazione di Rotazione"
+L["%s - Scale Animation"] = "%s - Animazione di Ridimensionamento"
+L["%s - Start"] = "%s - Inizio"
+L["%s - Start Action"] = "%s - Azione Iniziale"
+L["%s - Start Custom Text"] = "%s - Testo Personalizzato Iniziale"
+L["%s - Translate Animation"] = "%s - Animazione di Traslazione"
+L["%s - Trigger Logic"] = "%s - Logica dell'innesco"
+L["%s Duration Function"] = "%s Durata della Funzione"
+L["%s Icon Function"] = "%s Icona della Funzione"
+L["%s Name Function"] = "%s Name della Funzione"
+L["%s Overlay Color"] = "%s Colore Overlay"
 --[[Translation missing --]]
 L["%s Stacks Function"] = "%s Stacks Function"
+L["%s Texture Function"] = "%s Funzione di Texture"
+L["%s total auras"] = "%s aure totali"
+L["%s Trigger Function"] = "%s Funzione di Innesco"
+L["%s Untrigger Function"] = "%s Funzione di Disinnesco"
+L["/wa help - Show this message"] = "/wa help - Mostra questo messaggio"
+L["/wa minimap - Toggle the minimap icon"] = "/wa minimap - Mostra/Nascondi l'icona della minimappa"
+L["/wa pprint - Show the results from the most recent profiling"] = "/wa pprint - Mostra i risultati del più recente profiling"
+L["/wa pstart - Start profiling"] = "/wa pstart - Avvia il profiling"
+L["/wa pstop - Finish profiling"] = "/wa pstop - Termina il profiling"
+L["|cff9900ffWeakAuras EXPERIMENTAL Profiling Data:|r"] = "|cff9900ffWeakAuras SPERIMENTALE Profiling Data:|r"
+L["|cffeda55fLeft-Click|r to toggle showing the main window."] = "|cffeda55fClick Sinistro|r per mostrare/nascondere la finestra principale."
+L["|cffeda55fMiddle-Click|r to toggle the minimap icon on or off."] = "|cffeda55fClick Centrale|r per mostrare/nascondere l'icona della minimappa."
+L["|cffeda55fRight-Click|r to toggle performance profiling on or off."] = "|cffeda55fClick Destro|r per attivare/disattivare il profiling delle prestazioni."
+L["|cffeda55fShift-Click|r to pause addon execution."] = "|cffeda55fShift Click|r per mettere in pausa l'addon."
+L["|cffeda55fShift-Right-Click|r to show profiling results."] = "|cffeda55fShift Click Destro|r per mostrare i risultati del profiling."
 --[[Translation missing --]]
-L["%s Texture Function"] = "%s Texture Function"
---[[Translation missing --]]
-L["%s total auras"] = "%s total auras"
---[[Translation missing --]]
-L["%s Trigger Function"] = "%s Trigger Function"
---[[Translation missing --]]
-L["%s Untrigger Function"] = "%s Untrigger Function"
---[[Translation missing --]]
-L["/wa help - Show this message"] = "/wa help - Show this message"
---[[Translation missing --]]
-L["/wa minimap - Toggle the minimap icon"] = "/wa minimap - Toggle the minimap icon"
---[[Translation missing --]]
-L["/wa pprint - Show the results from the most recent profiling"] = "/wa pprint - Show the results from the most recent profiling"
---[[Translation missing --]]
-L["/wa pstart - Start profiling"] = "/wa pstart - Start profiling"
---[[Translation missing --]]
-L["/wa pstop - Finish profiling"] = "/wa pstop - Finish profiling"
---[[Translation missing --]]
-L["|cff9900ffWeakAuras EXPERIMENTAL Profiling Data:|r"] = "|cff9900ffWeakAuras EXPERIMENTAL Profiling Data:|r"
---[[Translation missing --]]
-L["|cffeda55fLeft-Click|r to toggle showing the main window."] = "|cffeda55fLeft-Click|r to toggle showing the main window."
---[[Translation missing --]]
-L["|cffeda55fMiddle-Click|r to toggle the minimap icon on or off."] = "|cffeda55fMiddle-Click|r to toggle the minimap icon on or off."
---[[Translation missing --]]
-L["|cffeda55fRight-Click|r to toggle performance profiling on or off."] = "|cffeda55fRight-Click|r to toggle performance profiling on or off."
---[[Translation missing --]]
-L["|cffeda55fShift-Click|r to pause addon execution."] = "|cffeda55fShift-Click|r to pause addon execution."
---[[Translation missing --]]
-L["|cffeda55fShift-Right-Click|r to show profiling results."] = "|cffeda55fShift-Right-Click|r to show profiling results."
-L["<"] = "<"
-L["<="] = "<="
-L["="] = "="
-L[">"] = ">"
-L[">="] = ">="
---[[Translation missing --]]
-L["1. Text Color"] = "1. Text Color"
---[[Translation missing --]]
-L["1. Text Size"] = "1. Text Size"
+L["1. Text"] = "1. Text"
 L["10 Man Raid"] = "Incursione da 10 giocatori"
 --[[Translation missing --]]
-L["2. Text Color"] = "2. Text Color"
---[[Translation missing --]]
-L["2. Text Size"] = "2. Text Size"
---[[Translation missing --]]
-L["20 Man Raid"] = "20 Man Raid"
+L["2. Text"] = "2. Text"
+L["20 Man Raid"] = "incursione da 20 giocatori"
 L["25 Man Raid"] = "Incursione da 25 giocatori"
---[[Translation missing --]]
-L["40 Man Raid"] = "40 Man Raid"
+L["40 Man Raid"] = "incursione da 40 giocatori"
 L["5 Man Dungeon"] = "Spedizione da 5 giocatori"
---[[Translation missing --]]
-L["A WeakAura just tried to use a forbidden function but has been blocked from doing so. Please check your auras!"] = "A WeakAura just tried to use a forbidden function but has been blocked from doing so. Please check your auras!"
+L["A WeakAura just tried to use a forbidden function but has been blocked from doing so. Please check your auras!"] = "Una WeakAura ha appena provato ad usare una funzione proibita ma è stata bloccata. Per favore controlla le tue aure!"
 L["Absorb"] = "Assorbimento"
---[[Translation missing --]]
-L["Absorb Display"] = "Absorb Display"
+L["Absorb Display"] = "Mostra Assorbimento"
 L["Absorbed"] = "Assorbito"
 --[[Translation missing --]]
 L["Action Button Glow"] = "Action Button Glow"
 L["Action Usable"] = "Azione utilizzabile"
---[[Translation missing --]]
-L["Actions"] = "Actions"
---[[Translation missing --]]
-L["Active"] = "Active"
---[[Translation missing --]]
-L["Add Missing Auras"] = "Add Missing Auras"
---[[Translation missing --]]
-L["Additional Trigger Replacements"] = "Additional Trigger Replacements"
---[[Translation missing --]]
-L["Adjust Timer"] = "Adjust Timer"
+L["Actions"] = "Azioni"
+L["Active"] = "Attivo"
+L["Add Missing Auras"] = "Aggiungi Aure Mancanti"
+L["Additional Trigger Replacements"] = "Ulteriori Sostituzioni di Innesco"
+L["Adjust Timer"] = "Regola il Timer"
 L["Affected"] = "Affetto"
---[[Translation missing --]]
-L["Affected Unit Count"] = "Affected Unit Count"
---[[Translation missing --]]
+L["Affected Unit Count"] = "Conta Unità Interessate"
 L["Aggro"] = "Aggro"
---[[Translation missing --]]
-L["Alert Type"] = "Alert Type"
+L["Alert Type"] = "Tipo di Allerta"
 L["Alive"] = "Vivo"
---[[Translation missing --]]
-L["All"] = "All"
+L["All"] = "Tutto"
 L["All Triggers"] = "Tutte le attivazioni"
---[[Translation missing --]]
-L["Alliance"] = "Alliance"
---[[Translation missing --]]
-L["Allow partial matches"] = "Allow partial matches"
---[[Translation missing --]]
-L["Alpha"] = "Alpha"
-L["Alternate Power"] = "Alternate Power"
---[[Translation missing --]]
-L["Always"] = "Always"
---[[Translation missing --]]
-L["Always active trigger"] = "Always active trigger"
-L["Ambience"] = "Ambiente"
+L["Alliance"] = "Alleanza"
+L["Allow partial matches"] = "Permetti corrispondenze parziali"
+L["Alpha"] = "Alfa"
+L["Alternate Power"] = "Risorse Speciali"
+L["Always"] = "Sempre"
+L["Always active trigger"] = "Innesco sempre attivo"
 L["Amount"] = "Quantità"
---[[Translation missing --]]
-L["And Talent selected"] = "And Talent selected"
---[[Translation missing --]]
-L["Animations"] = "Animations"
---[[Translation missing --]]
-L["Anticlockwise"] = "Anticlockwise"
---[[Translation missing --]]
-L["Any"] = "Any"
+L["And Talent selected"] = "E Talento selezionato"
+L["Animations"] = "Animazioni"
+L["Anticlockwise"] = "Antiorario"
+L["Any"] = "Qualsiasi"
 L["Any Triggers"] = "Qualsiasi attivazione"
 L["Arena"] = "Arena"
+--[[Translation missing --]]
+L["Armor (%)"] = "Armor (%)"
+--[[Translation missing --]]
+L["Armor against Target (%)"] = "Armor against Target (%)"
+--[[Translation missing --]]
+L["Armor Rating"] = "Armor Rating"
 L["Ascending"] = "Crescente"
---[[Translation missing --]]
-L["Assist"] = "Assist"
 L["At Least One Enemy"] = "Almeno un nemico"
---[[Translation missing --]]
-L["Attach to End"] = "Attach to End"
---[[Translation missing --]]
-L["Attach to Start"] = "Attach to Start"
+L["Attach to End"] = "Aggiungi alla Fine"
+L["Attach to Start"] = "Aggiungi all'inizio"
 L["Attackable"] = "Attaccabile"
---[[Translation missing --]]
-L["Attackable Target"] = "Attackable Target"
+L["Attackable Target"] = "Bersaglio attaccabile"
 L["Aura"] = "Aura"
 L["Aura Applied"] = "Aura applicata"
 L["Aura Applied Dose"] = "Parte di aura applicata"
 L["Aura Broken"] = "Aura finita"
 L["Aura Broken Spell"] = "Aura di magia finita"
---[[Translation missing --]]
-L["Aura Name"] = "Aura Name"
---[[Translation missing --]]
-L["Aura Names"] = "Aura Names"
+L["Aura Name"] = "Nome Aura"
+L["Aura Names"] = "Nomi Aura"
 L["Aura Refresh"] = "Aura rinnovata"
 L["Aura Removed"] = "Aura rimossa"
 L["Aura Removed Dose"] = "Parte di aura rimossa"
 L["Aura Stack"] = "Aura Stack"
 L["Aura Type"] = "Tipo di aura"
---[[Translation missing --]]
-L["Aura(s) Found"] = "Aura(s) Found"
---[[Translation missing --]]
-L["Aura(s) Missing"] = "Aura(s) Missing"
+L["Aura(s) Found"] = "Aura(e) Trovata(e)"
+L["Aura(s) Missing"] = "Aura(e) Mancante(i)"
 L["Aura:"] = "Aura:"
-L["Auras:"] = "Auras:"
+L["Auras:"] = "Aure:"
+L["Author Options"] = "Opzioni Autore"
 --[[Translation missing --]]
-L["Author Options"] = "Author Options"
+L["Auto"] = "Auto"
 --[[Translation missing --]]
 L["Autocast Shine"] = "Autocast Shine"
---[[Translation missing --]]
-L["Auto-Clone (Show all Matches)"] = "Auto-Clone (Show all Matches)"
+L["Auto-Clone (Show all Matches)"] = "Auto-Clona (Mostra tutte le corrispondenze)"
 L["Automatic"] = "Automatico"
+L["Automatic Rotation"] = "Rotazione Automatica"
 --[[Translation missing --]]
-L["Automatic Rotation"] = "Automatic Rotation"
+L["Avoidance (%)"] = "Avoidance (%)"
 --[[Translation missing --]]
-L["Back"] = "Back"
+L["Avoidance Rating"] = "Avoidance Rating"
 L["Back and Forth"] = "Avanti e indietro"
---[[Translation missing --]]
-L["Backdrop Color"] = "Backdrop Color"
---[[Translation missing --]]
-L["Background Color"] = "Background Color"
---[[Translation missing --]]
-L["Bar Color"] = "Bar Color"
+L["Backdrop Color"] = "Colore Fondale"
+L["Background Color"] = "Colore Sfondo"
+L["Bar Color"] = "Colore Barra"
 L["Battle.net Whisper"] = "Sussurri di Battle.net"
 L["Battleground"] = "Campo di battaglia"
 L["BG>Raid>Party>Say"] = "BG>Raid>Party>Say"
@@ -217,18 +140,17 @@ L["BG-System Alliance"] = "BG-System Alliance"
 L["BG-System Horde"] = "BG-System Horde"
 --[[Translation missing --]]
 L["BG-System Neutral"] = "BG-System Neutral"
---[[Translation missing --]]
-L["BigWigs Addon"] = "BigWigs Addon"
---[[Translation missing --]]
-L["BigWigs Message"] = "BigWigs Message"
---[[Translation missing --]]
-L["BigWigs Timer"] = "BigWigs Timer"
+L["BigWigs Addon"] = "BigWigs Add-on"
+L["BigWigs Message"] = "Messaggio di BigWigs"
+L["BigWigs Timer"] = "Timer di BigWigs"
 L["Blizzard Combat Text"] = "Testo di combattimento Blizzard"
 L["Block"] = "Bloccare"
+--[[Translation missing --]]
+L["Block (%)"] = "Block (%)"
+--[[Translation missing --]]
+L["Block against Target (%)"] = "Block against Target (%)"
 L["Blocked"] = "Bloccato"
---[[Translation missing --]]
-L["Border Color"] = "Border Color"
---[[Translation missing --]]
+L["Border Color"] = "Colore Bordo"
 L["Boss"] = "Boss"
 L["Boss Emote"] = "Boss Emote"
 --[[Translation missing --]]
@@ -240,10 +162,8 @@ L["Bottom to Top"] = "Basso verso l'alto"
 L["Bounce"] = "Balzo"
 L["Bounce with Decay"] = "Bounce with Decay"
 L["Buff"] = "Buff"
---[[Translation missing --]]
-L["Buffed/Debuffed"] = "Buffed/Debuffed"
---[[Translation missing --]]
-L["Can be used for e.g. checking if \"boss1target\" is the same as \"player\"."] = "Can be used for e.g. checking if \"boss1target\" is the same as \"player\"."
+L["Buffed/Debuffed"] = "Buffato/Debuffato"
+L["Can be used for e.g. checking if \"boss1target\" is the same as \"player\"."] = "Può essere usato per esempio per controllare se \"boss1target\" sia uguale a \"player\"."
 L["Cast"] = "Cast"
 L["Cast Failed"] = "Cast fallito"
 L["Cast Start"] = "Inizio cast"
@@ -260,23 +180,19 @@ L["Caster's Target "] = "Caster's Target "
 L["Center"] = "Centro"
 L["Centered Horizontal"] = "Centrato orizzontalmente"
 L["Centered Vertical"] = "Centrato verticalmente"
---[[Translation missing --]]
-L["Challenge"] = "Challenge"
---[[Translation missing --]]
-L["Changed"] = "Changed"
+L["Changed"] = "Modificato"
 L["Channel"] = "Canale"
 L["Channel (Spell)"] = "Canale (Magia)"
+--[[Translation missing --]]
+L["Character Stats"] = "Character Stats"
 L["Character Type"] = "Tipo di carattere"
 --[[Translation missing --]]
 L["Charge gained/lost"] = "Charge gained/lost"
---[[Translation missing --]]
-L["Charges"] = "Charges"
+L["Charges"] = "Cariche"
 --[[Translation missing --]]
 L["Charges Changed (Spell)"] = "Charges Changed (Spell)"
 L["Chat Frame"] = "Cornice di chat"
 L["Chat Message"] = "Messaggio di chat"
---[[Translation missing --]]
-L["Chest"] = "Chest"
 --[[Translation missing --]]
 L["Children:"] = "Children:"
 --[[Translation missing --]]
@@ -300,7 +216,7 @@ L["Combine all matches"] = "Combine all matches"
 L["Conditions"] = "Condizioni"
 L["Contains"] = "Contiene"
 --[[Translation missing --]]
-L["Cooldown Edge"] = "Cooldown Edge"
+L["Cooldown"] = "Cooldown"
 --[[Translation missing --]]
 L["Cooldown Progress (Equipment Slot)"] = "Cooldown Progress (Equipment Slot)"
 --[[Translation missing --]]
@@ -314,25 +230,25 @@ L["Cooldown Ready (Item)"] = "Cooldown Ready (Item)"
 --[[Translation missing --]]
 L["Cooldown Ready (Spell)"] = "Cooldown Ready (Spell)"
 --[[Translation missing --]]
-L["Cooldown Swipe"] = "Cooldown Swipe"
---[[Translation missing --]]
 L["Counter Clockwise"] = "Counter Clockwise"
 L["Create"] = "Crea"
 --[[Translation missing --]]
 L["Create a Copy"] = "Create a Copy"
 L["Critical"] = "Critico"
 --[[Translation missing --]]
-L["Cross"] = "Cross"
+L["Critical (%)"] = "Critical (%)"
+--[[Translation missing --]]
+L["Critical Rating"] = "Critical Rating"
 --[[Translation missing --]]
 L["Crowd Controlled"] = "Crowd Controlled"
 --[[Translation missing --]]
 L["Crushing"] = "Crushing"
 --[[Translation missing --]]
-L["Cunning"] = "Cunning"
+L["Current Zone Group"] = "Current Zone Group"
 --[[Translation missing --]]
-L["Current Zone Group ID: "] = "Current Zone Group ID: "
---[[Translation missing --]]
-L["Current Zone ID: "] = "Current Zone ID: "
+L[ [=[Current Zone
+]=] ] = [=[Current Zone
+]=]
 --[[Translation missing --]]
 L["Curse"] = "Curse"
 --[[Translation missing --]]
@@ -350,8 +266,6 @@ L["Damage Shield Missed"] = "Damage Shield Missed"
 --[[Translation missing --]]
 L["Damage Split"] = "Damage Split"
 --[[Translation missing --]]
-L["Damager"] = "Damager"
---[[Translation missing --]]
 L["DBM Announce"] = "DBM Announce"
 --[[Translation missing --]]
 L["DBM Timer"] = "DBM Timer"
@@ -359,7 +273,7 @@ L["Death Knight Rune"] = "Rune del cavaliere della morte"
 --[[Translation missing --]]
 L["Debuff"] = "Debuff"
 --[[Translation missing --]]
-L["Defensive"] = "Defensive"
+L["Debuff Type"] = "Debuff Type"
 --[[Translation missing --]]
 L["Deflect"] = "Deflect"
 --[[Translation missing --]]
@@ -381,10 +295,6 @@ L["Destination Name"] = "Destination Name"
 --[[Translation missing --]]
 L["Destination Unit"] = "Destination Unit"
 --[[Translation missing --]]
-L["Dialog"] = "Dialog"
---[[Translation missing --]]
-L["Diamond"] = "Diamond"
---[[Translation missing --]]
 L["Disease"] = "Disease"
 --[[Translation missing --]]
 L["Dispel"] = "Dispel"
@@ -397,19 +307,29 @@ L["Distance"] = "Distance"
 --[[Translation missing --]]
 L["Dodge"] = "Dodge"
 --[[Translation missing --]]
+L["Dodge (%)"] = "Dodge (%)"
+--[[Translation missing --]]
+L["Dodge Rating"] = "Dodge Rating"
+--[[Translation missing --]]
 L["Done"] = "Done"
 --[[Translation missing --]]
 L["Down"] = "Down"
+--[[Translation missing --]]
+L["Down, then Left"] = "Down, then Left"
+--[[Translation missing --]]
+L["Down, then Right"] = "Down, then Right"
 --[[Translation missing --]]
 L["Drain"] = "Drain"
 --[[Translation missing --]]
 L["Dropdown Menu"] = "Dropdown Menu"
 --[[Translation missing --]]
-L["Drowning"] = "Drowning"
+L["Dungeons"] = "Dungeons"
 --[[Translation missing --]]
 L["Durability Damage"] = "Durability Damage"
 --[[Translation missing --]]
 L["Durability Damage All"] = "Durability Damage All"
+--[[Translation missing --]]
+L["Edge"] = "Edge"
 --[[Translation missing --]]
 L["Elide"] = "Elide"
 --[[Translation missing --]]
@@ -441,6 +361,10 @@ L["Equipped"] = "Equipped"
 --[[Translation missing --]]
 L["Error not receiving display information from %s"] = "Error not receiving display information from %s"
 --[[Translation missing --]]
+L[ [=['ERROR: Anchoring %s': 
+]=] ] = [=['ERROR: Anchoring %s': 
+]=]
+--[[Translation missing --]]
 L["Evade"] = "Evade"
 --[[Translation missing --]]
 L["Event"] = "Event"
@@ -455,6 +379,10 @@ L["Extra Amount"] = "Extra Amount"
 --[[Translation missing --]]
 L["Extra Attacks"] = "Extra Attacks"
 --[[Translation missing --]]
+L["Extra Options: %s"] = "Extra Options: %s"
+--[[Translation missing --]]
+L["Extra Options: none"] = "Extra Options: none"
+--[[Translation missing --]]
 L["Extra Spell Name"] = "Extra Spell Name"
 --[[Translation missing --]]
 L["Fade In"] = "Fade In"
@@ -463,21 +391,7 @@ L["Fade Out"] = "Fade Out"
 --[[Translation missing --]]
 L["Fail Alert"] = "Fail Alert"
 --[[Translation missing --]]
-L["Falling"] = "Falling"
---[[Translation missing --]]
 L["False"] = "False"
---[[Translation missing --]]
-L["Fatigue"] = "Fatigue"
---[[Translation missing --]]
-L["Feet"] = "Feet"
---[[Translation missing --]]
-L["Ferocity"] = "Ferocity"
---[[Translation missing --]]
-L["Finger 1"] = "Finger 1"
---[[Translation missing --]]
-L["Finger 2"] = "Finger 2"
---[[Translation missing --]]
-L["Fire"] = "Fire"
 --[[Translation missing --]]
 L["First"] = "First"
 --[[Translation missing --]]
@@ -524,13 +438,11 @@ L["Global Cooldown"] = "Global Cooldown"
 --[[Translation missing --]]
 L["Glow"] = "Glow"
 --[[Translation missing --]]
-L["Glow Color"] = "Glow Color"
---[[Translation missing --]]
-L["Glow Type"] = "Glow Type"
---[[Translation missing --]]
 L["Gradient"] = "Gradient"
 --[[Translation missing --]]
 L["Gradient Pulse"] = "Gradient Pulse"
+--[[Translation missing --]]
+L["Grid"] = "Grid"
 --[[Translation missing --]]
 L["Group"] = "Group"
 --[[Translation missing --]]
@@ -544,27 +456,23 @@ L["GTFO Alert"] = "GTFO Alert"
 --[[Translation missing --]]
 L["Guild"] = "Guild"
 --[[Translation missing --]]
-L["Hands"] = "Hands"
---[[Translation missing --]]
 L["Has Target"] = "Has Target"
 --[[Translation missing --]]
 L["Has Vehicle UI"] = "Has Vehicle UI"
 --[[Translation missing --]]
 L["HasPet"] = "HasPet"
 --[[Translation missing --]]
-L["Head"] = "Head"
+L["Haste (%)"] = "Haste (%)"
+--[[Translation missing --]]
+L["Haste Rating"] = "Haste Rating"
 --[[Translation missing --]]
 L["Heal"] = "Heal"
---[[Translation missing --]]
-L["Healer"] = "Healer"
 --[[Translation missing --]]
 L["Health"] = "Health"
 --[[Translation missing --]]
 L["Health (%)"] = "Health (%)"
 --[[Translation missing --]]
 L["Height"] = "Height"
---[[Translation missing --]]
-L["Heroic"] = "Heroic"
 --[[Translation missing --]]
 L["Hide"] = "Hide"
 --[[Translation missing --]]
@@ -594,7 +502,11 @@ L["If you require additional assistance, please open a ticket on GitHub or visit
 --[[Translation missing --]]
 L["Ignore Rune CD"] = "Ignore Rune CD"
 --[[Translation missing --]]
+L["Ignore Rune CDs"] = "Ignore Rune CDs"
+--[[Translation missing --]]
 L["Ignore Spell Known"] = "Ignore Spell Known"
+--[[Translation missing --]]
+L["Ignore Unknown Spell"] = "Ignore Unknown Spell"
 --[[Translation missing --]]
 L["Immune"] = "Immune"
 --[[Translation missing --]]
@@ -678,17 +590,23 @@ L["Keep Inside"] = "Keep Inside"
 --[[Translation missing --]]
 L["Large"] = "Large"
 --[[Translation missing --]]
-L["Lava"] = "Lava"
---[[Translation missing --]]
 L["Least remaining time"] = "Least remaining time"
 --[[Translation missing --]]
 L["Leaving"] = "Leaving"
 --[[Translation missing --]]
 L["Leech"] = "Leech"
 --[[Translation missing --]]
+L["Leech (%)"] = "Leech (%)"
+--[[Translation missing --]]
+L["Leech Rating"] = "Leech Rating"
+--[[Translation missing --]]
 L["Left"] = "Left"
 --[[Translation missing --]]
 L["Left to Right"] = "Left to Right"
+--[[Translation missing --]]
+L["Left, then Down"] = "Left, then Down"
+--[[Translation missing --]]
+L["Left, then Up"] = "Left, then Up"
 --[[Translation missing --]]
 L["Legacy Aura"] = "Legacy Aura"
 --[[Translation missing --]]
@@ -696,13 +614,9 @@ L["Legacy RGB Gradient"] = "Legacy RGB Gradient"
 --[[Translation missing --]]
 L["Legacy RGB Gradient Pulse"] = "Legacy RGB Gradient Pulse"
 --[[Translation missing --]]
-L["Legs"] = "Legs"
---[[Translation missing --]]
 L["Level"] = "Level"
 --[[Translation missing --]]
 L["Load Conditions"] = "Load Conditions"
---[[Translation missing --]]
-L["Looking for Raid"] = "Looking for Raid"
 --[[Translation missing --]]
 L["Loop"] = "Loop"
 --[[Translation missing --]]
@@ -714,7 +628,7 @@ L["Lower Than Tank"] = "Lower Than Tank"
 --[[Translation missing --]]
 L["Magic"] = "Magic"
 --[[Translation missing --]]
-L["Main Hand"] = "Main Hand"
+L["Main Stat"] = "Main Stat"
 --[[Translation missing --]]
 L["Make sure you can trust the person who sent it!"] = "Make sure you can trust the person who sent it!"
 --[[Translation missing --]]
@@ -728,7 +642,13 @@ L["Marked Last"] = "Marked Last"
 --[[Translation missing --]]
 L["Master"] = "Master"
 --[[Translation missing --]]
+L["Mastery (%)"] = "Mastery (%)"
+--[[Translation missing --]]
+L["Mastery Rating"] = "Mastery Rating"
+--[[Translation missing --]]
 L["Match Count"] = "Match Count"
+--[[Translation missing --]]
+L["Match Count per Unit"] = "Match Count per Unit"
 --[[Translation missing --]]
 L["Matches (Pattern)"] = "Matches (Pattern)"
 --[[Translation missing --]]
@@ -778,21 +698,17 @@ L["Monster Whisper"] = "Monster Whisper"
 --[[Translation missing --]]
 L["Monster Yell"] = "Monster Yell"
 --[[Translation missing --]]
-L["Moon"] = "Moon"
---[[Translation missing --]]
 L["Most remaining time"] = "Most remaining time"
 --[[Translation missing --]]
 L["Mounted"] = "Mounted"
 --[[Translation missing --]]
 L["Mouse Cursor"] = "Mouse Cursor"
 --[[Translation missing --]]
-L["Multi-Line"] = "Multi-Line"
+L["Movement Speed (%)"] = "Movement Speed (%)"
+--[[Translation missing --]]
+L["Movement Speed Rating"] = "Movement Speed Rating"
 --[[Translation missing --]]
 L["Multi-target"] = "Multi-target"
---[[Translation missing --]]
-L["Music"] = "Music"
---[[Translation missing --]]
-L["Mythic"] = "Mythic"
 --[[Translation missing --]]
 L["Mythic+ Affix"] = "Mythic+ Affix"
 --[[Translation missing --]]
@@ -806,8 +722,6 @@ L["Names of affected Players"] = "Names of affected Players"
 --[[Translation missing --]]
 L["Names of unaffected Players"] = "Names of unaffected Players"
 --[[Translation missing --]]
-L["Neck"] = "Neck"
---[[Translation missing --]]
 L["Neutral"] = "Neutral"
 --[[Translation missing --]]
 L["Never"] = "Never"
@@ -819,8 +733,6 @@ L["No Children"] = "No Children"
 L["No Instance"] = "No Instance"
 --[[Translation missing --]]
 L["No Profiling information saved."] = "No Profiling information saved."
---[[Translation missing --]]
-L["none"] = "none"
 --[[Translation missing --]]
 L["None"] = "None"
 --[[Translation missing --]]
@@ -845,8 +757,6 @@ L["Note: This trigger type estimates the range to the hitbox of a unit. The actu
 L["Number"] = "Number"
 --[[Translation missing --]]
 L["Number Affected"] = "Number Affected"
---[[Translation missing --]]
-L["Off Hand"] = "Off Hand"
 --[[Translation missing --]]
 L["Officer"] = "Officer"
 --[[Translation missing --]]
@@ -880,11 +790,13 @@ L["Overlay Cost of Casts"] = "Overlay Cost of Casts"
 --[[Translation missing --]]
 L["Parry"] = "Parry"
 --[[Translation missing --]]
+L["Parry (%)"] = "Parry (%)"
+--[[Translation missing --]]
+L["Parry Rating"] = "Parry Rating"
+--[[Translation missing --]]
 L["Party"] = "Party"
 --[[Translation missing --]]
 L["Party Kill"] = "Party Kill"
---[[Translation missing --]]
-L["Passive"] = "Passive"
 --[[Translation missing --]]
 L["Paused"] = "Paused"
 --[[Translation missing --]]
@@ -966,6 +878,8 @@ L["Raid"] = "Raid"
 --[[Translation missing --]]
 L["Raid Warning"] = "Raid Warning"
 --[[Translation missing --]]
+L["Raids"] = "Raids"
+--[[Translation missing --]]
 L["Range"] = "Range"
 --[[Translation missing --]]
 L["Range Check"] = "Range Check"
@@ -989,8 +903,6 @@ L["Remaining Time"] = "Remaining Time"
 L["Remove Obsolete Auras"] = "Remove Obsolete Auras"
 --[[Translation missing --]]
 L["Repeat"] = "Repeat"
---[[Translation missing --]]
-L["Replace Aura"] = "Replace Aura"
 --[[Translation missing --]]
 L["Requested display does not exist"] = "Requested display does not exist"
 --[[Translation missing --]]
@@ -1019,6 +931,10 @@ L["Resurrect"] = "Resurrect"
 L["Right"] = "Right"
 --[[Translation missing --]]
 L["Right to Left"] = "Right to Left"
+--[[Translation missing --]]
+L["Right, then Down"] = "Right, then Down"
+--[[Translation missing --]]
+L["Right, then Up"] = "Right, then Up"
 --[[Translation missing --]]
 L["Rotate Left"] = "Rotate Left"
 --[[Translation missing --]]
@@ -1060,7 +976,7 @@ L["Seconds"] = "Seconds"
 --[[Translation missing --]]
 L["Select Frame"] = "Select Frame"
 --[[Translation missing --]]
-L["Set Glow Visibility"] = "Set Glow Visibility"
+L["Separator"] = "Separator"
 --[[Translation missing --]]
 L["Set Maximum Progress"] = "Set Maximum Progress"
 --[[Translation missing --]]
@@ -1069,8 +985,6 @@ L["Set Minimum Progress"] = "Set Minimum Progress"
 L["Shake"] = "Shake"
 --[[Translation missing --]]
 L["Shift-Click to resume addon execution."] = "Shift-Click to resume addon execution."
---[[Translation missing --]]
-L["Shoulder"] = "Shoulder"
 --[[Translation missing --]]
 L["Show"] = "Show"
 --[[Translation missing --]]
@@ -1083,6 +997,8 @@ L["Show all Matches from all Units"] = "Show all Matches from all Units"
 L["Show CD of Charge"] = "Show CD of Charge"
 --[[Translation missing --]]
 L["Show Code"] = "Show Code"
+--[[Translation missing --]]
+L["Show GCD"] = "Show GCD"
 --[[Translation missing --]]
 L["Show Global Cooldown"] = "Show Global Cooldown"
 --[[Translation missing --]]
@@ -1102,11 +1018,9 @@ L["Show lowest time left per unit"] = "Show lowest time left per unit"
 --[[Translation missing --]]
 L["Shrink"] = "Shrink"
 --[[Translation missing --]]
-L["Single-Line"] = "Single-Line"
+L["Size"] = "Size"
 --[[Translation missing --]]
 L["Size & Position"] = "Size & Position"
---[[Translation missing --]]
-L["Skull"] = "Skull"
 --[[Translation missing --]]
 L["Slide from Bottom"] = "Slide from Bottom"
 --[[Translation missing --]]
@@ -1126,15 +1040,11 @@ L["Slide to Top"] = "Slide to Top"
 --[[Translation missing --]]
 L["Slider"] = "Slider"
 --[[Translation missing --]]
-L["Slime"] = "Slime"
---[[Translation missing --]]
 L["Small"] = "Small"
 --[[Translation missing --]]
 L["Sound"] = "Sound"
 --[[Translation missing --]]
 L["Sound by Kit ID"] = "Sound by Kit ID"
---[[Translation missing --]]
-L["Sound Effects"] = "Sound Effects"
 --[[Translation missing --]]
 L["Source In Group"] = "Source In Group"
 --[[Translation missing --]]
@@ -1192,8 +1102,6 @@ L["Spiral"] = "Spiral"
 --[[Translation missing --]]
 L["Spiral In And Out"] = "Spiral In And Out"
 --[[Translation missing --]]
-L["Square"] = "Square"
---[[Translation missing --]]
 L["Stacks"] = "Stacks"
 --[[Translation missing --]]
 L["Stacks Text Color"] = "Stacks Text Color"
@@ -1202,9 +1110,9 @@ L["Stacks Text Size"] = "Stacks Text Size"
 --[[Translation missing --]]
 L["Stagger Scale"] = "Stagger Scale"
 --[[Translation missing --]]
-L["Stance/Form/Aura"] = "Stance/Form/Aura"
+L["Stamina"] = "Stamina"
 --[[Translation missing --]]
-L["Star"] = "Star"
+L["Stance/Form/Aura"] = "Stance/Form/Aura"
 --[[Translation missing --]]
 L["Start Profiling"] = "Start Profiling"
 --[[Translation missing --]]
@@ -1220,6 +1128,8 @@ L["String"] = "String"
 --[[Translation missing --]]
 L["Summon"] = "Summon"
 --[[Translation missing --]]
+L["Supports multiple entries, separated by commas"] = "Supports multiple entries, separated by commas"
+--[[Translation missing --]]
 L[ [=[Supports multiple entries, separated by commas
 ]=] ] = [=[Supports multiple entries, separated by commas
 ]=]
@@ -1228,9 +1138,9 @@ L["Swing"] = "Swing"
 --[[Translation missing --]]
 L["Swing Timer"] = "Swing Timer"
 --[[Translation missing --]]
-L["System"] = "System"
+L["Swipe"] = "Swipe"
 --[[Translation missing --]]
-L["Tabard"] = "Tabard"
+L["System"] = "System"
 --[[Translation missing --]]
 L["Talent Selected"] = "Talent Selected"
 --[[Translation missing --]]
@@ -1238,15 +1148,11 @@ L["Talent selected"] = "Talent selected"
 --[[Translation missing --]]
 L["Talent Specialization"] = "Talent Specialization"
 --[[Translation missing --]]
-L["Tank"] = "Tank"
---[[Translation missing --]]
 L["Tanking And Highest"] = "Tanking And Highest"
 --[[Translation missing --]]
 L["Tanking But Not Highest"] = "Tanking But Not Highest"
 --[[Translation missing --]]
 L["Target"] = "Target"
---[[Translation missing --]]
-L["Tenacity"] = "Tenacity"
 --[[Translation missing --]]
 L["There are %i updates to your auras ready to be installed!"] = "There are %i updates to your auras ready to be installed!"
 --[[Translation missing --]]
@@ -1269,8 +1175,6 @@ L["Threat Situation"] = "Threat Situation"
 L["Tier "] = "Tier "
 --[[Translation missing --]]
 L["Timed"] = "Timed"
---[[Translation missing --]]
-L["Timewalking"] = "Timewalking"
 --[[Translation missing --]]
 L["Toggle"] = "Toggle"
 --[[Translation missing --]]
@@ -1312,9 +1216,15 @@ L["Totem Name"] = "Totem Name"
 --[[Translation missing --]]
 L["Totem Number"] = "Totem Number"
 --[[Translation missing --]]
-L["Transmission error"] = "Transmission error"
+L["Track Cooldowns"] = "Track Cooldowns"
 --[[Translation missing --]]
-L["Triangle"] = "Triangle"
+L["Tracking Charge %i"] = "Tracking Charge %i"
+--[[Translation missing --]]
+L["Tracking Charge CDs"] = "Tracking Charge CDs"
+--[[Translation missing --]]
+L["Tracking Only Cooldown"] = "Tracking Only Cooldown"
+--[[Translation missing --]]
+L["Transmission error"] = "Transmission error"
 --[[Translation missing --]]
 L["Trigger"] = "Trigger"
 --[[Translation missing --]]
@@ -1325,10 +1235,6 @@ L["Trigger State Updater (Advanced)"] = "Trigger State Updater (Advanced)"
 L["Trigger Update"] = "Trigger Update"
 --[[Translation missing --]]
 L["Trigger:"] = "Trigger:"
---[[Translation missing --]]
-L["Trinket 1"] = "Trinket 1"
---[[Translation missing --]]
-L["Trinket 2"] = "Trinket 2"
 --[[Translation missing --]]
 L["True"] = "True"
 --[[Translation missing --]]
@@ -1354,21 +1260,29 @@ L["Units Affected"] = "Units Affected"
 --[[Translation missing --]]
 L["Up"] = "Up"
 --[[Translation missing --]]
+L["Up, then Left"] = "Up, then Left"
+--[[Translation missing --]]
+L["Up, then Right"] = "Up, then Right"
+--[[Translation missing --]]
 L["Update Auras"] = "Update Auras"
 --[[Translation missing --]]
 L["Usage:"] = "Usage:"
 --[[Translation missing --]]
 L["Use /wa minimap to show the minimap icon again"] = "Use /wa minimap to show the minimap icon again"
 --[[Translation missing --]]
-L["Use Custom Glow Color"] = "Use Custom Glow Color"
+L["Use Custom Color"] = "Use Custom Color"
 --[[Translation missing --]]
 L["Values/Remaining Time above this value are displayed as full progress."] = "Values/Remaining Time above this value are displayed as full progress."
 --[[Translation missing --]]
 L["Values/Remaining Time below this value are displayed as no progress."] = "Values/Remaining Time below this value are displayed as no progress."
 --[[Translation missing --]]
+L["Versatility (%)"] = "Versatility (%)"
+--[[Translation missing --]]
+L["Versatility Rating"] = "Versatility Rating"
+--[[Translation missing --]]
 L["Version: "] = "Version: "
 --[[Translation missing --]]
-L["Waist"] = "Waist"
+L["Visibility"] = "Visibility"
 --[[Translation missing --]]
 L["War Mode Active"] = "War Mode Active"
 --[[Translation missing --]]
@@ -1391,8 +1305,6 @@ L["Width"] = "Width"
 L["Wobble"] = "Wobble"
 --[[Translation missing --]]
 L["Wrap"] = "Wrap"
---[[Translation missing --]]
-L["Wrist"] = "Wrist"
 --[[Translation missing --]]
 L["X-Offset"] = "X-Offset"
 --[[Translation missing --]]

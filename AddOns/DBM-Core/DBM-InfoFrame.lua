@@ -95,7 +95,7 @@ do
 	local function toggleShowSelf()
 		DBM.Options.InfoFrameShowSelf = not DBM.Options.InfoFrameShowSelf
 	end
-	
+
 	local function setLines(self, line)
 		DBM.Options.InfoFrameLines = line
 		if line ~= 0 then
@@ -124,7 +124,7 @@ do
 			end
 			info.func = toggleShowSelf
 			UIDropDownMenu_AddButton(info, 1)
-			
+
 			info = UIDropDownMenu_CreateInfo()
 			info.text = DBM_CORE_INFOFRAME_SETLINES
 			info.notCheckable = true
@@ -161,28 +161,28 @@ do
 				info.arg1 = 5
 				info.checked = (DBM.Options.InfoFrameLines == 5)
 				UIDropDownMenu_AddButton(info, 2)
-				
+
 				info = UIDropDownMenu_CreateInfo()
 				info.text = DBM_CORE_INFOFRAME_LINES_TO:format(8)
 				info.func = setLines
 				info.arg1 = 8
 				info.checked = (DBM.Options.InfoFrameLines == 8)
 				UIDropDownMenu_AddButton(info, 2)
-				
+
 				info = UIDropDownMenu_CreateInfo()
 				info.text = DBM_CORE_INFOFRAME_LINES_TO:format(10)
 				info.func = setLines
 				info.arg1 = 10
 				info.checked = (DBM.Options.InfoFrameLines == 10)
 				UIDropDownMenu_AddButton(info, 2)
-				
+
 				info = UIDropDownMenu_CreateInfo()
 				info.text = DBM_CORE_INFOFRAME_LINES_TO:format(15)
 				info.func = setLines
 				info.arg1 = 15
 				info.checked = (DBM.Options.InfoFrameLines == 15)
 				UIDropDownMenu_AddButton(info, 2)
-				
+
 				info = UIDropDownMenu_CreateInfo()
 				info.text = DBM_CORE_INFOFRAME_LINES_TO:format(20)
 				info.func = setLines
@@ -199,7 +199,7 @@ end
 --  Create the frame  --
 ------------------------
 local frameBackdrop = {
-	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",--131071
 	tile = true,
 	tileSize = 16,
 	insets = { left = 2, right = 14, top = 2, bottom = 2 },
@@ -302,6 +302,7 @@ local function updateLinesCustomSort(sortFunc)
 	end
 end
 
+--8.2 TODO FIXME if broken.
 local function updateIcons()
 	twipe(icons)
 	for uId in DBM:GetGroupMembers() do
@@ -665,7 +666,8 @@ local function updatePlayerAggro()
 	for uId in DBM:GetGroupMembers() do
 		if tankIgnored and (UnitGroupRolesAssigned(uId) == "TANK" or GetPartyAssignment("MAINTANK", uId, 1)) then
 		else
-			if UnitThreatSituation(uId) >= aggroType then
+			local currentThreat = UnitThreatSituation(uId) or 0
+			if currentThreat >= aggroType then
 				lines[UnitName(uId)] = ""
 			end
 		end
@@ -803,7 +805,7 @@ function onUpdate(frame, table)
 			--return
 		end
 		local rightText = lines[leftText]
-		local extra, extraName = string.split("-", leftText)--Find just unit name, if extra info had to be added to make unique
+		local extra, extraName = string.split("--", leftText)--Find just unit name, if extra info had to be added to make unique
 		local icon = icons[extraName or leftText] and icons[extraName or leftText]..leftText
 		if friendlyEvents[currentEvent] then
 			local unitId = DBM:GetRaidUnitId(DBM:GetUnitFullName(extraName or leftText)) or "player"--Prevent nil logical error
@@ -811,10 +813,12 @@ function onUpdate(frame, table)
 				local _, class = UnitClass(unitId)
 				if class then
 					color = RAID_CLASS_COLORS[class]
+				else
+					color = NORMAL_FONT_COLOR
 				end
 				linesShown = linesShown + 1
 				if (extraName or leftText) == playerName then--It's player.
-					if currentEvent == "health" or currentEvent == "playerpower" or currentEvent == "playerabsorb" or currentEvent == "playerbuff" or currentEvent == "playergooddebuff" or currentEvent == "playerbaddebuff" or currentEvent == "playerdebuffremaining" or currentEvent == "playerdebuffstacks" or currentEvent == "playerbuffremaining" or currentEvent == "playertargets" or (currentEvent == "playeraggro" and value[1] == 3) then--Red
+					if currentEvent == "health" or currentEvent == "playerpower" or currentEvent == "playerabsorb" or currentEvent == "playerbuff" or currentEvent == "playergooddebuff" or currentEvent == "playerbaddebuff" or currentEvent == "playerdebuffremaining" or currentEvent == "playerdebuffstacks" or currentEvent == "playerbuffremaining" or currentEvent == "playertargets" or currentEvent == "playeraggro" then--Red
 						frame:AddDoubleLine(icon or leftText, rightText, 255, 0, 0, 255, 255, 255)-- (leftText, rightText, left.R, left.G, left.B, right.R, right.G, right.B)
 					else--Green
 						frame:AddDoubleLine(icon or leftText, rightText, 0, 255, 0, 255, 255, 255)
@@ -847,13 +851,21 @@ function onUpdate(frame, table)
 				local _, class = UnitClass(unitId)
 				if class then
 					color = RAID_CLASS_COLORS[class]
+				else
+					color = NORMAL_FONT_COLOR
 				end
+			else
+				color = NORMAL_FONT_COLOR
 			end
 			if unitId2 then--Check right text
 				local _, class = UnitClass(unitId2)
 				if class then
 					color2 = RAID_CLASS_COLORS[class]
+				else
+					color2 = NORMAL_FONT_COLOR
 				end
+			else
+				color2 = NORMAL_FONT_COLOR
 			end
 			linesShown = linesShown + 1
 			frame:AddDoubleLine(icon or leftText, rightText, color.r, color.g, color.b, color2.r, color2.g, color2.b)

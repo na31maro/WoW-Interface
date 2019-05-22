@@ -1115,12 +1115,6 @@ L["STRING_OPTIONS_SPELL_NOTFOUND"] = "Zauber nicht gefunden."
 L["STRING_OPTIONS_SPELL_REMOVE"] = "Entfernen"
 L["STRING_OPTIONS_SPELL_RESET"] = "Zurücksetzen"
 L["STRING_OPTIONS_SPELL_SPELLID"] = "Zauber-ID"
-L["STRING_OPTIONS_SPELL_SPELLID_DESC"] = [=[Eine ID ist eine einzigartige Nummer, um den Zauber in WoW zu identifizieren. Es gibt viele Wege an diese Nummer zu kommen:
-
-- Im Spielerdetail-Fenster durch Gedrückthalten der SHIFT-Taste während der Mauszeiger über der Zauberleiste schwebt.
-- Tippe den Namen in das Zauber-ID-Feld ein und im Tooltip werden Zauber vorgeschlagen.
-- Community-Webseiten - die meisten haben die Zauber-ID in ihrer Webadresse.
-- Indem im unten stehenden Zauber-Cache gesucht wird:]=]
 L["STRING_OPTIONS_STRETCH"] = "Ausweitungsschaltfläche auf der Oberseite"
 L["STRING_OPTIONS_STRETCH_DESC"] = "Platziert die Ausweitungsschaltfläche oberhalb des Fensters."
 L["STRING_OPTIONS_STRETCHTOP"] = "Ausweitungsschaltfläche immer oben"
@@ -1489,10 +1483,12 @@ L["STRING_SEGMENT_TRASH"] = "Trash abgräumt"
 L["STRING_SEGMENTS"] = "Segmente"
 L["STRING_SEGMENTS_LIST_BOSS"] = "Bosskampf"
 L["STRING_SEGMENTS_LIST_COMBATTIME"] = "Kampfzeit"
-L["STRING_SEGMENTS_LIST_OVERALL"] = "Insgesamt"
+L["STRING_SEGMENTS_LIST_OVERALL"] = "insgesamt"
 L["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] = "Zeit im Kampf"
 L["STRING_SEGMENTS_LIST_TOTALTIME"] = "Insgesamte Zeit"
 L["STRING_SEGMENTS_LIST_TRASH"] = "Trash"
+--[[Translation missing --]]
+--[[ L["STRING_SEGMENTS_LIST_WASTED_TIME"] = ""--]] 
 L["STRING_SHIELD_HEAL"] = "verhindert"
 L["STRING_SHIELD_OVERHEAL"] = "Vergeudet"
 L["STRING_SHORTCUT_RIGHTCLICK"] = "Rechtsklick, um zu schließen"

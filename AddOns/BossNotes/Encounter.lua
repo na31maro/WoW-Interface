@@ -23,6 +23,100 @@ BOSS_NOTES_ENCOUNTERS = {
 		instanceSetId = "BFARaid",
 		raid = true,
 		instances = {
+		{
+				--Crucible of Storms
+				instanceId = "COSR",
+				npcIds = {},
+				encounters = {
+					{
+						-- "Restless Cabal"
+						encounterId = 146495,
+						npcIds = {146495, 146497}
+					},
+					{
+						-- "Uu'nat"
+						encounterId = 145371,
+						npcIds = {145371}
+					},
+				},
+
+		},
+		
+		
+		
+				{
+				--BOD
+				instanceId = "BODR",
+				npcIds = {144680, 144683, 148117, 144638, 144690, 148238, 145261, 144747, 145616, 144838, 146251, 133251, 144767, 144963, 144941, 146253, 146099, 146100},
+				encounters = {
+					{
+						-- "Frida Ironbellows"
+						encounterId = 144680,
+						npcIds = {144680}
+					},
+					{
+						-- "Ra'wani Kanae"
+						encounterId = 144683,
+						npcIds = {144683}
+					},
+					{
+						-- "Grong Horde"
+						encounterId = 148117,
+						npcIds = {148117}
+					},
+					{
+						-- "Grong Alliance"
+						encounterId = 144638,
+						npcIds = {144638}
+					},
+					{
+						-- "Jadefire Masters Horde"
+						encounterId = 144690,
+						npcIds = {144690, 146099}
+					},
+					{
+						-- "Jadefire Masters Alliance"
+						encounterId = 148238,
+						npcIds = {148238, 146100}
+					},
+					{
+						-- "Opulence"
+						encounterId = 145261,
+						npcIds = {145261}
+					},
+					{
+						-- "Conclave of the chosen"
+						encounterId = 144747,
+						npcIds = {144747, 144767, 144963, 144941}
+					},
+					{
+						-- "King Rastakhan"
+						encounterId = 145616,
+						npcIds = {}
+					},
+					{
+						-- "High Tinker Minker Mekkatorque"
+						encounterId = 144796,
+						npcIds = {144796}
+					},
+					{
+						-- "Stormwall Blockade"
+						encounterId = 146251,
+						npcIds = {146251, 146253}
+					},
+					{
+						-- "Jaina Proudmoore"
+						encounterId = 133251,
+						npcIds = {133251}
+					},
+					
+					
+					
+				},
+			},
+			
+			
+			
 			{
 				--World Bosses
 				instanceId = "BFAWB",
@@ -68,7 +162,7 @@ BOSS_NOTES_ENCOUNTERS = {
 					
 				},
 			},
-					},
+},
 	},
 	{
 		-- BFA Dungeons - Added by Horrorbrood
@@ -294,13 +388,13 @@ BOSS_NOTES_ENCOUNTERS = {
 					},
 					{
 						-- "Ring of Booty"
-						encounterId = 101,
-						npcIds = {101}
+						encounterId = 126969,
+						npcIds = {126969}
 					},
 					{
 						-- "Harlan Sweete"
-						encounterId = 129440,
-						npcIds = {129440}
+						encounterId = 126983,
+						npcIds = {126983}
 					},
 				},
 			},
@@ -5092,6 +5186,35 @@ BOSS_NOTES_ENCOUNTERS = {
 			}
 		}
 	}
+	----raid template
+	{
+				--
+				instanceId = "",
+				npcIds = {},
+				encounters = {
+					{
+						-- ""
+						encounterId = ,
+						npcIds = {}
+					},
+					{
+						-- ""
+						encounterId = ,
+						npcIds = {}
+					},
+				},
+
+},
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 --]]
 	
 	}

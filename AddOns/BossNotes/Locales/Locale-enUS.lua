@@ -1838,8 +1838,8 @@ L["encounter:127503"] = "Overseer Korgus"
 L["instance:FreeHold"]="Freehold"
 L["encounter:129732"] = "Skycap'n Kragg"
 L["encounter:129431"] = "Council o'Captains"
-L["encounter:101"] = "Ring of Booty"
-L["encounter:129440"] = "Harlan Sweete"
+L["encounter:126969"] = "Ring of Booty"
+L["encounter:126983"] = "Harlan Sweete"
 -----Temple of Sethraliss
 L["instance:TOSETH"]="Temple of Sethraliss"
 L["encounter:133379"] = "Adderis and Aspix"
@@ -1856,6 +1856,22 @@ L["encounter:137374"] = "The lion's Roar"
 L["encounter:136385"] = "Azurethos, The Winged Typhoon"
 L["encounter:140163"] = "Warbringer Yenajz"
 L["encounter:138794"] = "Dunegorger Kraulok"
-
+-------------------------------------------------
+L["instance:BODR"]="Battle of Dazar'alor"
+L["encounter:144680"] = "Frida Ironbellows"
+L["encounter:144683"] = "Ra'wani Kanae"
+L["encounter:148117"] = "Grong Horde"
+L["encounter:144638"] = "Grong Alliance"
+L["encounter:144690"] = "JadeFire Masters Horde" --146099 add
+L["encounter:148238"] = "JadeFire Masters Alliance" --146100
+L["encounter:145261"] = "Opulence Treasure Guardian"
+L["encounter:144747"] = "Conclave of the chosen" --144767 gonk 144963 kimbuls 144941 akunda
+L["encounter:145616"] = "King Rastakhan"
+L["encounter:144796"] = "High Tinker Minker Mekkatorque"
+L["encounter:146251"] = "Stormwall Blockade" --146253
+L["encounter:133251"] = "Jaina Proudmoore"
+L["instance:COSR"]="Crucible of Storms"
+L["encounter:146495"] = "Restless Cabal" --146497
+L["encounter:145371"] = "Uu'nat"
 
 end

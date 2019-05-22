@@ -187,6 +187,17 @@ GTFO.SpellID["287538"] = {
   sound = 1;
 };
 
+GTFO.SpellID["288924"] = {
+  --desc = "Smoldering Flames (Aman)";
+  sound = 1;
+};
+
+GTFO.SpellID["288897"] = {
+  --desc = "Shadow Crash (Soggoth the Slitherer)";
+  sound = 1;
+};
+
+
 -- ***********************
 -- * Shrine of the Storm *
 -- ***********************
@@ -636,5 +647,121 @@ GTFO.SpellID["276834"] = {
 
 GTFO.SpellID["279575"] = {
   --desc = "Choking Miasma (G'huun)";
+  sound = 1;
+};
+
+--- *************************
+--- * Battle for Dazar'alor *
+--- *************************
+
+GTFO.SpellID["283582"] = {
+  --desc = "Consecration (Ra'wani Kanae)";
+  sound = 1;
+};
+
+GTFO.SpellID["286373"] = {
+  --desc = "Chill of Death (Grong)";
+  sound = 1;
+};
+
+GTFO.SpellID["286501"] = {
+  --desc = "Creeping Blaze (Yalat's Bulwark)";
+  sound = 1;
+};
+
+GTFO.SpellID["283063"] = {
+  --desc = "Flames of Punishment (Yalat's Bulwark)";
+  applicationOnly = true;
+  sound = 1;
+};
+
+GTFO.SpellID["287513"] = {
+  --desc = "Flames of Punishment (Yalat's Bulwark)";
+  applicationOnly = true;
+  sound = 1;
+};
+
+GTFO.SpellID["284424"] = {
+  --desc = "Scorching Ground (Yalat's Bulwark)";
+  sound = 1;
+};
+
+GTFO.SpellID["285479"] = {
+  --desc = "Flame Jet (Yalat's Bulwark)";
+  sound = 1;
+};
+
+GTFO.SpellID["284470"] = {
+  --desc = "Hex of Lethargy (Opulence)";
+  sound = 2;
+  minimumDamage = 1;
+  test = true;
+};
+
+GTFO.SpellID["287074"] = {
+  --desc = "Molten Gold (Opulence)";
+  sound = 1;
+};
+
+GTFO.SpellID["285894"] = {
+  --desc = "Wild Maul (Gonk's Aspect)";
+  sound = 1;
+  tankSound = 0;
+};
+
+GTFO.SpellID["290448"] = {
+  --desc = "Seal of Purification (King Rhast)";
+  sound = 1;
+};
+
+GTFO.SpellID["286680"] = {
+  --desc = "Roiling Tides";
+  sound = 1;
+};
+
+GTFO.SpellID["284369"] = {
+  --desc = "Sea Storm";
+  sound = 1;
+};
+
+GTFO.SpellID["288051"] = {
+  --desc = "Dragon's Breath (Ma'ra Grimfang)";
+  sound = 1;
+};
+
+GTFO.SpellID["288297"] = {
+  --desc = "Arctic Ground (Lady Jaina Proudmoore)";
+  sound = 1;
+};
+
+GTFO.SpellID["287993"] = {
+  --desc = "Chilling Touch (Lady Jaina Proudmoore)";
+  applicationOnly = true;
+  affirmingDebuffSpellID = 288297; -- Arctic Ground
+  sound = 1;
+};
+
+GTFO.SpellID["288808"] = {
+  --desc = "Consecration";
+  applicationOnly = true;
+  heroicSound = 1;
+  mythicSound = 1;
+  sound = 0;
+  test = true;
+};
+
+--- **********************
+--- * Crucible of Storms *
+--- **********************
+
+-- TODO: Promises of Power (Restless Cabal) -- sound = 4 [Requires investigation]
+
+GTFO.SpellID["287876"] = {
+  --desc = "Enveloping Darkness (Restless Cabal)";
+  sound = 1;
+};
+
+GTFO.SpellID["287876"] = {
+  --desc = "Gift of N'Zoth: Obscurity (Uu'nat)";
   sound = 1;
 };

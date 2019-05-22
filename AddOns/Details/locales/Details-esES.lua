@@ -1367,8 +1367,6 @@ L["STRING_OPTIONS_SPELL_REMOVE"] = "Eliminar"
 L["STRING_OPTIONS_SPELL_RESET"] = "Restablecer"
 L["STRING_OPTIONS_SPELL_SPELLID"] = "ID de hechizo"
 --[[Translation missing --]]
---[[ L["STRING_OPTIONS_SPELL_SPELLID_DESC"] = ""--]] 
---[[Translation missing --]]
 --[[ L["STRING_OPTIONS_STRETCH"] = ""--]] 
 --[[Translation missing --]]
 --[[ L["STRING_OPTIONS_STRETCH_DESC"] = ""--]] 
@@ -1826,6 +1824,8 @@ L["STRING_SEGMENT_START"] = "Iniciar"
 --[[ L["STRING_SEGMENTS_LIST_TOTALTIME"] = ""--]] 
 --[[Translation missing --]]
 --[[ L["STRING_SEGMENTS_LIST_TRASH"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["STRING_SEGMENTS_LIST_WASTED_TIME"] = ""--]] 
 --[[Translation missing --]]
 --[[ L["STRING_SHIELD_HEAL"] = ""--]] 
 --[[Translation missing --]]

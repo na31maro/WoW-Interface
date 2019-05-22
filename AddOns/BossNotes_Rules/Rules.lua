@@ -566,10 +566,11 @@ end
 
 -- Sends a comm message to the appropriate channel.
 function BossNotesRules:Broadcast (messageObj)
+local inInstance, instanceType = IsInInstance()
 	local message = self:Serialize(messageObj)
-	if (UnitInRaid("player")) then
+	if (instanceType == raid) then
 		self:SendCommMessage(BOSS_NOTES_RULES_COMM_PREFIX, message, "RAID")
-	elseif GetNumGroupMembers() > 0 then
+	elseif (instanceType == party) then
 		self:SendCommMessage(BOSS_NOTES_RULES_COMM_PREFIX, message, "PARTY")
 	end
 end

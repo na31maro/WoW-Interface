@@ -1,3 +1,14 @@
+== BossNotesV1.7.0.27 ==
+Added CoS
+
+
+== BossNotesV1.7.0.26 ==
+Record Abilitys fix and emotes. Please report bugs
+
+== BossNotesV1.7.0.25 ==
+ the /bossnotes learn has been fixed addon records spells and boss emotes also fixed some rule capabilities please report any bugs so i can recreate them and fix them. thanks!
+== BossNotesV1.7.0.24 ==
+Added Battle of Dazar'alor and boss tactics bfa has broken record spells not working atm. But you can still send notes to party guild chat etc and edit personal notes
 == BossNotesV1.7.0.23 ==
 Added BFA dungeons and world bosses. removed old raids, record spells not working atm
 

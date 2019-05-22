@@ -1378,3 +1378,25 @@ Change Log:
 4.46.12
 * Added Battle for Azeroth spells (world)
 
+4.46.13
+* Added BFA spells for Freehold
+* Added BFA spells for Atal'Dazar
+* Added BFA spells for Battle of Dazar'alor
+
+4.46.14
+* Added BFA spells for Battle of Dazar'alor
+
+4.46.15
+* Added Battle for Azeroth spells (world)
+* Added BFA spells for Battle of Dazar'alor
+
+4.46.16
+* Added BFA spells for Battle of Dazar'alor
+
+4.46.17
+* Added BFA spells for Battle of Dazar'alor
+
+4.47
+* Re-enabled sound channel support UI dropdown (hopefully Blizzard finally fixed their taint issues)
+* Added BFA spells for Crucible of Storms
+

@@ -33,9 +33,41 @@ local IconTexCoord = {5/64, 59/64, 5/64, 59/64}
 local CONST_BAR_HEIGHT = 20
 local CONST_TARGET_HEIGHT = 18
 
+local PLAYER_DETAILS_WINDOW_WIDTH = 790
+local PLAYER_DETAILS_WINDOW_HEIGHT = 474
+
+local PLAYER_DETAILS_STATUSBAR_HEIGHT = 20
+local PLAYER_DETAILS_STATUSBAR_ALPHA = 1
+
 ------------------------------------------------------------------------------------------------------------------------------
 --self = instancia
 --jogador = classe_damage ou classe_heal
+
+--return the combat being used to show the data in the opened breakdown window
+function Details:GetCombatFromBreakdownWindow()
+	return info.instancia and info.instancia.showing
+end
+
+--return the window that requested to open the player breakdown window
+function Details:GetActiveWindowFromBreakdownWindow()
+	return info.instancia
+end
+
+--return if the breakdown window is showing damage or heal
+function Details:GetDisplayTypeFromBreakdownWindow()
+	return info.atributo, info.sub_atributo
+end
+
+--return the actor object in use by the breakdown window
+function Details:GetPlayerObjectFromBreakdownWindow()
+	return info.jogador
+end
+
+--english alias
+--window object from Details:GetWindow(n) and playerObject from Details:GetPlayer(playerName, attribute)
+function Details:OpenPlayerBreakdown (windowObject, playerObject)
+	windowObject:AbreJanelaInfo (playerObject)
+end
 
 function _detalhes:AbreJanelaInfo (jogador, from_att_change, refresh, ShiftKeyDown, ControlKeyDown)
 
@@ -1205,7 +1237,7 @@ local elvui_skin = function()
 	window.container_barras:SetSize (419, 195)
 	window.container_barras:SetPoint ("TOPLEFT", window, "TOPLEFT", 2, -76)
 	--target container
-	window.container_alvos:SetPoint ("BOTTOMLEFT", window, "BOTTOMLEFT", 2, 6)
+	window.container_alvos:SetPoint ("BOTTOMLEFT", window, "BOTTOMLEFT", 2, 6 + PLAYER_DETAILS_STATUSBAR_HEIGHT)
 	window.container_alvos:SetSize (418, 150)
 	
 	--texts
@@ -1466,9 +1498,10 @@ function gump:CriaJanelaInfo()
 
 	--> propriedades da janela
 	este_gump:SetPoint ("CENTER", UIParent)
-	--este_gump:SetWidth (640)
-	este_gump:SetWidth (790)
-	este_gump:SetHeight (454)
+
+	este_gump:SetWidth (PLAYER_DETAILS_WINDOW_WIDTH)
+	este_gump:SetHeight (PLAYER_DETAILS_WINDOW_HEIGHT)
+	
 	este_gump:EnableMouse (true)
 	este_gump:SetResizable (false)
 	este_gump:SetMovable (true)
@@ -1774,6 +1807,30 @@ function gump:CriaJanelaInfo()
 	este_gump.report_direita:SetPoint ("TOPRIGHT", este_gump, "TOPRIGHT",  -10, -70)	
 	este_gump.report_direita:Show()
 	
+	--> statusbar
+	local statusBar = CreateFrame ("frame", nil, este_gump)
+	statusBar:SetPoint ("bottomleft", este_gump, "bottomleft")
+	statusBar:SetPoint ("bottomright", este_gump, "bottomright")
+	statusBar:SetHeight (PLAYER_DETAILS_STATUSBAR_HEIGHT)
+	DetailsFramework:ApplyStandardBackdrop (statusBar)
+	statusBar:SetAlpha (PLAYER_DETAILS_STATUSBAR_ALPHA)
+	
+	statusBar.Text = DetailsFramework:CreateLabel (statusBar)
+	statusBar.Text:SetPoint ("left", 2, 0)
+	
+	function este_gump:SetStatusbarText (text, fontSize, fontColor)
+		if (not text) then
+			este_gump:SetStatusbarText ("Details! Damage Meter | Use '/details stats' for statistics", 10, "gray")
+			return
+		end
+		statusBar.Text.text = text
+		statusBar.Text.fontsize = fontSize
+		statusBar.Text.fontcolor = fontColor
+	end
+	
+	--set default text
+	este_gump:SetStatusbarText()
+
 	--> apply default skin
 	_detalhes:ApplyPDWSkin()
 	
@@ -1818,7 +1875,7 @@ function gump:CriaJanelaInfo()
 		--> Percent Desc
 			local percent_desc = frame:CreateFontString (nil, "artwork", "GameFontNormal")
 			percent_desc:SetText ("Percent values are comparisons with the previous try.")
-			percent_desc:SetPoint ("bottomleft", frame, "bottomleft", 13, 13)
+			percent_desc:SetPoint ("bottomleft", frame, "bottomleft", 13, 13 + PLAYER_DETAILS_STATUSBAR_HEIGHT)
 			percent_desc:SetTextColor (.5, .5, .5, 1)
 		
 		--> SUMMARY
@@ -4738,11 +4795,34 @@ function gump:CriaJanelaInfo()
 				end
 				
 				if (#tabOBject.players > 0) then
+					--tutorial flash
+					local blink = _detalhes:GetTutorialCVar ("DETAILS_INFO_TUTORIAL2") or 0
+					if (type (blink) == "number" and blink < 10) then
+					
+						if (not tabOBject.FlashAnimation) then
+							local flashAnimation = tabOBject:CreateTexture (nil, "overlay")
+							flashAnimation:SetPoint ("topleft", tabOBject.widget, "topleft", 1, -1)
+							flashAnimation:SetPoint ("bottomright", tabOBject.widget, "bottomright", -1, 1)
+							flashAnimation:SetColorTexture (1, 1, 1)
+
+							local flashHub = DetailsFramework:CreateAnimationHub (flashAnimation, function() flashAnimation:Show() end, function() flashAnimation:Hide() end)
+							DetailsFramework:CreateAnimation (flashHub, "alpha", 1, 1, 0, 0.3)
+							DetailsFramework:CreateAnimation (flashHub, "alpha", 2, 1, 0.45, 0)
+							flashHub:SetLooping ("REPEAT")
+							
+							tabOBject.FlashAnimation = flashHub
+						end
+						
+						_detalhes:SetTutorialCVar ("DETAILS_INFO_TUTORIAL2", blink+1)
+
+						tabOBject.FlashAnimation:Play()
+					end
+					
 					return true
 				end
 				
 				--return false
-				return true
+				return true --debug?
 			end, 
 			
 			compare_fill, --[3] fill function
@@ -4774,19 +4854,10 @@ function gump:CriaJanelaInfo()
 							alert.ArrowUP:Show()
 							alert.ArrowGlowUP:Show()
 							alert.Text:SetText (Loc ["STRING_INFO_TUTORIAL_COMPARISON1"])
-							alert:SetPoint ("bottom", tab, "top", 5, 28)
+							alert:SetPoint ("bottom", tab.widget or tab, "top", 5, 28)
 							alert:Show()
 						end
-						
-						local blink = _detalhes:GetTutorialCVar ("DETAILS_INFO_TUTORIAL2") or 0
-						if (type (blink) == "number" and blink < 10) then
-							_detalhes:SetTutorialCVar ("DETAILS_INFO_TUTORIAL2", blink+1)
-							if (not tab.glow.Flash) then
-								gump:CreateFlashAnimation (tab.glow)
-							end
-							tab.glow:Flash (4.5, 0.8, 6, false, 0, 0, "NONE")
-						end
-						
+
 					end
 				
 					tab:Show()
@@ -4800,6 +4871,7 @@ function gump:CriaJanelaInfo()
 					PixelUtil.SetSize (tab, buttonTemplate.width, buttonTemplate.height)
 					PixelUtil.SetPoint (tab, "bottomright", info, "topright",  -9 - (buttonWidth * (amt_positive-1)), -72)
 					tab:SetAlpha (0.8)
+					
 				else
 					tab.frame:Hide()
 					tab:Hide()

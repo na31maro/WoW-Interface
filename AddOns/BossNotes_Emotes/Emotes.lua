@@ -32,6 +32,9 @@ BOSS_NOTES_EMOTES_USAGE =               0x000000ff
 BOSS_NOTES_EMOTES_RAID_BOSS_EMOTE =     0x00000001
 BOSS_NOTES_EMOTES_RAID_BOSS_WHISPER =   0x00000002
 BOSS_NOTES_EMOTES_MONSTER_YELL =        0x00000004
+BOSS_NOTES_EMOTES_MONSTER_EMOTE =       0x00000005
+BOSS_NOTES_EMOTES_MONSTER_PARTY =       0x00000006
+BOSS_NOTES_EMOTES_MONSTER_SAY =         0x00000007
 
 -- DB defaults
 local DB_DEFAULTS = {
@@ -69,9 +72,11 @@ function BossNotesEmotes:OnEnable ()
 	self:RegisterEvent("CHAT_MSG_RAID_BOSS_EMOTE", "HandleEmote")
 	self:RegisterEvent("CHAT_MSG_RAID_BOSS_WHISPER", "HandleEmote")
 	self:RegisterEvent("CHAT_MSG_MONSTER_YELL", "HandleEmote")
-	self:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+	self:RegisterEvent("CHAT_MSG_MONSTER_EMOTE", "HandleEmote")
+	self:RegisterEvent("CHAT_MSG_MONSTER_PARTY", "HandleEmote")
+	self:RegisterEvent("CHAT_MSG_MONSTER_SAY", "HandleEmote")
 	self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-	self:RegisterEvent("PARTY_MEMBERS_CHANGED")
+	self:RegisterEvent("GROUP_ROSTER_UPDATE")
 	
 end
 
@@ -179,11 +184,12 @@ end
 -- Handles a combat log event
 function BossNotesEmotes:HandleEmote (message, msg, unitName)
 	-- Get NPC ID
+
 	local npcId = self.npcIds[unitName]
 	if not npcId then
 		return
 	end
-	
+
 	-- Filter out empty emotes
 	if string.len(msg) == 0 then
 	
@@ -200,7 +206,7 @@ function BossNotesEmotes:HandleEmote (message, msg, unitName)
 	if not process then
 		-- Do not track NPCs until one of their spells matches one of the
 		-- usage patterns. This is to prevent empty NPC entries.
-		instance, encounter, process = BossNotes:GetOrLearnInstanceAndEncounter(npcId, unitName)
+		local instance, encounter, process = BossNotes:GetOrLearnInstanceAndEncounter(npcId, unitName)
 		if not process then
 		
 			return
@@ -217,7 +223,6 @@ function BossNotesEmotes:HandleEmote (message, msg, unitName)
 		}
 		self.db.global.npcs[npcId] = npc
 	end
-	
 	-- Track usage
 	local flags
 	if message == "CHAT_MSG_RAID_BOSS_EMOTE" then
@@ -226,9 +231,20 @@ function BossNotesEmotes:HandleEmote (message, msg, unitName)
 	elseif message == "CHAT_MSG_RAID_BOSS_WHISPER" then
 	
 		flags = BOSS_NOTES_EMOTES_RAID_BOSS_WHISPER
-	else
+	elseif message == "CHAT_MSG_MONSTER_YELL" then
 
 		flags = BOSS_NOTES_EMOTES_MONSTER_YELL
+	elseif message == "CHAT_MSG_MONSTER_EMOTE" then
+
+		flags = BOSS_NOTES_EMOTES_MONSTER_EMOTE
+	elseif message == "CHAT_MSG_MONSTER_PARTY" then
+
+		flags = BOSS_NOTES_EMOTES_MONSTER_PARTY
+	elseif message == "CHAT_MSG_MONSTER_SAY" then
+
+		flags = BOSS_NOTES_EMOTES_MONSTER_SAY
+		else
+		
 	end
 
 	-- Track text, isolating player name
@@ -299,25 +315,29 @@ function BossNotesEmotes:UPDATE_MOUSEOVER_UNIT ()
 end
 
 -- Handles combat log events
-function BossNotesEmotes:COMBAT_LOG_EVENT_UNFILTERED (message, _, event, _, sourceGuid, sourceName, _, _, _, _, _, _, ...)
+function BossNotesEmotes:COMBAT_LOG_EVENT_UNFILTERED (...)
+local timestamp, type, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = CombatLogGetCurrentEventInfo()
 	-- Map NPC names to NPC IDs for emote tracking
-	local npcId = BossNotes:GetNpcId(sourceGuid)
+	local npcId = BossNotes:GetNpcId(sourceGUID)
 	if npcId then
 		self.npcIds[sourceName] = npcId
 	end
 end
 
 -- Handle changes in the party or raid roster
-function BossNotesEmotes:PARTY_MEMBERS_CHANGED (message)
- --table.wipe(self.members)
-	if (UnitInRaid("player")) then
+function BossNotesEmotes:GROUP_ROSTER_UPDATE (message)
+local name, instanceType, difficultyID, difficultyName, maxPlayers, dynamicDifficulty, isDynamic, instanceMapID, instanceGroupSize = GetInstanceInfo()
+
+ --table.wipe(self.members)UnitInRaid("player")
+	if (instanceType == "raid") then
 		for i = 1, MAX_RAID_MEMBERS do
 			local member = UnitName("raid" .. i)
 			if member then
 				self.members[member] = true
 			end
 		end
-	else
+		end
+	if (instanceType == "party") then
 		self.members[UnitName("player")] = true
 		for i = 1, MAX_PARTY_MEMBERS do
 			local member = UnitName("party" .. i)

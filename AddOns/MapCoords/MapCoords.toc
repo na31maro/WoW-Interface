@@ -1,4 +1,4 @@
-## Interface: 80000
+## Interface: 80100
 ## Author: ReCover, Jim-Bim, Urmelus (TOC Update)
 ## Version: 0.28
 ## Title: MapCoords

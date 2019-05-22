@@ -1,8 +1,10 @@
-------------------------------------------------------------------------
-r139 | olafskii | 2018-07-18 17:25:42 +0000 (Wed, 18 Jul 2018) | 1 line
-Changed paths:
-   M /trunk/AutoVendor.toc
+lightweight tag a95581278adb96864664a27660629bb56700b3df v61
+Author:	Olaf Keijsers <noreply@autovendor>
+Date:	Sun Feb 17 01:25:10 2019 +0100
 
-Update for Battle for Azeroth.
-------------------------------------------------------------------------
+commit a95581278adb96864664a27660629bb56700b3df
+Author: Olaf Keijsers <noreply@autovendor>
+Date:   Sun Feb 17 01:25:10 2019 +0100
+
+    Check whether item actually has quality
 

@@ -1129,12 +1129,6 @@ L["STRING_OPTIONS_SPELL_NOTFOUND"] = "Magia não encontrada."
 L["STRING_OPTIONS_SPELL_REMOVE"] = "Remover"
 L["STRING_OPTIONS_SPELL_RESET"] = "Resetar"
 L["STRING_OPTIONS_SPELL_SPELLID"] = "ID da Magia"
-L["STRING_OPTIONS_SPELL_SPELLID_DESC"] = [=[A ID é o número único para identificar uma magia dentro do jogo. Há várias formas de obtê-lo:
-
-- Na janela de detalhes do jogador, segure o botão SHIFT e passe o mouse sobre uma barra de uma habilidade.
-- Digite o nome da habilidade no campo do ID, uma lista será mostrada em um tooltip.
-- Páginas na internet da comunidade do WoW, na maioria deles o id da habilidade esta junto ao link do site.
-- Navegando no bloco abaixo:]=]
 L["STRING_OPTIONS_STRETCH"] = "Âncora do botão de esticar"
 L["STRING_OPTIONS_STRETCH_DESC"] = [=[Altera a posição da alça de esticar.
 
@@ -1508,6 +1502,8 @@ L["STRING_SEGMENTS_LIST_OVERALL"] = "tudo"
 L["STRING_SEGMENTS_LIST_TIMEINCOMBAT"] = "Tempo em Combate"
 L["STRING_SEGMENTS_LIST_TOTALTIME"] = "Tempo Total"
 L["STRING_SEGMENTS_LIST_TRASH"] = "trash"
+--[[Translation missing --]]
+--[[ L["STRING_SEGMENTS_LIST_WASTED_TIME"] = ""--]] 
 L["STRING_SHIELD_HEAL"] = "Prevenido"
 L["STRING_SHIELD_OVERHEAL"] = "Desperdiçado"
 L["STRING_SHORTCUT_RIGHTCLICK"] = "Menu de Atalho (botão direito para fechar)"

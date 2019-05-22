@@ -3,8 +3,9 @@ LoadAddOn("Blizzard_ScrappingMachineUI")
 ScrappingMachineFrame.ScrapButton.SetEnabledBackup = ScrappingMachineFrame.ScrapButton.SetEnabled --To prevent button mashers from scrapping while adding items
 
 EasyScrap = {}
-EasyScrap.addonVersion = 19
+EasyScrap.addonVersion = 22
 EasyScrap.saveData = {}
+EasyScrap.debugMode = false
 
 EasyScrap.itemCache = {}
 EasyScrap.scrappableItems = {}
@@ -18,6 +19,7 @@ EasyScrap.queueItemsToAdd = 0
 EasyScrap.scrapInProgress = false
 EasyScrap.itemIgnoreList = {}
 EasyScrap.mouseInItem = false
+EasyScrap.mouseInItemRef = 0
 EasyScrap.activeFilterID = 0
 
 EasyScrap.defaultSettings = {}
@@ -60,7 +62,17 @@ GameTooltip:HookScript('OnTooltipSetItem', function(self)
                 GameTooltip:AddLine(ITEM_SCRAPABLE, 0.53333216905594, 0.66666519641876, 0.99999779462814)
              end 
          end
-      end     
+      end
+
+  --Ugly hack to deal with addons that are redrawing tooltips?
+    if EasyScrap.mouseInItemRef > 0 and ScrappingMachineFrame:IsVisible() then 
+        if EasyScrap.scrappableItems[EasyScrap.mouseInItemRef].filterMessage and not EasyScrap:itemInIgnoreList(EasyScrap.mouseInItemRef) then
+            GameTooltip:AddLine('|cFFFF0000'..EasyScrap.scrappableItems[EasyScrap.mouseInItemRef].filterMessage..'|r') 
+        end
+        if IsModifiedClick("COMPAREITEMS") then
+            GameTooltip_ShowCompareItem(GameTooltip);
+        end
+    end      
 end)
 
 

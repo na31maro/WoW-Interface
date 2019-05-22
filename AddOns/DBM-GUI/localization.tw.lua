@@ -160,6 +160,7 @@ L.ExpandUpwards				= "計時條向上延伸"
 L.FillUpBars				= "填滿計時條"
 L.ClickThrough				= "禁用鼠標事件(允許你點擊穿透計時條)"
 L.Bar_Decimal				= "%d秒以下顯示小數點"
+L.Bar_Alpha					= "計時條透明度: %0.1f"
 L.Bar_DBMOnly				= "以下選項只支援 \"DBM\" 計時條風格"
 L.Bar_EnlargeTime			= "計時條時間低於:%d時放大"
 L.Bar_EnlargePercent		= "計時條百分比低於:%0.1f%%時放大"
@@ -169,6 +170,9 @@ L.BarSort					= "依剩餘時間排序"
 L.BarColorByType			= "根據類型上色"
 L.BarInlineIcons			= "顯示嵌入圖示"
 L.ShortTimerText			= "使用較短的計時器文字(如果可用時)"
+L.KeepBar					= "保持計時條顯示直到技能施放"
+L.KeepBar2					= "(當被模組支援)"
+L.FadeBar					= "清除超出範圍技能的計時條"
 
 -- Tab: Spec Warn Frame
 L.Panel_SpecWarnFrame		= "特別警告"
@@ -276,9 +280,9 @@ L.Area_PullTimer			= "開怪計時器過濾選項"
 L.DontShowPTNoID			= "阻擋與你不同區域ID送出的開怪倒數計時條"
 L.DontShowPT				= "不要顯示開怪/休息倒數計時條"
 L.DontShowPTText			= "不要顯示開怪/休息提示文字"
-L.DontPlayPTCountdown		= "不要使用開怪/休息/開戰/自訂計時器倒數音效"
-L.DontShowPTCountdownText	= "不要顯示開怪/休息/開戰/自訂計時器倒數文字"
-L.PT_Threshold				= "不要顯示高於%d秒以上的休息/開戰/自訂倒數計時器文字"
+L.DontShowPTCountdownText	= "不要顯示開怪計時器倒數文字"
+L.DontPlayPTCountdown		= "完全不要使用開怪/休息/開戰/自訂計時器倒數音效"
+L.PT_Threshold				= "不要使用高於%d秒以上的開怪/休息/開戰/自訂倒數計時器音效"
 
 L.Panel_HideBlizzard		= "禁用及隱藏暴雪功能"
 L.Area_HideBlizzard			= "禁用及隱藏暴雪功能選項"
@@ -290,15 +294,16 @@ L.HideQuestTooltips			= "首領戰鬥時隱藏滑鼠提示的任務物件"
 L.HideTooltips				= "首領戰鬥時完全地隱藏滑鼠提示"
 L.DisableSFX				= "首領戰鬥時禁用音效頻道"
 L.DisableCinematics			= "禁用遊戲中的過場動畫"
-L.AfterFirst				= "在每次動畫播放一次之後"
+L.OnlyFight					= "只在戰鬥進行中，在每次動畫被播放一次之後"
+L.AfterFirst				= "在副本中每次動畫播放一次之後"
 L.Always					= ALWAYS
 L.CombatOnly				= "在任何戰鬥中禁用"
 L.RaidCombat				= "只在首領戰鬥中禁用"
 L.HideBonusHeader			= "隱藏額外獎勵視窗低於..."
-L.TrivialContent			= "五人地城(<340)"--Basically anything below 340
-L.NormalRaider				= "傳奇地城+5和隨機團隊(<355)"--Basically, anything below 355
-L.HeroicRaider				= "傳奇地城+10和英雄團隊和非戰爭前線首領(<370)"--Basically anything below 370
-L.MythicRaider				= "傳奇團隊(<385)"--Basically anything below 385
+L.TrivialContent			= "五人地城"--Basically anything below 340
+L.NormalRaider				= "傳奇地城+5和隨機團隊"--Basically, anything below 355
+L.HeroicRaider				= "傳奇地城+10和英雄團隊和非戰爭前線首領"--Basically anything below 370
+L.MythicRaider				= "傳奇團隊"--Basically anything below 385
 
 L.Panel_ExtraFeatures		= "額外功能"
 --

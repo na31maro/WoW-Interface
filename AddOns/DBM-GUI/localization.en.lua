@@ -24,8 +24,8 @@ L.TabCategory_CLASSIC		= EXPANSION_NAME0
 L.TabCategory_OTHER    		= "Other Boss Mods"
 
 L.BossModLoaded 			= "%s statistics"
-L.BossModLoad_now 			= [[This boss mod is not loaded. 
-It will be loaded when you enter the instance. 
+L.BossModLoad_now 			= [[This boss mod is not loaded.
+It will be loaded when you enter the instance.
 You can also click the button to load the mod manually.]]
 
 L.PosX						= 'Position X'
@@ -82,7 +82,7 @@ L.RaidWarnColor_1 			= "Color 1"
 L.RaidWarnColor_2 			= "Color 2"
 L.RaidWarnColor_3		 	= "Color 3"
 L.RaidWarnColor_4 			= "Color 4"
-L.InfoRaidWarning			= [[You can specify the position and colors of the raid warning frame. 
+L.InfoRaidWarning			= [[You can specify the position and colors of the raid warning frame.
 This frame is used for messages like "Player X is affected by Y".]]
 L.ColorResetted 			= "The color settings of this field have been reset."
 L.ShowWarningsInChat 		= "Show warnings in chat frame"
@@ -168,6 +168,7 @@ L.ExpandUpwards				= "Expand upward"
 L.FillUpBars				= "Fill up"
 L.ClickThrough				= "Disable mouse events (click through)"
 L.Bar_Decimal				= "Decimal shows below time: %d"
+L.Bar_Alpha					= "Bar Alpha: %0.1f"
 L.Bar_DBMOnly				= "Below options only work with \"DBM\" bar style."
 L.Bar_EnlargeTime			= "Bar enlarges below time: %d"
 L.Bar_EnlargePercent		= "Bar enlarges below percent: %0.1f%%"
@@ -177,6 +178,9 @@ L.BarSort					= "Sort by remaining time"
 L.BarColorByType			= "Color by type"
 L.BarInlineIcons			= "Show inline icons"
 L.ShortTimerText			= "Use short timer text (when available)"
+L.KeepBar					= "Keep timer active until ability cast"
+L.KeepBar2					= "(when supported by mod)"
+L.FadeBar					= "Fade timers for out of range abilities"
 
 -- Tab: Spec Warn Frame
 L.Panel_SpecWarnFrame		= "Special Warnings"
@@ -217,7 +221,7 @@ L.SpecWarn_NoSoundsWVoice	= "Filter special warning sounds for warnings that als
 L.SWFNever					= "Never"
 L.SWFDefaultOnly			= "when special warnings use default sounds. (Allows custom sounds to still play)"
 L.SWFAll					= "when special warnings use any sound"
-L.SpecWarn_AlwaysVoice		= "Always play all spoken alerts (Overrides boss-specific options. Useful for RL)"
+L.SpecWarn_AlwaysVoice		= "Always play all spoken alerts (Even if Special Warning disabled. Useful for Raid Leader, not recommended otherwise)"
 --TODO, maybe add URLS right to GUI panel on where to acquire 3rd party voice packs?
 L.Area_GetVEM				= "Get VEM Voice Pack"
 L.VEMDownload				= "|cFF73C2FBhttps://wow.curseforge.com/projects/dbm-voicepack-vem|r"
@@ -254,7 +258,8 @@ L.SpamBlockNoSetIcon		= "Do not set icons on targets"
 L.SpamBlockNoRangeFrame		= "Do not show range frame"
 L.SpamBlockNoInfoFrame		= "Do not show info frame"
 L.SpamBlockNoHudMap			= "Do not show HudMap"
-L.SpamBlockNoNameplate		= "Do not show Nameplate Auras"
+L.SpamBlockNoNameplate		= "Do not show Nameplate Auras (disables completely)"
+L.SpamBlockNoNameplateLines	= "Do not show Nameplate Aura lines (aura icons still show)"
 L.SpamBlockNoCountdowns		= "Do not play countdown sounds"
 L.SpamBlockNoYells			= "Do not send chat yells"
 L.SpamBlockNoNoteSync		= "Do not accept shared notes"
@@ -297,15 +302,16 @@ L.HideQuestTooltips			= "Hide quest objectives from tooltips during boss fights"
 L.HideTooltips				= "Completely hide tooltips during boss fights"
 L.DisableSFX				= "Disable sound effects channel during boss fights"
 L.DisableCinematics			= "Hide in-game cinematics"
-L.AfterFirst				= "After each movie has played once"
+L.OnlyFight					= "Only during fight, after each movie has played once"
+L.AfterFirst				= "In instance, after each movie has played once"
 L.Always					= ALWAYS
 L.CombatOnly				= "Disable in combat (any)"
 L.RaidCombat				= "Disable in combat (bosses only)"
 L.HideBonusHeader			= "Hide bonus roll window in..."
-L.TrivialContent			= "NON-Mythic dungeons (<340)"--Basically anything below 340
-L.NormalRaider				= "Dungeons below Mythic+5 and LFR raids (<355)"--Basically, anything below 355
-L.HeroicRaider				= "Dungeons below Mythic+10 and raids below heroic and non warfront bosses (<370)"--Basically anything below 370
-L.MythicRaider				= "Anything below mythic difficulty raids (<385)"--Basically anything below 385
+L.TrivialContent			= "NON-Mythic dungeons"--Basically anything below 340
+L.NormalRaider				= "Dungeons below Mythic+5 and LFR raids"--Basically, anything below 355
+L.HeroicRaider				= "Dungeons below Mythic+10 and raids below heroic and non warfront bosses"--Basically anything below 370
+L.MythicRaider				= "Anything below mythic difficulty raids"--Basically anything below 385
 
 L.Panel_ExtraFeatures		= "Extra Features"
 --

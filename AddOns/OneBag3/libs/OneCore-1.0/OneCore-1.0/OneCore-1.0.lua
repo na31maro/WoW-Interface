@@ -4,7 +4,7 @@
 local _G = _G
 local LibStub = _G.LibStub
 
-local MAJOR, MINOR = "OneCore-1.0", tonumber("@project-revision@") or 9999
+local MAJOR, MINOR = "OneCore-1.0", tonumber("@project-timestamp@") or 9999
 local OneCore, oldminor = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not OneCore then return end -- No Upgrade needed.
@@ -130,7 +130,7 @@ function OneCore:CreateSlotFrame(parent, id)
         slotType = "ReagentBankItemButtonGenericTemplate"
     end
 
-	local slot = CreateFrame("Button", parent:GetName().."Item"..id, parent, slotType)
+	local slot = CreateFrame("ItemButton", parent:GetName().."Item"..id, parent, slotType)
 
 	slot:SetID(id)
 	slot:SetFrameLevel(parent:GetParent():GetFrameLevel()+5)

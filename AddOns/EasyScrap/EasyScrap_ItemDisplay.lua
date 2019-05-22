@@ -96,21 +96,15 @@ local function createItemButton(i)
     frame:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
     frame:SetScript('OnClick', itemButtonOnClick)
     frame:SetScript('OnEnter', function(self)
-        if self.itemRef > 0 then 
-            GameTooltip:SetOwner(self, "ANCHOR_NONE")
-            GameTooltip:SetBagItem(EasyScrap.scrappableItems[self.itemRef].bag, EasyScrap.scrappableItems[self.itemRef].slot)
-            if EasyScrap.scrappableItems[self.itemRef].filterMessage and not EasyScrap:itemInIgnoreList(self.itemRef) then
-                GameTooltip:AddLine('|cFFFF0000'..EasyScrap.scrappableItems[self.itemRef].filterMessage..'|r') 
-            end
-            GameTooltip:SetPoint("BOTTOMLEFT", frame, "TOPRIGHT");
-            GameTooltip:Show()
-            if IsModifiedClick("COMPAREITEMS") then
-                GameTooltip_ShowCompareItem(GameTooltip);
-            end
-        end
         EasyScrap.mouseInItem = true
+        EasyScrap.mouseInItemRef = self.itemRef
+        --Ugly hack to deal with addons that are redrawing tooltips? Is now located in the tooltip item set hookscript in EasyScrap.lua
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        --GameTooltip:SetPoint("BOTTOMLEFT", frame, "TOPRIGHT");
+        GameTooltip:SetBagItem(EasyScrap.scrappableItems[self.itemRef].bag, EasyScrap.scrappableItems[self.itemRef].slot)
+        GameTooltip:Show()
     end)
-    frame:SetScript('OnLeave', function(self) GameTooltip_Hide() EasyScrap.mouseInItem = false end)
+    frame:SetScript('OnLeave', function(self) GameTooltip_Hide() EasyScrap.mouseInItem = false EasyScrap.mouseInItemRef = 0 end)
     
     frame.shineFrame = CreateFrame('Frame', 'EasyScrapItemButton'..i..'Shine', frame, 'AutoCastShineTemplate')
     frame.shineFrame:SetPoint('TOPLEFT', 1, -1)

@@ -1,559 +1,760 @@
-changeset:   766:b47964a7f9ff
-tag:         tip
-user:        Tercioo
-date:        Sun Jan 20 20:14:24 2019 -0200
-summary:     - Improvements on the Encounter Breakdown plugin.
+commit dfad8bc9fd20f4713295041552ac090c76f10baa
+Author: Tercioo <terciob19@hotmail.com>
+Date:   Tue Apr 23 15:02:34 2019 -0300
 
+    New API Details.SegmentPhases() and Details.UnitDamageByPhase()
+    
+    Details.SegmentPhases(): return a table containing phase numbers, use to query unit damage for a specific encounter phase.
+    Details.UnitDamageByPhase( unitId, phaseNumber): query the damage of a unit during a specific phase.
 
-changeset:   765:4badbe30d64f
-user:        Tercioo
-date:        Sun Jan 20 00:22:22 2019 -0200
-summary:     - Battle for Dazaralor update.
+commit 1869c6134d6e8435e7722a0f953d829c1784eecd
+Author: Tercioo <terciob19@hotmail.com>
+Date:   Mon Apr 22 14:04:50 2019 -0300
 
+    Added API Details.SegmentPhases() and Details.UnitDamageByPhase()
+    
+    See ingame documentation with /details api
 
-changeset:   764:e68d261c6a61
-user:        Tercioo
-date:        Mon Dec 31 11:06:00 2018 -0200
-summary:     - Fixed Event Tracker tool broken on 8.1 patch.
+commit 5e0e64982d212d7fbf4af080d63a4e3f7958ec0f
+Author: Tercioo <terciob19@hotmail.com>
+Date:   Sun Apr 21 13:50:44 2019 -0300
 
+    Added API Details.UnitInfo and Details.UnitTexture
+    
+    UnitInfo return information about the unit and UnitTexture return the texture for the class and spec for the unit.
 
-changeset:   763:1ae1f6b5a2c7
-user:        Tercioo
-date:        Mon Dec 17 08:14:11 2018 -0200
-summary:     - ToC and libraries update.
+commit be966f74369dc95891c6f9d26d5dd205c26f482b
+Author: Tercioo <terciob19@hotmail.com>
+Date:   Tue Apr 16 13:20:28 2019 -0300
 
+    Added support for Combat Log Event Recording (in game)
+    
+    Further versions will support ingame time line analysis using the combat log event records, at the moment it is available for early adopters.
+    To enable, edit the line '_is_storing_cleu' to true in Parser.lua.
+    
+    Also on this version: added early implementation of damage chart in the Player Detail Breakdown window, it is disabled by default for users.
 
-changeset:   762:a2d25472f076
-user:        Tercioo
-date:        Tue Dec 11 11:23:05 2018 -0200
-summary:     - Fixed East Asian myriads showing a giganting non formated number in the total bar DPS.
+commit d18fa8c1384682f593026b86158e814ee75a0664
+Author: Tercioo <terciob19@hotmail.com>
+Date:   Sat Apr 13 13:00:51 2019 -0300
 
+    Moving rank text to a new Statusbar in the Player Detail Window
+    
+    Rank information was shown in the header above the tabs, now the player details window has a statusbar and the rank information is shown there.
 
-changeset:   761:914618091b2c
-user:        Tercioo
-date:        Mon Dec 03 17:25:35 2018 -0200
-summary:     - Fixed East Asian myriads showing a giganting non formated number in the total bar DPS.
+commit b778d46d3dd92ca818c1d84c62fdf431db0e24c0
+Author: Tercioo <terciob19@hotmail.com>
+Date:   Fri Apr 12 13:18:46 2019 -0300
 
+    Added Healing API
 
-changeset:   760:ea42ccffcad1
-user:        Tercioo
-date:        Fri Nov 23 19:31:40 2018 -0200
-summary:     - Framwork update for timeline plugin.
+commit f793dbeba5884c00d4c7225d189cb0e2a84b10d6
+Author: Tercioo <terciob19@hotmail.com>
+Date:   Wed Apr 10 18:39:19 2019 -0300
 
+    API 2.0 Updates, /details api
 
-changeset:   759:daf50a35a0fe
-user:        Tercioo
-date:        Thu Nov 22 14:01:54 2018 -0200
-summary:     - Added Death Logs for mythic dungeon runs in the Overall Data.
+commit 2ff8108c836776a6bb29593c68741241a6c873b6
+Author: Tercioo <terciob19@hotmail.com>
+Date:   Tue Apr 9 14:05:18 2019 -0300
 
+    More development on the new API
 
-changeset:   758:e1c9450234ec
-user:        Tercioo
-date:        Wed Nov 21 22:14:43 2018 -0200
-summary:     - Fixed window for report to Copy/Paste.
+commit 4bd7bbc6dfc92c96b4176eb2e1034e705a4b5dc8
+Author: Tercioo <Tercioo@localhost>
+Date:   Wed Apr 3 15:08:37 2019 -0300
 
+    - If the skin selected does not exists, use the default skin.
+    - Added 'icon_offset' member into instances to offset the class icon.
+    - Event Tracker not uses the cooldown and crowd control lists from the framework.
+    - Added new gradient wallpapers.
 
-changeset:   757:0d92132ce7d7
-user:        Tercioo
-date:        Wed Nov 07 17:32:08 2018 -0200
-summary:     - New Feature: import and export profiles.
+commit 1523f179f8492e8f1502edda64f84787f9765f10
+Author: Tercioo <Tercioo@localhost>
+Date:   Sat Mar 23 20:20:12 2019 -0300
 
+    - Added te first batch of API 2.0 (file functions/api2.lua)
 
-changeset:   756:313b158026ee
-user:        Tercio
-date:        Tue Oct 30 19:40:07 2018 -0300
-summary:     - Major improvements on row text scripts, now they pass 4 objects: actor, combat, instance and the default text of the bar.
+commit 625b1124bd301ae22617752f2477c892e3aae1d7
+Author: Tercioo <Tercioo@localhost>
+Date:   Sat Mar 23 19:35:49 2019 -0300
 
+    - Added te first batch of API 2.0 (file functions/api2.lua)
 
-changeset:   755:b53b11c41a50
-user:        Tercio
-date:        Sun Oct 28 15:58:05 2018 -0300
-summary:     - Added import and export profiles.
+commit 020bb1bcdad50c8c2888ae4038ffb05ac2ffcb68
+Author: Tercioo <Tercioo@localhost>
+Date:   Mon Mar 18 15:10:59 2019 -0300
 
+    - Attempt to delete the last trash segment in a dungeon run if this trash is the current segment. I'll delete it and pass the last boss segment as the current segment, after that it'll create the overall segment for the dungeon run.
 
-changeset:   754:64d71a698f27
-user:        Tercio
-date:        Sat Oct 20 00:18:52 2018 -0300
-summary:     - Fixed broken change log from last version.
+commit 55790fb0ffe0b153a580eb10783c09bec2d8acbd
+Author: Tercioo <Tercioo@localhost>
+Date:   Fri Mar 15 20:03:38 2019 -0300
 
+    - Tagging deprecated functions as 'deprecated' and small cleanups.
+    - Adding more prints to chat on the overall merge.
 
-changeset:   753:cdaff539eed9
-user:        Tercio
-date:        Fri Oct 19 21:11:32 2018 -0300
-summary:     - Fixed damage on low level training dummies where it was showing 1 damage for each ability.
+commit b7b90f6d5e6e1faee3bf4a8584fa75de6cdf71ec
+Author: Tercioo <Tercioo@localhost>
+Date:   Thu Mar 14 20:30:51 2019 -0300
 
+    - Make sure the actor isn't a fight component before the garbage collector erases it.
+    - Do not do trash cleanups during mythic+ dungeon runs.
+    - Do not overrite a fight component or group state if the new value is false during a merge.
 
-changeset:   752:b5a107128b3f
-user:        Tercio
-date:        Wed Oct 10 23:01:37 2018 -0300
-summary:     - Fixing the pvp issue introduced in the previous build.
+commit 5b90fbbf3cab01628981bcc5b95218f7d2d54440
+Author: Tercioo <Tercioo@localhost>
+Date:   Tue Mar 12 16:03:41 2019 -0300
 
+    - Fixed debug message without debug enabled.
 
-changeset:   751:83144964254d
-user:        Tercio
-date:        Wed Oct 10 14:31:12 2018 -0300
-summary:     - Send character data when the group roster changes.
+commit a6f56c46ad6caa883943bebed5658d2c937325e5
+Author: Tercioo <Tercioo@localhost>
+Date:   Mon Mar 11 21:41:55 2019 -0300
 
+    - Garbage collector won't clear actors in mythic dungeon segments.
 
-changeset:   750:8ad20c7b78e7
-user:        Tercio
-date:        Tue Oct 09 18:43:05 2018 -0300
-summary:     - Player detail window now has bigger lines (16 pixels to 20).
+commit 7c8c2aa1d82f6c316a4b9681168b323b46b4e5ce
+Author: Tercioo <Tercioo@localhost>
+Date:   Sun Mar 10 23:44:35 2019 -0300
 
+    - Segments list improvements.
+    - Shutdown the debug lines.
 
-changeset:   749:4e7c350ff26b
-user:        Tercio
-date:        Sat Oct 06 17:39:20 2018 -0300
-summary:     - Added a macro section with useful macros.
+commit 29f8cfbf75b17ff0bca61e6f255249ab5bb5d5f3
+Author: Tercioo <Tercioo@localhost>
+Date:   Sun Mar 10 21:36:25 2019 -0300
 
+    - Changed the way mythic dungeons are handled internally.
+    - Added events: COMBAT_MYTHICDUNGEON_START, COMBAT_MYTHICDUNGEON_END, COMBAT_ENCOUNTER_END, COMBAT_ENCOUNTER_START.
+    - Added API: Details:GetCombatFromBreakdownWindow()
+    - Added wasted time in the segment tooltip for mythic dungeon overall and trash overall.
+    - Added Fel Eruption crowd control.
 
-changeset:   748:589b441f6a68
-user:        Tercio
-date:        Fri Oct 05 09:18:09 2018 -0300
-summary:     - framework update.
+commit 8f01d343923db436ccddc4f9e12482767eb3629b
+Author: Tercioo <Tercioo@localhost>
+Date:   Fri Mar 8 18:57:38 2019 -0300
 
+    - Fixing the Streamer plugin for the recently changes in details!.
 
-changeset:   747:5ae6f4f26046
-user:        Tercio
-date:        Sun Sep 30 20:05:18 2018 -0300
-summary:     - Updated to BFA 'Potion Used' and 'Health Potion and Stone' custom displays.
+commit 21bb23ead570c280c7f5f5e557d165547e2c5944
+Author: Tercioo <Tercioo@localhost>
+Date:   Fri Mar 8 12:32:33 2019 -0300
 
+    - Fixed Raid Check plugin not showing the in plugin management nor in the title bar.
 
-changeset:   746:6bc9f8bacdb5
-user:        Tercio
-date:        Fri Sep 28 19:19:03 2018 -0300
-summary:     - Show light of the martyr damage on death log.
+commit 0a234de375f83257276955cab589120c996b25d1
+Author: Tercioo <Tercioo@localhost>
+Date:   Thu Mar 7 17:49:46 2019 -0300
 
+    - Fixed plugins initialization broken in latest version.
 
-changeset:   745:414ed11c2900
-user:        Tercio
-date:        Tue Sep 25 20:21:13 2018 -0300
-summary:     - Deprecated rules for friendly fire has been removed, this might fix some random issues with mind controlled players in the Lord Stormsong encounter in the Shrine of the Storm dungeon.
+commit 3c62ffbf5b1db43eea472a42920cb23453369b65
+Author: Tercioo <Tercioo@localhost>
+Date:   Wed Mar 6 15:22:09 2019 -0300
 
+    - Attempt to fix some plugins loading after details! start and failing to install.
+    - Fixed Vamguard plugin not showing debuffs on tanks.
+    - Fixed a bug within Atal'Dazar dungeon where in some cases adds damage where considered friendly fire.
 
-changeset:   744:4249f1488249
-user:        Tercio
-date:        Tue Sep 18 18:13:39 2018 -0300
-summary:     - Fixed pets with the owner name showing twice in the pet name.
+commit ab333051bc3b498414b1bf1173d4a4a50ef1f782
+Author: Tercioo <Tercioo@localhost>
+Date:   Sat Feb 23 14:55:50 2019 -0300
 
+    - Framework update.
+    - Schedules run after combat ends and no more after regen_enabled.
 
-changeset:   743:16c8b07b352a
-user:        Tercio
-date:        Tue Sep 11 22:19:59 2018 -0300
-summary:     - Added macro text box in Encounter Plugin.
+commit df46fc9cf29cf1ecf4b333119df954f45da8cb13
+Author: Tercioo <Tercioo@localhost>
+Date:   Thu Feb 21 13:02:22 2019 -0300
 
+    - Moving Details:Start() to PLAYER_LOGIN.
 
-changeset:   742:882d9fa124cf
-user:        Tercio
-date:        Tue Sep 11 19:57:17 2018 -0300
-summary:     - Added a new panel to open the Chart after a mythic dungeon.
+commit 02fa9a5c6b71fef27b7fc5b0fe70f13254e740c2
+Author: Tercioo <Tercioo@localhost>
+Date:   Tue Feb 19 21:56:21 2019 -0300
 
+    - Fixed an issue where some options combinations was making the window unlock after /reload.
+    - Framework update.
+    - Localization updates.
 
-changeset:   741:4d105898bbc1
-user:        Tercio
-date:        Mon Sep 10 21:17:53 2018 -0300
-summary:     - Details! is ready for Uldir mythic raiding!.
+commit c018f4db29983403b0826251597829d7d5dac01a
+Author: Tercioo <Tercioo@localhost>
+Date:   Sat Feb 9 14:05:24 2019 -0200
 
+    - Custom display 'My Spells' now get the player role from the current spec the character is using.
+    - Framework: table copy won't try to copy '__index' meta table.
 
-changeset:   740:aa2d4ac294e0
-user:        Tercio
-date:        Mon Sep 10 11:20:00 2018 -0300
-summary:     - Removed RaiderIO integration.
+commit a4833f966b62bbd27698c41c43a0ed40b539c4ed
+Author: Tercioo <Tercioo@localhost>
+Date:   Wed Jan 30 17:35:46 2019 -0200
 
+    - Added encounter ID for Grong horde version inside the parser encounter rules.
 
-changeset:   739:6af1603684c5
-user:        Tercio
-date:        Tue Aug 28 13:03:08 2018 -0300
-summary:     - Fixed custom display 'Dynamic Overall Data'.
+commit e434a1a0c1df5a95bfa32a7e4d858f60102a3f7b
+Author: Tercioo <Tercioo@localhost>
+Date:   Wed Jan 30 14:36:09 2019 -0200
 
+    - Fixed Player Details Breakdown window not opening for new instalations.
 
-changeset:   738:253e14dca82e
-user:        Tercio
-date:        Sat Aug 25 20:15:31 2018 -0300
-summary:     - Fixed spell container :ListActors() API.
+commit 05cb5eeaf25980c49779e837c004668249a1d44a
+Author: Tercioo <Tercioo@localhost>
+Date:   Fri Jan 25 16:00:17 2019 -0200
 
+    - Fixed Player Details! Breakdown window not opening for new installs.
 
-changeset:   737:84218026dc7b
-user:        Tercio
-date:        Fri Aug 24 22:41:35 2018 -0300
-summary:     - Cleanup on the item level tracker.
+commit 2c71a6428c455b6ff96d101e198e507dc41ccaa8
+Author: Tercioo <Tercioo@localhost>
+Date:   Wed Jan 23 16:20:12 2019 -0200
 
+    - Major clean up on plugins that lost support on 8.0.
+    - Some code cleanup and old windows using old window styles are now using the framework.
+    - Removed some debug prints.
+    - All export data are using LibDeflate now.
 
-changeset:   736:1fdf66defdcb
-user:        Tercio
-date:        Wed Aug 22 12:22:19 2018 -0300
-summary:     - Workaround for Hunter's Incendiary Ammunition bug.
+commit 9301c993cad908d7d6db2e635ac505f87b89b893
+Author: Tercioo <Tercioo@localhost>
+Date:   Tue Jan 22 14:28:29 2019 -0200
 
+    - Encounter updates and framework fixes.
 
-changeset:   735:4fcaff920195
-user:        Tercio
-date:        Tue Aug 21 18:14:42 2018 -0300
-summary:     - Parser cleanup.
+commit d5773d1583dce9bd82f9be6c1c9cfe2788e8d09f
+Author: Tercioo <Tercioo@localhost>
+Date:   Tue Jan 22 09:39:01 2019 -0200
 
+    - Framework update for mage polymorph fixes.
+    - Fixes for battle of dazar'alor raid.
 
-changeset:   734:28929636d0cd
-user:        Tercio
-date:        Mon Aug 20 21:29:47 2018 -0300
-summary:     - Fixed the latest raid check update.
+commit 6fb7af3204882b7283ad1a62e07bc7ba3670eda7
+Author: Tercioo <Tercioo@localhost>
+Date:   Sun Jan 20 20:14:24 2019 -0200
 
+    - Improvements on the Encounter Breakdown plugin.
 
-changeset:   733:0c3d5411181c
-user:        Tercio
-date:        Sun Aug 19 15:27:19 2018 -0300
-summary:     - Updated flask and food list to BFA.
+commit 0c486a24a2156364c8d1fecc16d5e996aa08d569
+Author: Tercioo <Tercioo@localhost>
+Date:   Sun Jan 20 00:22:22 2019 -0200
 
+    - Battle for Dazaralor update.
+    - Fixed rogue spec icons.
+    - Some visual improvements.
+    - Framework update.
 
-changeset:   732:0fe5b00bc175
-user:        Tercio
-date:        Thu Aug 16 22:05:10 2018 -0300
-summary:     - bug fixes.
+commit b198c6248975ec91bd437b978ba50bf5797d790a
+Author: Tercioo <Tercioo@localhost>
+Date:   Mon Dec 31 11:06:00 2018 -0200
 
+    - Fixed Event Tracker tool broken on 8.1 patch.
+    - Fixed background color for the event tracker not changing correctly from the value selected on the options menu.
 
-changeset:   731:dfe710f3192f
-user:        Tercio
-date:        Mon Aug 13 17:06:46 2018 -0300
-summary:     - Fixed an issue with Alliance or Horde icons showing at random in player bars.
+commit 9dc02805b0c507c686b4a870f94bc5390377d87d
+Author: Tercioo <Tercioo@localhost>
+Date:   Mon Dec 17 08:14:11 2018 -0200
 
+    - ToC and libraries update.
 
-changeset:   730:a4e4991a7f8d
-user:        Tercio
-date:        Mon Aug 13 17:01:58 2018 -0300
-summary:     - Fixed an issue with Alliance or Horde icons showing at random in player bars.
+commit 55f5caaedcbd95e795bcf1acbd14420a0f8a420c
+Author: Tercioo <Tercioo@localhost>
+Date:   Tue Dec 11 11:23:05 2018 -0200
 
+    - Fixed East Asian myriads showing a giganting non formated number in the total bar DPS.
+    - Added a reset nickname button in the right side of the nickname field.
+    - Framework and NickTag library updates.
+    - Removed deprecated 'feedback' button, there's Discord now.
 
-changeset:   729:41c0431ad5c8
-user:        Tercio
-date:        Thu Aug 09 11:55:18 2018 -0300
-summary:     - Fixed mobs showing when in Standard mode.
+commit 24d5be67d26a142c8d9f99596a66f1b8b9f9b9a7
+Author: Tercioo <Tercioo@localhost>
+Date:   Mon Dec 3 17:25:35 2018 -0200
 
+    - Fixed East Asian myriads showing a giganting non formated number in the total bar DPS.
+    - Added a reset nickname button in the right side of the nickname field.
+    - Framework and NickTag library updates.
 
-changeset:   728:5c29a7092020
-user:        Tercio
-date:        Thu Aug 09 00:39:13 2018 -0300
-summary:     - Hotfix an initialization issue caused by a stealth patch in the client addon API.
+commit 857ddbbc9ee80a27fc199805d7281aee126169a5
+Author: Tercioo <Tercioo@localhost>
+Date:   Fri Nov 23 19:31:40 2018 -0200
 
+    - Framwork update for timeline plugin.
 
-changeset:   727:3f1ec67b4eeb
-user:        Tercio
-date:        Tue Aug 07 15:55:19 2018 -0300
-summary:     - Death Knight: Epidemic, Scourge Strike and Howling Blast now has a better description on the spell name.
+commit 7e0916de635e5207cafa8447d7a6caaba3e6959d
+Author: Tercioo <Tercioo@localhost>
+Date:   Thu Nov 22 14:01:54 2018 -0200
 
+    - Added Death Logs for mythic dungeon runs in the Overall Data.
 
-changeset:   726:7ca9550a402a
-user:        Tercio
-date:        Mon Jul 30 14:02:20 2018 -0300
-summary:     - Framework update.
+commit ca0775dcdab1801650aae41fb317e2301987c1d9
+Author: Tercioo <Tercioo@localhost>
+Date:   Wed Nov 21 22:14:43 2018 -0200
 
+    - Fixed window for report to Copy/Paste.
+    - Removed Report History from the report window.
+    - Fixed tooltip not hiding after clicking the report button.
 
-changeset:   725:9c36469215a4
-user:        Tercio
-date:        Sat Jul 28 18:22:13 2018 -0300
-summary:     - Added size offset options for the chat tab embed feature.
+commit 268fab49a9aa5d2007239aece786f0bab717f3cc
+Author: Tercioo <Tercioo@localhost>
+Date:   Wed Nov 7 17:32:08 2018 -0200
 
+    - New Feature: import and export profiles.
+    - Major improvements on bar text scripts.
+    - Improved import and export custom skins.
+    - Fixed shaman's sundering spell not showing in crowd control.
+    - Fixed sharing guild statistics.
+    - More spells added to spell consolidation: Whirlwind, Fracture, Mutilate.
+    - Monk Mistweaver Blackout Kick now has a indicator when it comes from passive 'Teachings of the Monastery'.
+    - Added slash command '/details debugwindow' for cases when the window isn't shown or are anchored in the wrong place.
+    - Exposed spell ignore table, you can now add spells to be ignored using Details.SpellsToIgnore [spellID] = true.
 
-changeset:   724:c37a7672ea3a
-user:        Tercio
-date:        Tue Jul 24 13:56:44 2018 -0300
-summary:     - Removed bookmark tutorial popup.
+commit 8dd8714dd59cdbd7ffbe673c0353d01ac1df7296
+Author: Tercio <Tercio@localhost>
+Date:   Tue Oct 30 19:40:07 2018 -0300
 
+    - Major improvements on row text scripts, now they pass 4 objects: actor, combat, instance and the default text of the bar.
+    - Added warrior Whirlwind, deamonhunter Fracture, rogue Mutilate to spell consolidation.
 
-changeset:   723:7269c15128aa
-user:        Tercio
-date:        Fri Jul 20 18:23:25 2018 -0300
-summary:     - Added Cyclone to crowd control.
+commit 24eebefb6f1117a1dc9ec741ce3141abefcec051
+Author: Tercio <Tercio@localhost>
+Date:   Sun Oct 28 15:58:05 2018 -0300
 
+    - Added import and export profiles.
+    - Improved import and export custom skins.
+    - Fixed shaman's sundering spell not showing in crowd control.
+    - Fixed sharing guild statistics.
 
-changeset:   722:905512562025
-user:        Tercio
-date:        Thu Jul 19 16:40:11 2018 -0300
-summary:     - Missing localization for the welcome window has been added.
+commit c6c3cdca1a069d359d71d671f8baf5a0efe93d13
+Author: Tercio <Tercio@localhost>
+Date:   Sat Oct 20 00:18:52 2018 -0300
 
+    - Fixed broken change log from last version.
+    - Fixed damage on low level training dummies where it was showing 1 damage for each ability.
+    - Added a line in the tooltip shown when hovering over the spec icon to show non-formated DPS, example: "12.0K" DPS shows "11,985.8".
+    - Developers: command /run Details:DumpTable() should now show the correct table names with quotation marks if string.
+    - Framework update.
 
-changeset:   721:d62a7bb07482
-user:        Tercio
-date:        Wed Jul 18 16:42:30 2018 -0300
-summary:     - Attempt to fix a load file error.
+commit c8bac60626584d085db9ece4e7b2731b1a779ee5
+Author: Tercio <Tercio@localhost>
+Date:   Fri Oct 19 21:11:32 2018 -0300
 
+    - Fixed damage on low level training dummies where it was showing 1 damage for each ability.
+    - Added a line in the tooltip shown when hovering over the spec icon to show non-formated DPS, example: "12.0K" DPS shows "11,985.8".
+    - Developers: command /run Details:DumpTable() should now show the correct table names with quotation marks if string.
+    - Framework update.
 
-changeset:   720:6cf5b11ae1f7
-user:        Tercio
-date:        Wed Jul 18 16:29:26 2018 -0300
-summary:     - Fixing a red alert load fail which was happening for some users.
+commit 6cfb1a71c457ce8d5099d4619de6878c1e08189b
+Author: Tercio <Tercio@localhost>
+Date:   Wed Oct 10 23:01:37 2018 -0300
 
+    - Fixing the pvp issue introduced in the previous build.
 
-changeset:   719:4fe1a6f189e6
-user:        Tercio
-date:        Tue Jul 17 13:31:22 2018 -0300
-summary:     - Second pass on Patch 8.0.1
+commit 14651bebb1468cd9b1fa55a85b734468906d114f
+Author: Tercio <Tercio@localhost>
+Date:   Wed Oct 10 14:31:12 2018 -0300
 
+    - Send character data when the group roster changes.
+    - Removed ignore_actors check since there's nothing to check at the moment.
 
-changeset:   718:100a0bcd8c7e
-user:        Tercio
-date:        Tue Jul 17 12:07:40 2018 -0300
-summary:     - Patch 8.0.1
+commit 98b28ee05b0e8bb8b15bb37333de5cf408acd85b
+Author: Tercio <Tercio@localhost>
+Date:   Tue Oct 9 18:43:05 2018 -0300
 
+    - Player detail window now has bigger lines (16 pixels to 20).
+    - Renamed the Group DPS window title to Real Time Group DPS.
+    - Framework update.
 
-changeset:   717:e63e22c9c4af
-user:        Tercio
-date:        Fri May 04 13:14:49 2018 -0300
-summary:     - Attempt to make the packager work.
+commit c228e85acf630a7c5134a2c4393aad43b026509d
+Author: Tercio <Tercio@localhost>
+Date:   Sat Oct 6 17:39:20 2018 -0300
 
+    - Added a macro section with useful macros.
+    - More polish done to the Encounter Details! window.
 
-changeset:   716:d021b8e5392f
-user:        Tercio
-date:        Thu May 03 14:51:47 2018 -0300
-summary:     - Changes to make the live version work with the BfA Beta.
+commit fa15da8338bd7c375ed79fd2e0bf7eb7c068d01a
+Author: Tercio <Tercio@localhost>
+Date:   Fri Oct 5 09:18:09 2018 -0300
 
+    - framework update.
+    - fix for friendly fire cleanup on the previous commit.
 
-changeset:   715:b025504ef9dd
-user:        Tercio
-date:        Fri Apr 27 13:31:55 2018 -0300
-summary:     - Fixed major issue with the statistics sharing.
+commit 9e9f897db6b086cc597f5ebb0c97964db43e8372
+Author: Tercio <Tercio@localhost>
+Date:   Sun Sep 30 20:05:18 2018 -0300
 
+    - Updated to BFA 'Potion Used' and 'Health Potion and Stone' custom displays.
+    - Fixed small visual glitches and tooltip updates.
 
-changeset:   714:4803d97fbcf0
-user:        Tercio
-date:        Fri Apr 13 10:46:36 2018 -0300
-summary:     Release 5559:
+commit 027cdda48c3b57a9fc5c9f00e32186e9453564a9
+Author: Tercio <Tercio@localhost>
+Date:   Fri Sep 28 19:19:03 2018 -0300
 
+    - Show light of the martyr damage on death log.
+    - Truncate spell and source name in the death recap window.
 
-changeset:   713:049eb249f86f
-user:        Tercio
-date:        Fri Apr 06 13:59:18 2018 -0300
-summary:     - Created a safe dispatcher for callbacks registered in details events.
+commit 7b3078ae39c8feb309d4bf147ad4bf9c2196ac47
+Author: Tercio <Tercio@localhost>
+Date:   Tue Sep 25 20:21:13 2018 -0300
 
+    - Deprecated rules for friendly fire has been removed, this might fix some random issues with mind controlled players in the Lord Stormsong encounter in the Shrine of the Storm dungeon.
+    - Fixed DBM/BigWigs aura creation from the Spell List panel.
+    - Chart scripts now receives the envTable, use local envTable = ... .
+    - Polymorth (Black Cat) and Between the Eyes got added to Crowd Control list.
+    - Fixed Timeline plugin not showing the cooldown panel.
+    - Overall data setting won't reset on every logout.
+    - Slash command '/details merge' won't flag the merged combat as a trash segment anymore.
+    - Added function to use on macros to open the Player Details Window: /script Details:OpenPlayerDetails(1).
+    - Done more improvements on the Death Recap window.
 
-changeset:   712:7f8c65f91d5b
-user:        Tercio
-date:        Fri Apr 06 13:52:50 2018 -0300
-summary:     - Added a minimize button on the mythic dungeon chart window.
+commit d8134d51f1384804a1a3e1c16dcd46f47b2fa2cb
+Author: Tercio <Tercio@localhost>
+Date:   Tue Sep 18 18:13:39 2018 -0300
 
+    - Fixed pets with the owner name showing twice in the pet name.
+    - Fixed tooltips not showing pets for the end segment created after a mythic dungeon.
 
-changeset:   711:27afcfb49a35
-user:        Tercio
-date:        Fri Mar 30 10:44:46 2018 -0300
-summary:     - Added outline option for the right text of the bar.
+commit 404f3c3ab41252b8dcaa39f0bf41f5fee28cfa70
+Author: Tercio <Tercio@localhost>
+Date:   Tue Sep 11 22:19:59 2018 -0300
 
+    - Added macro text box in Encounter Plugin.
 
-changeset:   710:eb1e33639a41
-user:        Tercio
-date:        Sat Mar 24 09:32:03 2018 -0300
-summary:     - Forgot to disable debug on mythic dungeons.
+commit ed8aaee35251456630fb69ac7cdd4e0fda02bf10
+Author: Tercio <Tercio@localhost>
+Date:   Tue Sep 11 19:57:17 2018 -0300
 
+    - Added a new panel to open the Chart after a mythic dungeon.
+    - Improvements on Encounter Details plugin.
 
-changeset:   709:3f710381107a
-user:        Tercio
-date:        Fri Mar 23 14:50:11 2018 -0300
-summary:     - Fixed dungeon chart at the end of a mythic dungeon run.
+commit 3f18a99d42423cad79e650ad0e0da690523eb515
+Author: Tercio <Tercio@localhost>
+Date:   Mon Sep 10 21:17:53 2018 -0300
 
+    - Details! is ready for Uldir mythic raiding!.
+    - Details! Scroll Damage for training in dummies is now ready for more tests, access it /details scrolldamage.
+    - Damage and Healing tooltips now show a statusbar indicating the percent done by the ability.
+    - Added a scale slider  to the options panel.
+    - Added monk's Quaking Palm to crowd control spells.
+    - Fixed an issue with Plater integration.
+    - Fixed tooltips not hiding when the cursor leaves the spell icon in the Damage Taken by Spell.
+    - Framework: fixed an issue with tooltips and menus where the division line wasn't hiding properly.
+    - Framework: fixed some buttons not showing its text in the options panel.
 
-changeset:   708:2c718c3348dc
-user:        Tercio
-date:        Fri Mar 16 13:04:05 2018 -0300
-summary:     - Added run macro to disable arena team colors, use '/run Details.color_by_arena_team = false;' to disable it.
+commit 822f15fe748a55fe226cb1784c5725234b6c7936
+Author: Tercio <Tercio@localhost>
+Date:   Mon Sep 10 11:20:00 2018 -0300
 
+    - Removed RaiderIO integration.
 
-changeset:   707:aa06683bfa18
-user:        Tercio
-date:        Tue Mar 13 22:15:05 2018 -0300
-summary:     - hot fixes for the last update.
+commit 4b7beb14694f049e47b4e2d1e8d64f938b73209b
+Author: Tercio <Tercio@localhost>
+Date:   Tue Aug 28 13:03:08 2018 -0300
 
+    - Fixed custom display 'Dynamic Overall Data'.
+    - Fixed friendly fire for some dungeon bosses.
+    - New API: Details:GetSpecByGUID (unitGUID)
 
-changeset:   706:15c2bfee2970
-user:        Tercio
-date:        Sat Mar 10 10:55:49 2018 -0300
-summary:     - Added suport to open plugins through macros, example: /run Details:OpenPlugin ("Time Line").
+commit c76e830a0b84c0aea9c44b74280f846b870075d4
+Author: Tercio <Tercio@localhost>
+Date:   Sat Aug 25 20:15:31 2018 -0300
 
+    - Fixed spell container :ListActors() API.
+    - Finished revamp on the avoidance tab.
+    - Added Details:RemoveOwnerName(petName)
 
-changeset:   705:09866345bf79
-user:        Tercio
-date:        Fri Mar 09 15:31:22 2018 -0300
-summary:     - More development on the mythic dungeon chart.
+commit 5733096412c9604844f6bb01cccc415da83e35cc
+Author: Tercio <Tercio@localhost>
+Date:   Fri Aug 24 22:41:35 2018 -0300
 
+    - Cleanup on the item level tracker.
+    - Revamp on the Avoidance tab.
+    - Increased the font size of the bookmark window.
+    - Added Hunter's Intimidation as crowd control.
+    - More update on the RaidCheck plugin.
 
-changeset:   704:15e95c95cd02
-user:        Tercio
-date:        Fri Mar 02 21:39:27 2018 -0300
-summary:     - Nicktag library update
+commit b5c646540f6c2fde93eddaec50dd759ca4d81a9d
+Author: Tercio <Tercio@localhost>
+Date:   Wed Aug 22 12:22:19 2018 -0300
 
+    - Workaround for Hunter's Incendiary Ammunition bug.
 
-changeset:   703:c0a7b29a7d2e
-user:        Tercio
-date:        Wed Feb 28 11:57:00 2018 -0300
-summary:     - Fix for ticket #333: error on the new dungeon chart recorder.
+commit 08bc98c2b31adf6ae4855d22e136f2abc0bf8754
+Author: Tercio <Tercio@localhost>
+Date:   Tue Aug 21 18:14:42 2018 -0300
 
+    - Parser cleanup.
 
-changeset:   702:8d27c569ad87
-user:        Tercio
-date:        Mon Feb 26 11:13:39 2018 -0300
-summary:     - Added option to disable the mythic dungeon damage chart.
+commit bdf5344f5ee4016200bd617fe7d5266e4cc8a79e
+Author: Tercio <Tercio@localhost>
+Date:   Mon Aug 20 21:29:47 2018 -0300
 
+    - Fixed the latest raid check update.
+    - Added NpcID storage.
 
-changeset:   701:2de94f058bc6
-user:        Tercio
-date:        Fri Feb 23 12:13:56 2018 -0300
-summary:     - Added damage chart at the end of a mythic dungeon run.
+commit 5217fdd9b26b523fa26a7e031fee73206bb13bcb
+Author: Tercio <Tercio@localhost>
+Date:   Sun Aug 19 15:27:19 2018 -0300
 
+    - Updated flask and food list to BFA.
+    - Framework update.
+    - RaidCheck plugin updated.
+    - API added: _detalhes:GetSpecFromSerial (guid)
+    - API added: _detalhes:GetIconTexture (iconType, withAlpha)
+    - API added: _detalhes:GetRoleIcon (role)
+    - API added: _detalhes:GetSpecIcon (spec)
 
-changeset:   700:379ec089b56c
-user:        Tercio
-date:        Fri Feb 09 11:33:02 2018 -0200
-summary:     - Added real time compile error while writing a custom script.
+commit e3e63dcd673531ae58e1e80045fb06a0954aee5a
+Author: Tercio <Tercio@localhost>
+Date:   Thu Aug 16 22:05:10 2018 -0300
 
+    - bug fixes.
 
-changeset:   699:ad8526b89561
-user:        Tercio
-date:        Fri Feb 02 13:29:07 2018 -0200
-summary:     - Fixed wasted shield subtracting the total healing of the spell. This wasn't affecting the healing done of the actor it self.
+commit 00d306a7b3ee7ef1b193d6d6c5c9c1b0cfbc8e1d
+Author: Tercio <Tercio@localhost>
+Date:   Mon Aug 13 17:06:46 2018 -0300
 
+    - Fixed an issue with Alliance or Horde icons showing at random in player bars.
+    - Fixed the Death Recap window not showing data during battlegrounds.
+    - Fixed new segment creation when the option to use only one segment while in a battleground is disabled.
+    - Fixed east asian number format on several strings.
+    - 'Smart Score' option renamed to "Unique Segment" under the PvP options for battlegrounds.
 
-changeset:   698:77c2eeecd28d
-user:        Tercio
-date:        Fri Jan 26 14:07:43 2018 -0200
-summary:     - Warlock mana from Life Tap won't show up any more under mana regen, this makes easy to see Soul Shard gain.
+commit 9af2eabb13e015c04a582aa06bd47d34fa1e96cb
+Author: Tercio <Tercio@localhost>
+Date:   Mon Aug 13 17:01:58 2018 -0300
 
+    - Fixed an issue with Alliance or Horde icons showing at random in player bars.
+    - Fixed the Death Recap window not showing data during battlegrounds.
+    - Fixed new segment creation when the option to use only one segment while in a battleground is disabled.
+    - Fixed east asian number format on several strings.
+    - 'Smart Score' option renamed to "Unique Segment" under the PvP options for battlegrounds.
 
-changeset:   697:8e9fc4be13d7
-user:        Tercio
-date:        Thu Jan 18 14:58:35 2018 -0200
-summary:     - Framework upated to v63 (template parenting support).
+commit 1fe339f168bcf04865865e912036cd39a20d265e
+Author: Tercio <Tercio@localhost>
+Date:   Thu Aug 9 11:55:18 2018 -0300
 
+    - Fixed mobs showing when in Standard mode.
 
-changeset:   696:d4a8c7e49b83
-user:        Tercio
-date:        Fri Jan 12 10:36:46 2018 -0200
-summary:     - Default width for death window is now 350 (up from 300).
+commit 6ac2c37bef87655cde41890ea4dfd7bb3631de18
+Author: Tercio <Tercio@localhost>
+Date:   Thu Aug 9 00:39:13 2018 -0300
 
+    - Hotfix an initialization issue caused by a stealth patch in the client addon API.
 
-changeset:   695:a9105667be91
-user:        Tercio
-date:        Wed Jan 03 11:53:23 2018 -0200
-summary:     - Custom window should now clear the previous code when start editing a new custom display.
+commit 2fb29a497da23e86ec1872d4689b1d68386bf5ac
+Author: Tercio <Tercio@localhost>
+Date:   Tue Aug 7 15:55:19 2018 -0300
 
+    - Death Knight: Epidemic, Scourge Strike and Howling Blast now has a better description on the spell name.
+    - Fixed snap button showing when 'Hide Resize Buttons' are enabled.
+    - Fixed title bar icons not hiding when 'Auto Hide Buttons' is enabled.
+    - Several improvements to overall data, it should be more consistent now.
+    - Details! now passes to identify the tank role of the player even when out of a party or raid.
+    - Debug helper Details:DumpTable(table) now correctly shows the key name when it isn't a string.
+    - Improvements done on the Bookmark config frame accessed by the options panel > display section.
+    - New slash command: '/details spells'.
+    - Statistics for Legion has been closed! You can access statistics from the orange gear > statistics.
 
-changeset:   694:a3424c8730ec
-user:        Tercio
-date:        Fri Dec 22 09:09:34 2017 -0200
-summary:     - Create Aura and API window moved to the new plugin window.
+commit 5f55045b15c427f7d9fed6087cb6e94512379eb1
+Author: Tercio <Tercio@localhost>
+Date:   Mon Jul 30 14:02:20 2018 -0300
 
+    - Framework update.
+    - Fix for hunters spec detection.
+    - Spells panel can now be opened from outside Details!.
+    - Overall data will now track everything by default for new Details! instalation.
 
-changeset:   693:a690bf789019
-user:        Tercio
-date:        Fri Dec 15 08:29:20 2017 -0200
-summary:     - Polish on the Custom Display and Encounter Details windows.
+commit 720a95bc1b200b67eebbbc24a53eb4b544e7f978
+Author: Tercio <Tercio@localhost>
+Date:   Sat Jul 28 18:22:13 2018 -0300
 
+    - Added size offset options for the chat tab embed feature.
+    - Revamp on the editor for the custom line text.
 
-changeset:   692:d29c7d939821
-user:        Tercio
-date:        Tue Dec 12 13:09:20 2017 -0200
-summary:     - Embeding the custom display window into the new plugin window.
+commit a1c527711cae60ab57e1b7265446a45c29e5afda
+Author: Tercio <Tercio@localhost>
+Date:   Tue Jul 24 13:56:44 2018 -0300
 
+    - Removed bookmark tutorial popup.
+    - Major Framework update to fix already existing XML warnings.
+    - Added more alias for the basic api, old calls won't be changed:
+     * Details:GetWindow -> GetInstance
+     * Window:IsShown() -> Instance:IsActive()
+     * Window:HideWindow() -> Instance:ShutDown()
+     * Window:ShowWindow() -> Instance:EnableInstance()
 
-changeset:   691:bfc5ab9d4df1
-user:        Tercio
-date:        Sat Dec 09 10:08:54 2017 -0200
-summary:     - Fixed an issue with the statistics sharing among guild members.
+commit 2526d8802d9565cb08e2fde2bc57bd872001c42e
+Author: Tercio <Tercio@localhost>
+Date:   Fri Jul 20 18:23:25 2018 -0300
 
+    - Added Cyclone to crowd control.
+    - Added new Auto Run script: on enter or leave group.
 
-changeset:   690:18cba0f76e41
-user:        Tercio
-date:        Fri Dec 08 18:09:20 2017 -0200
-summary:     - Fixed an issue with the statistics sharing among guild members.
+commit dae28af2362a3752c7febbfb8b99a8659a7bc4fe
+Author: Tercio <Tercio@localhost>
+Date:   Thu Jul 19 16:40:11 2018 -0300
 
+    - Missing localization for the welcome window has been added.
 
-changeset:   689:deb826e20b4f
-user:        Tercio
-date:        Wed Dec 06 20:37:04 2017 -0200
-summary:     - attempt to fix the argus encounter double segments.
+commit 1917a4d8a59890f1341e19784952e607f66cf550
+Author: Tercio <Tercio@localhost>
+Date:   Wed Jul 18 16:42:30 2018 -0300
 
+    - Attempt to fix a load file error.
 
-changeset:   688:17b265227703
-user:        Tercio
-date:        Wed Nov 29 11:32:17 2017 -0200
-summary:     - Hotfix the issue of getting errors when login in the game.
+commit ca47ca332cc297ac22f48291bd0d3e92138eaf3c
+Author: Tercio <Tercio@localhost>
+Date:   Wed Jul 18 16:29:26 2018 -0300
 
+    - Fixing a red alert load fail which was happening for some users.
 
-changeset:   687:89042076572f
-user:        Tercio
-date:        Mon Nov 27 11:54:48 2017 -0200
-summary:     - adding stuff for the new raid.
+commit dba05908ececd0e8372b4917afb1246eaecab8e0
+Author: Tercio <Tercio@localhost>
+Date:   Tue Jul 17 13:31:22 2018 -0300
 
+    - Second pass on Patch 8.0.1
 
-changeset:   686:83216118b57d
-user:        Tercio
-date:        Sun Nov 26 16:31:05 2017 -0200
-summary:     - added new panel to consolidate plugins and panels from the main addon into only one frame.
+commit df9ce12b8230d91048f85fa1224a4926cdf25758
+Author: Tercio <Tercio@localhost>
+Date:   Tue Jul 17 12:07:40 2018 -0300
 
+    - Patch 8.0.1
 
-changeset:   685:39dd82ba0a0e
-user:        Tercio
-date:        Tue Nov 21 10:00:22 2017 -0200
-summary:     - removed some already fixed debug lines.
+commit 6ef270ac6f617368e5c3038b60edfb2be24e49b3
+Author: Tercio <Tercio@localhost>
+Date:   Fri May 4 13:14:49 2018 -0300
 
+    - Attempt to make the packager work.
 
-changeset:   684:8a7fba7e847c
-user:        Tercio
-date:        Sat Oct 21 13:30:06 2017 -0200
-summary:     - Fixed an error when clicking on the spec icon.
+commit 117913ab8df7ada1218efcf2b109bb9c943dec14
+Author: Tercio <Tercio@localhost>
+Date:   Thu May 3 14:51:47 2018 -0300
 
+    - Changes to make the live version work with the BfA Beta.
 
-changeset:   683:e708d8a64e08
-user:        Tercio
-date:        Sat Oct 21 12:40:54 2017 -0200
-summary:     - Fix for ticket #262: unable to open the player detail window when streamer option 'no alerts' are enabled.
+commit febf9dd34f4a794e2e4c7e43ed3245263313d0f9
+Author: Tercio <Tercio@localhost>
+Date:   Fri Apr 27 13:31:55 2018 -0300
 
+    - Fixed major issue with the statistics sharing.
+    - Added a new to disable score messages by using /run Details.deny_score_messages = true;
+    - minor fix in the framework to stop a warning in the beta of BfA.
 
-changeset:   682:6ade12d881ad
-user:        Tercio
-date:        Mon Oct 16 21:21:44 2017 -0200
-summary:     - Fixed green icons on the new feature 'event tracker'.
+commit 1823dab92959dcb12e7c4325efe88f9ffb95ac4a
+Author: Tercio <Tercio@localhost>
+Date:   Fri Apr 13 10:46:36 2018 -0300
 
+    Release 5559:
+            - All Details! internal events callback are now secure calls.
+            - Added slash commands: /details 'softtoggle' 'softshow' 'softhide'. Use them to manipulate the window visibility while using auto hide.
+            - Fixed mythic dungeon graphic window showing up when the user leaves the dungeon before completing it.
 
-changeset:   681:217e1d219223
-user:        Tercio
-date:        Mon Oct 16 14:38:40 2017 -0200
-summary:     - Click to open menus now close the menu if already opened.
+commit af907e7ffa0e626c6b8a6b7efbfc8e9b036bf42c
+Author: Tercio <Tercio@localhost>
+Date:   Fri Apr 6 13:59:18 2018 -0300
 
+    - Created a safe dispatcher for callbacks registered in details events.
 
-changeset:   680:7ffc9da9aaee
-user:        Tercio
-date:        Sat Oct 14 16:01:59 2017 -0300
-summary:     - framework update to v58 (looks like some author are adding words like 'topleft' and 'top' to the global namespace).
+commit 9119b2e287cd4027100d878e6aacee4b19f55eb5
+Author: Tercio <Tercio@localhost>
+Date:   Fri Apr 6 13:52:50 2018 -0300
 
+    - Added a minimize button on the mythic dungeon chart window.
+    - API: added Details:ResetSegmentData()
+    - API: added Details:ResetSegmentOverallData()
 
-changeset:   679:bc5a5e38ecac
-user:        Tercio
-date:        Sat Oct 14 13:04:36 2017 -0300
-summary:     - fixed an issue opening the segments menu.
+commit 57393e40763ea5231b411e26dc8b7db24322a105
+Author: Tercio <Tercio@localhost>
+Date:   Fri Mar 30 10:44:46 2018 -0300
 
+    - Added outline option for the right text of the bar.
+    - Faction icon shouldn't show when setting show_arena_role_icon to false.
+    - Fixed a random error on the mythic dungeon chart.
 
-changeset:   678:fb72e955bfed
-user:        Tercio
-date:        Mon Oct 09 22:43:26 2017 -0300
-summary:     - Added several options and tools for streamers and youtubers.
+commit cabd60f5c804bcea738960e6ab67574e4e71a16a
+Author: Tercio <Tercio@localhost>
+Date:   Sat Mar 24 09:32:03 2018 -0300
 
+    - Forgot to disable debug on mythic dungeons.
 
-changeset:   677:6cf0fca6ebdb
-user:        Tercio
-date:        Sun Oct 01 21:03:47 2017 -0300
-summary:     - lib folder renamed.
+commit 66e4561a0ca2b5ce13977adaac0344395910fe28
+Author: Tercio <Tercio@localhost>
+Date:   Fri Mar 23 14:50:11 2018 -0300
 
+    - Fixed dungeon chart at the end of a mythic dungeon run.
+    - Added console run command: /run Details.show_arena_role_icon = true; this enable or disable the role icon in arena.
+    - Added console run command: /run Details.data_cleanup_logout = false; when true, clean all data on logoff.
 
-changeset:   676:8f7230c2e02e
-user:        Tercio
-date:        Wed Sep 27 17:59:04 2017 -0300
-summary:     - Rolling back to Mercurial repository.
+commit a6cfb2a188f3ad9bdf82ce6e7d209a0c2533a38a
+Author: Tercio <Tercio@localhost>
+Date:   Fri Mar 16 13:04:05 2018 -0300
 
+    - Added run macro to disable arena team colors, use '/run Details.color_by_arena_team = false;' to disable it.
+    - Added the core version to show when using /details without parameters.
 
-changeset:   675:899e13d626a1
-user:        Tercio
-date:        Tue Sep 19 12:56:32 2017 -0300
-summary:     - testing the mercurial repo packpager.
+commit 7b9bd3088433ad7e3e4b936cf70c7ef766f743cc
+Author: Tercio <Tercio@localhost>
+Date:   Tue Mar 13 22:15:05 2018 -0300
 
+    - hot fixes for the last update.
 
-changeset:   674:3939641c0fe0
-user:        Tercio
-date:        Wed Jul 26 10:14:37 2017 -0300
-summary:     - packpager, hello?
+commit 830af846cf30fe9686cfe12d00c042fe84f01f4f
+Author: Tercio <Tercio@localhost>
+Date:   Sat Mar 10 10:55:49 2018 -0300
 
+    - Added suport to open plugins through macros, example: /run Details:OpenPlugin ("Time Line").
+
+commit ea5ce81d2fe66ede2ed10398e2ab4e124fb29ce9
+Author: Tercio <Tercio@localhost>
+Date:   Fri Mar 9 15:31:22 2018 -0300
+
+    - More development on the mythic dungeon chart.
+    - Fixed options panel not opening on the requested section.
+
+commit 58c325395ddcff08c4cacbcafe7b0cad04b8ffb4
+Author: Tercio <Tercio@localhost>
+Date:   Fri Mar 2 21:39:27 2018 -0300
+
+    - Nicktag library update
+
+commit f8c216ea0c13b42544ea0ad05e052bcc0af8a0ad
+Author: Tercio <Tercio@localhost>
+Date:   Wed Feb 28 11:57:00 2018 -0300
+
+    - Fix for ticket #333: error on the new dungeon chart recorder.
+
+commit 208ede8e6e38431125266a9e1c0cd779a8a89bf6
+Author: Tercio <Tercio@localhost>
+Date:   Mon Feb 26 11:13:39 2018 -0300
+
+    - Added option to disable the mythic dungeon damage chart.
+    - Removed debug chat messages from the dungeon chart.
+    - Framework update to v67.
+
+commit 801dfb3bbc347bbcd513edc405873496a5abf4c0
+Author: Tercio <Tercio@localhost>
+Date:   Fri Feb 23 12:13:56 2018 -0300
+
+    - Added damage chart at the end of a mythic dungeon run.
+    - Framework update to v66.
+
+commit 0b38e849bce05d1bbbe357b9cd0711fc2d3903c2
+Author: Tercio <Tercio@localhost>
+Date:   Fri Feb 9 11:33:02 2018 -0200
+
+    - Added real time compile error while writing a custom script.
+    - Added protection on compiling a custom script to show in the window, an error text should be printed to chat window.
+    - Added events: COMM_EVENT_RECEIVED and COMM_EVENT_SENT.
+    - When options panel is not in the screen, the script will attempt to fix the position.
+    - While doing a sync on guild statistics, more information about the download is shown.
+
+commit 521fee8ba7bf61e5677b493a216a3a9191ca461d
+Author: Tercio <Tercio@localhost>
+Date:   Fri Feb 2 13:29:07 2018 -0200
+
+    - Fixed wasted shield subtracting the total healing of the spell. This wasn't affecting the healing done of the actor it self.
+    - Removed the debug button 'Hello World' from the plugin menu.
+
+commit 6036cfcdb691dce640d4b22051622f01f7bf919a
+Author: Tercio <Tercio@localhost>
+Date:   Fri Jan 26 14:07:43 2018 -0200
+
+    - Warlock mana from Life Tap won't show up any more under mana regen, this makes easy to see Soul Shard gain.
+    - Due to a framework update, typing the value on a slider shouldn't round the value up.
 
