@@ -33,6 +33,8 @@
 	local atributo_custom = _detalhes.atributo_custom --details local
 	local info = _detalhes.janela_info --details local
 	
+	local UnitGroupRolesAssigned = DetailsFramework.UnitGroupRolesAssigned
+	
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --> constants
 	
@@ -115,7 +117,7 @@
 			local mapID = C_Map.GetBestMapForUnit ("player")
 			local ejid
 			if (mapID) then
-				ejid = EJ_GetInstanceForMap (mapID)
+				ejid = DetailsFramework.EncounterJournal.EJ_GetInstanceForMap (mapID)
 			end
 			
 			if (not mapID) then
@@ -123,7 +125,6 @@
 				return
 			end
 		
-			--local ejid = EJ_GetCurrentInstance()
 			if (ejid == 0) then
 				ejid = _detalhes:GetInstanceEJID()
 			end
@@ -551,9 +552,7 @@
 						mapID = 0
 					end
 					
-					local ejid = EJ_GetInstanceForMap (mapID)
-					
-					--local ejid = EJ_GetCurrentInstance()
+					local ejid = DetailsFramework.EncounterJournal.EJ_GetInstanceForMap (mapID)
 					
 					if (ejid == 0) then
 						ejid = _detalhes:GetInstanceEJID()
@@ -575,7 +574,7 @@
 			end		
 			
 			--> tag as a mythic dungeon segment, can be any type of segment, this tag also avoid the segment to be tagged as trash
-			local mythicLevel = C_ChallengeMode.GetActiveKeystoneInfo()
+			local mythicLevel = C_ChallengeMode and C_ChallengeMode.GetActiveKeystoneInfo()
 			if (mythicLevel and mythicLevel >= 2) then
 				_detalhes.tabela_vigente.is_mythic_dungeon_segment = true
 				_detalhes.tabela_vigente.is_mythic_dungeon_run_id = _detalhes.mythic_dungeon_id
@@ -756,6 +755,47 @@
 				_detalhes.tabela_historico:adicionar (_detalhes.tabela_vigente) --move a tabela atual para dentro do hist�rico
 				--8.0.1 miss data isn't required at the moment, spells like akari's soul has been removed from the game
 				--_detalhes:CanSendMissData()
+				
+				if (_detalhes.tabela_vigente.is_boss) then
+					if (IsInRaid()) then
+						local cleuID = _detalhes.tabela_vigente.is_boss.id
+						local diff = _detalhes.tabela_vigente.is_boss.diff
+						if (cleuID and diff == 16) then -- 16 mythic
+							local raidData = _detalhes.raid_data
+							
+							--get or build mythic raid data table
+							local mythicRaidData = raidData.mythic_raid_data
+							if (not mythicRaidData) then
+								mythicRaidData = {}
+								raidData.mythic_raid_data = mythicRaidData
+							end
+							
+							--get or build a table for this cleuID
+							mythicRaidData [cleuID] = mythicRaidData [cleuID] or {wipes = 0, kills = 0, best_try = 1, longest = 0, try_history = {}}
+							local cleuIDData = mythicRaidData [cleuID]
+							
+							--store encounter data for plugins and weakauras
+							if (_detalhes.tabela_vigente:GetCombatTime() > cleuIDData.longest) then
+								cleuIDData.longest = _detalhes.tabela_vigente:GetCombatTime()
+							end
+							
+							if (_detalhes.tabela_vigente.is_boss.killed) then
+								cleuIDData.kills = cleuIDData.kills + 1
+								cleuIDData.best_try = 0
+								tinsert (cleuIDData.try_history, {0, _detalhes.tabela_vigente:GetCombatTime()})
+								--print ("KILL", "best try", cleuIDData.best_try, "amt kills", cleuIDData.kills, "wipes", cleuIDData.wipes, "longest", cleuIDData.longest)
+							else
+								cleuIDData.wipes = cleuIDData.wipes + 1
+								if (_detalhes.boss1_health_percent and _detalhes.boss1_health_percent < cleuIDData.best_try) then
+									cleuIDData.best_try = _detalhes.boss1_health_percent
+									tinsert (cleuIDData.try_history, {_detalhes.boss1_health_percent, _detalhes.tabela_vigente:GetCombatTime()})
+								end
+								--print ("WIPE", "best try", cleuIDData.best_try, "amt kills", cleuIDData.kills, "wipes", cleuIDData.wipes, "longest", cleuIDData.longest)
+							end
+						end
+					end
+					--
+				end
 				
 				--the combat is valid, see if the user is sharing data with somebody
 				if (_detalhes.shareData) then
@@ -1029,10 +1069,10 @@
 				return
 			end
 			local _, playerClass = UnitClass ("player")
-			local specIndex = GetSpecialization()
+			local specIndex = DetailsFramework.GetSpecialization()
 			local playerSpecID
 			if (specIndex) then
-				playerSpecID = GetSpecializationInfo (specIndex)
+				playerSpecID = DetailsFramework.GetSpecializationInfo (specIndex)
 			end
 
 			if (playerSpecID and playerClass) then

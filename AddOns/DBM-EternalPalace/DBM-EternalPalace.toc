@@ -19,12 +19,13 @@
 ## X-DBM-Mod-MinExpansion: 7
 localization.en.lua
 localization.kr.lua
+localization.cn.lua
 AbyssalCommanderSivara.lua
-RageofAzshara.lua
+RadianceofAzshara.lua
 BlackwaterBehemoth.lua
 LadyPriscillaAshvane.lua
-TheHatchery.lua
+Orgozoa.lua
 TheQueensCourt.lua
-HeraldofNzoth.lua
+Zaqul.lua
 QueenAzshara.lua
 EternalPalaceTrash.lua

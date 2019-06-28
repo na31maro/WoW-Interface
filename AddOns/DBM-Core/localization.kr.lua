@@ -20,7 +20,6 @@ DBM_COPY_URL_DIALOG					= "URL 복사"
 --Post Patch 7.1
 DBM_CORE_NO_RANGE					= "거리 레이더를 인스턴스 던전에서 사용할 수 없습니다. 예전의 텍스트 방식 거리창으로 대체됩니다."
 DBM_CORE_NO_ARROW					= "화살표 기능을 인스턴스 던전에서 사용할 수 없습니다"
-DBM_CORE_ARROW_SUMMONED				= "DBM 화살표가 작동되었습니다. 화살표가 작동하지 않는다면 설치한 다른 써드파티 애드온에 작동 방식이 설정되어 있는 것입니다"
 DBM_CORE_NO_HUD						= "HUD 기능을 인스턴스 던전에서 사용할 수 없습니다"
 
 DBM_CORE_DYNAMIC_DIFFICULTY_CLUMP	= "현재 공격대 규모에 맞는 필요한 플레이어 숫자 관련 정보가 부족하여 DBM이 이 전투에서 동적 거리창을 비활성화 했습니다."
@@ -179,10 +178,11 @@ DBM_CORE_DPMCORE						= "경고: Deadly PvP 모드는 더이상 개발되지 않
 DBM_CORE_DBMLDB							= "경고: DBM-LDB는 이제 DBM-Core에 편입되었습니다. 같이 사용해도 문제가 생기는건 아니지만 가급적 애드온 폴더에서 'DBM-LDB' 폴더를 삭제하는걸 권장합니다"
 DBM_CORE_UPDATE_REQUIRES_RELAUNCH		= "경고: 지금 업데이트한 DBM은 게임 클라이언트를 완전히 재시작하기 전까진 정상 작동하지 않습니다. 이 업데이트엔 새 파일이 포함되어 있거나 UI 재시작으로는 로딩할 수 없는 .toc 파일의 변경 사항이 있습니다. 클라이언트 재시작 없이 사용할 경우 오류가 발생하거나 작동하지 않을 수 있습니다."
 DBM_CORE_OUT_OF_DATE_NAG				= "현재 사용중인 Deadly Boss Mods 버전이 오래되었습니다. 업데이트를 해야 이 전투의 중요한 알림이나 타이머 그리고 공격대원 모두가 보는 외침 등이 빠지지 않게 나옵니다."
+DBM_CORE_RETAIL_ONLY					= "경고: 이 DBM 버전은 월드 오브 워크래프트 최신 버전용입니다. 삭제하시고 클래식 WoW 전용 DBM을 설치하세요."
 
 DBM_CORE_MOVABLE_BAR				= "드래그 하세요!"
 
-DBM_PIZZA_SYNC_INFO					= "|Hplayer:%1$s|h[%1$s]|h1이;가; 당신에게 DBM 타이머를 전송했습니다"
+DBM_PIZZA_SYNC_INFO					= "|Hplayer:%1$s|h[%1$s]|h님이 당신에게 DBM 타이머를 전송했습니다"
 DBM_PIZZA_CONFIRM_IGNORE			= "정말 %s의 DBM 타이머를 차단하시겠습니까? 이 공격대에 있는 동안에만 적용됩니다."
 DBM_PIZZA_ERROR_USAGE				= "사용법: /dbm [broadcast] timer <시간> <텍스트>. <시간>은 1초 이상이어야 합니다."
 
@@ -248,11 +248,9 @@ DBM_CORE_TIMER_USAGE	= {
 	"DBM 타이머 명령어:",
 	"--------------",
 	"/dbm timer <초> <텍스트>: <초> 만큼 지속되는 <텍스트> 타이머가 시작됩니다.",
-	"/dbm ctimer <초> <텍스트>: 초읽기를 포함한 타이머가 시작됩니다.",
 	"/dbm ltimer <초> <텍스트>: 취소하기 전까진 자동 반복되는 타이머가 시작됩니다.",
-	"/dbm cltimer <초> <텍스트>: 취소하기 전까진 자동 반복되는 타이머가 시작되며 초읽기를 포함하고 있습니다.",
 	"(공대장이나 승급자일 경우 타이머 텍스트 앞에 'Broadcast'를 입력하면 공격대에 공유)",
-	"/dbm timer endloop: ltimer와 cltimer의 반복 작동을 멈춥니다."
+	"/dbm timer endloop: ltimer와 반복 작동을 멈춥니다."
 }
 
 DBM_ERROR_NO_PERMISSION				= "이 명령어를 실행하기 위한 권한을 가지고 있지 않습니다."
@@ -286,6 +284,7 @@ DBM_BOSS							= "보스"
 DBM_CORE_ROOM_EDGE					= "구석"
 DBM_CORE_FAR_AWAY					= "먼 곳"
 DBM_CORE_BREAK_LOS					= "시야를 가리는 곳"
+DBM_CORE_RESTORE_LOS				= "시야가 나오는 곳"
 DBM_CORE_SAFE						= "안전함"
 DBM_CORE_SHIELD						= "보호막"
 DBM_INCOMING						= "%s 등장"
@@ -326,6 +325,7 @@ DBM_CORE_AUTO_ANNOUNCE_TEXTS.bait		= "곧 %s - 위치 유도"
 DBM_CORE_AUTO_ANNOUNCE_TEXTS.stage			= "%s단계"
 DBM_CORE_AUTO_ANNOUNCE_TEXTS.prestage		= "곧 %s단계"
 DBM_CORE_AUTO_ANNOUNCE_TEXTS.stack			= "%s: >%%s< (%%d)"
+DBM_CORE_AUTO_ANNOUNCE_TEXTS.moveto		= "%s - >%%s<|1으로;로; 이동"
 
 local prewarnOption = "$spell:%s 사전 경고 보기"
 DBM_CORE_AUTO_ANNOUNCE_OPTIONS.you			= "당신이 $spell:%s 대상이 된 경우 알림 보기"
@@ -340,13 +340,14 @@ DBM_CORE_AUTO_ANNOUNCE_OPTIONS.adds			= "$spell:%s의 남은 수 알림 보기"
 DBM_CORE_AUTO_ANNOUNCE_OPTIONS.cast			= "$spell:%s 시전시 경고 보기"
 DBM_CORE_AUTO_ANNOUNCE_OPTIONS.soon		= prewarnOption
 DBM_CORE_AUTO_ANNOUNCE_OPTIONS.sooncount	= prewarnOption
-DBM_CORE_AUTO_ANNOUNCE_OPTIONS.prewarn 		= prewarnOption 
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS.prewarn 		= prewarnOption
 DBM_CORE_AUTO_ANNOUNCE_OPTIONS.bait		= "$spell:%s 사전 경고 보기 (위치 유도)"
 DBM_CORE_AUTO_ANNOUNCE_OPTIONS.stage		= "%s단계 알림"
 DBM_CORE_AUTO_ANNOUNCE_OPTIONS.stagechange	= "단계 전환 알림"
 DBM_CORE_AUTO_ANNOUNCE_OPTIONS.prestage		= "%s단계로 넘어가기 전 경고 보기"
 DBM_CORE_AUTO_ANNOUNCE_OPTIONS.count		= "$spell:%s 경고 보기 (횟수 포함)"
 DBM_CORE_AUTO_ANNOUNCE_OPTIONS.stack		= "$spell:%s 중첩 알림"
+DBM_CORE_AUTO_ANNOUNCE_OPTIONS.moveto		= "$spell:%s에 특정인 또는 특정 위치로 이동 경고 보기"
 
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.ends		= "%s 종료!"
 DBM_CORE_AUTO_SPEC_WARN_TEXTS.fades		= "%s 사라짐!"

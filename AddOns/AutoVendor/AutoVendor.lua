@@ -470,7 +470,7 @@ end
 
 function AV:ShouldSell(link)
 	local itemId = tonumber(strmatch(link, "item:(%d+)"))
-	local _, _, itemQuality, itemLevel, _, itemType, itemSubType, _, itemEquipLoc = GetItemInfo(link)
+	local itemName, _, itemQuality, itemLevel, _, itemType, itemSubType, _, itemEquipLoc = GetItemInfo(link)
 	
 	-- Noboru's Cudgel
 	if itemId == 6196 then 

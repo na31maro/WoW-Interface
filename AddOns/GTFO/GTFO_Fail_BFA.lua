@@ -345,6 +345,63 @@ GTFO.SpellID["288949"] = {
   sound = 3;
 };
 
+GTFO.SpellID["287203"] = {
+  --desc = "Trapped";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["289004"] = {
+  --desc = "Stone Smash (Stone Sentinel)";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["286059"] = {
+  --desc = "A Painful Amount of Damage (Opulence)";
+  sound = 3;
+};
+
+GTFO.SpellID["286699"] = {
+  --desc = "Bwonsamdi's Gaze";
+  sound = 3;
+};
+
+GTFO.SpellID["261552"] = {
+  --desc = "Terror Wail (T'zane)";
+  sound = 3;
+};
+
+GTFO.SpellID["261597"] = {
+  --desc = "Coalesced Essence (T'zane)
+  sound = 3
+};
+
+GTFO.SpellID["286525"] = {
+  --desc = "Poison Spray (Injured Bristlequeen)";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["295469"] = {
+  --desc = "Falling Rocks (Rockfall)";
+  sound = 3;
+};
+
+GTFO.SpellID["301146"] = {
+  --desc = "Shattering Smash (Ma'haat the Indomitable)";
+  sound = 3;
+};
+
+GTFO.SpellID["301145"] = {
+  --desc = "Shattering Smash (Ma'haat the Indomitable)";
+  sound = 3;
+};
+
+GTFO.SpellID["301802"] = {
+  --desc = "Water Wall";
+  sound = 3;
+};
 
 
 -- ***********************
@@ -1175,6 +1232,23 @@ GTFO.SpellID["282205"] = {
   sound = 3;
 };
 
+GTFO.SpellID["282182"] = {
+  --desc = "Buster Cannon (High Tinker Mekkatorque)";
+  sound = 3;
+  applicationOnly = true;
+};
+
+GTFO.SpellID["282408"] = {
+  --desc = "Spark Pulse (High Tinker Mekkatorque)";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["289621"] = {
+  --desc = "Churning Depths (Breakwater Elemental)";
+  sound = 3;
+};
+
 GTFO.SpellID["285125"] = {
   --desc = "Sea Swell (Laminaria)";
   sound = 3;
@@ -1213,6 +1287,11 @@ GTFO.SpellID["285177"] = {
 
 GTFO.SpellID["287585"] = {
   --desc = "Avalanche (Lady Jaina Proudmoore)";
+  sound = 3;
+};
+
+GTFO.SpellID["289985"] = {
+  --desc = "Arcane Barrage (Lady Jaina Proudmoore)";
   sound = 3;
 };
 

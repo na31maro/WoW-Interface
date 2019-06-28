@@ -1,14 +1,15 @@
-# [2.12.3](https://github.com/WeakAuras/WeakAuras2/tree/2.12.3) (2019-05-02)
+# [2.13.1](https://github.com/WeakAuras/WeakAuras2/tree/2.13.1) (2019-06-25)
 
-[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/2.12.2...2.12.3)
+[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/2.13.0...2.13.1)
 
 ## Highlights
 
- - Bug fix for a case where for some people the options would not open 
+ Swallow PlaySound file errors 
 
 ## Commits
 
-InfusOnWoW (1):
+emptyrivers (2):
 
-- Fix nil error if spell name is empty
+- also guard against errors when setting a sound in conditions
+- wrap PlaySound and friends in pcall
 

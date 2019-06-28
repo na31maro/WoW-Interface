@@ -17,7 +17,7 @@ Special thanks:
 		Andyca, and BNSSNB (Traditional Chinese Translations)
 		Phalk and Omukeka (Brazilian Portuguese Translations)
 		Asixandur (Italian Translations)
-
+		Arith (LibUIDropDownMenu)
 
 Change Log:
 
@@ -1400,3 +1400,20 @@ Change Log:
 * Re-enabled sound channel support UI dropdown (hopefully Blizzard finally fixed their taint issues)
 * Added BFA spells for Crucible of Storms
 
+4.47.1
+* Added BFA spells for Battle of Dazar'alor
+
+4.48
+* WoW Classic support
+* Implemented LibStub and LibUIDropDownMenu instead of Blizzard's UI dropdown
+* Added BFA spells for Battle of Dazar'alor
+
+4.48.1
+* Added BFA spells for Battle of Dazar'alor
+
+4.48.2
+* Added Battle for Azeroth spells (world)
+
+4.48.3
+* Updated for patch 8.2
+* Added Battle for Azeroth spells (world)

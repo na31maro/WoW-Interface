@@ -1385,9 +1385,11 @@ local default_global_data = {
 			
 		},
 	
-	--> dungeon information
+	--> dungeon information - can be accessed by plugins and third party mods
 		dungeon_data = {},
-		
+	
+	--> raid information - can be accessed by plugins and third party mods
+		raid_data = {},
 }
 
 _detalhes.default_global_data = default_global_data
@@ -1474,11 +1476,15 @@ function _detalhes:UpdateState_CurrentMythicDungeonRun (stillOngoing, segmentID,
 end
 
 function _detalhes:RestoreState_CurrentMythicDungeonRun()
+
+	--no need to check for mythic+ if the user is playing on classic wow
+	if (DetailsFramework.IsClassicWow()) then
+		return
+	end
+
 	local savedTable = _detalhes.mythic_dungeon_currentsaved
 	local mythicLevel = C_ChallengeMode.GetActiveKeystoneInfo()
 	local zoneName, _, _, _, _, _, _, currentZoneID = GetInstanceInfo()
-	
-	--local ejID = EJ_GetCurrentInstance() --removed on 8.0
 	
 	local mapID =  C_Map.GetBestMapForUnit ("player")
 	
@@ -1489,7 +1495,7 @@ function _detalhes:RestoreState_CurrentMythicDungeonRun()
 	local ejID = 0
 	
 	if (mapID) then
-		ejID = EJ_GetInstanceForMap (mapID) or 0
+		ejID = DetailsFramework.EncounterJournal.EJ_GetInstanceForMap (mapID) or 0
 	end
 
 	--> is there a saved state for the dungeon?

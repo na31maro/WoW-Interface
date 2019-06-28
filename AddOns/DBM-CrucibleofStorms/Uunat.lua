@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod(2332, "DBM-CrucibleofStorms", nil, 1177)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20190505231157")
+mod:SetRevision("20190527213044")
 mod:SetCreatureID(145371)
 mod:SetEncounterID(2273)
 mod:SetZone()
@@ -91,7 +91,7 @@ local specWarnGiftofNzothLunacy			= mod:NewSpecialWarningCount(285685, nil, nil,
 mod:AddTimerLine(DBM:EJ_GetSectionInfo(19055))
 local timerStormofAnnihilation			= mod:NewTargetTimer(15, 284583, 196871, nil, nil, 2, nil, DBM_CORE_HEALER_ICON)--Short text "Storm"
 local timerUnstableResonanceCD			= mod:NewCDCountTimer(40.8, 293653, nil, nil, nil, 3, nil, DBM_CORE_DEADLY_ICON)--40.8-45
-local timerUnstableResonance			= mod:NewBuffFadesTimer(15, 293653, nil, nil, nil, 5, nil, DBM_CORE_DEADLY_ICON)
+local timerUnstableResonance			= mod:NewBuffFadesTimer(15, 293653, nil, nil, nil, 5, nil, DBM_CORE_DEADLY_ICON, nil, 1, 5)--inlineIcon, keep, countdown, countdownMax
 --Stage One: His All-Seeing Eyes
 mod:AddTimerLine(DBM:EJ_GetSectionInfo(19104))
 local timerTouchoftheEndCD				= mod:NewCDCountTimer(25, 284851, nil, "Tank", nil, 5, nil, DBM_CORE_TANK_ICON)--25, but heavily affected by spell queueing or some kind of ability overlap protection
@@ -114,15 +114,6 @@ local timerGiftofNzothLunacyCD			= mod:NewCDCountTimer(42.6, 285685, L.Lunacy, n
 
 local berserkTimer						= mod:NewBerserkTimer(780)
 
---Relics of Power
---local countdownResonance				= mod:NewCountdown(50, 293653, nil, nil, 10)
-local countdownResonanceFades			= mod:NewCountdownFades(15, 293653, nil, nil, 5)
---Stage One: His All-Seeing Eyes
---Stage Two: His Dutiful Servants
---Stage Three: His Unwavering Gaze
---local countdownTouchoftheEnd			= mod:NewCountdown("Alt12", 284851, "Tank", nil, 3)
---local countdownFelstormBarrage		= mod:NewCountdown("AltTwo32", 244000, nil, nil, 3)
-
 --mod:AddSetIconOption("SetIconGift", 255594, true)
 mod:AddRangeFrameOption(10, 293653)
 mod:AddInfoFrameOption(293653, true)
@@ -131,8 +122,8 @@ mod:AddNamePlateOption("NPAuraOnFeed", 285307)
 mod:AddNamePlateOption("NPAuraOnRegen", 285333)
 mod:AddNamePlateOption("NPAuraOnConsume", 285427)
 mod:AddSetIconOption("SetIconOnAdds", "ej19118", true, true, {1, 2, 4})
-mod:AddSetIconOption("SetIconOnRelics", "ej18970", true, false, {1, 3, 5, 6})--only up to 3 are used, but it depends on what user sets UnstableBehavior2 to. 1 is not included in the default (SetTwo)
-mod:AddDropdownOption("UnstableBehavior2", {"SetOne", "SetTwo", "SetThree", "SetFour"}, "SetTwo", "misc")--SetTwo is BW default (BW default used to be SetOne)
+mod:AddSetIconOption("SetIconOnRelics", "ej18970", true, false, {1, 3, 5, 6, 7})--only up to 3 are used, but it depends on what user sets UnstableBehavior2 to. 1 and 7 are not included in the default used by DBM/BW (SetTwo)
+mod:AddDropdownOption("UnstableBehavior2", {"SetOne", "SetTwo", "SetThree", "SetFour", "SetFive", "SetSix"}, "SetTwo", "misc")--SetTwo is BW default (BW default used to be SetOne)
 
 mod.vb.phase = 1
 mod.vb.touchCount = 0
@@ -290,6 +281,12 @@ function mod:OnCombatStart(delay)
 		elseif self.Options.UnstableBehavior2 == "SetFour" then
 			self.vb.tridentOceanicon, self.vb.tempestStormIcon, self.vb.voidIcon = 6, 1, 3--Square, Star, Diamond
 			if UnitIsGroupLeader("player") then self:SendSync("SetFour") end
+		elseif self.Options.UnstableBehavior2 == "SetFive" then
+			self.vb.tridentOceanicon, self.vb.tempestStormIcon, self.vb.voidIcon = 6, 7, 3--Square, Cross, Diamond
+			if UnitIsGroupLeader("player") then self:SendSync("SetFive") end
+		elseif self.Options.UnstableBehavior2 == "SetSix" then
+			self.vb.tridentOceanicon, self.vb.tempestStormIcon, self.vb.voidIcon = 5, 7, 3--Moon, Cross, Diamond
+			if UnitIsGroupLeader("player") then self:SendSync("SetSix") end
 		end
 	end
 	berserkTimer:Start(self:IsMythic() and 540 or 780-delay)--780 verified on normal at least https://www.warcraftlogs.com/reports/rPQXVgaD6AnF4h2R#fight=8&view=events&pins=2%24Off%24%23244F4B%24expression%24ability.name%20%3D%20%22Berserk%22
@@ -574,7 +571,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				yellUnstableResonanceSign:Yell(self.vb.voidIcon, "", self.vb.voidIcon)
 				self:Unschedule(updateResonanceYell)
 				self:Schedule(2, updateResonanceYell, self, self.vb.voidIcon)
-				countdownResonanceFades:Start()
+				--countdownResonanceFades:Start()
 				timerUnstableResonance:Start()
 				playerAffected = true
 			end
@@ -585,7 +582,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				yellUnstableResonanceSign:Yell(self.vb.tridentOceanicon, "", self.vb.tridentOceanicon)
 				self:Unschedule(updateResonanceYell)
 				self:Schedule(2, updateResonanceYell, self, self.vb.tridentOceanicon)
-				countdownResonanceFades:Start()
+				--countdownResonanceFades:Start()
 				timerUnstableResonance:Start()
 				playerAffected = true
 			end
@@ -596,7 +593,7 @@ function mod:SPELL_AURA_APPLIED(args)
 				yellUnstableResonanceSign:Yell(self.vb.tempestStormIcon, "", self.vb.tempestStormIcon)
 				self:Unschedule(updateResonanceYell)
 				self:Schedule(2, updateResonanceYell, self, self.vb.tempestStormIcon)
-				countdownResonanceFades:Start()
+				--countdownResonanceFades:Start()
 				timerUnstableResonance:Start()
 				playerAffected = true
 			end
@@ -724,7 +721,7 @@ function mod:SPELL_AURA_REMOVED(args)
 	elseif spellId == 293663 or spellId == 293662 or spellId == 293661 then--Unstable Resonance (all)
 		self.vb.resonCount = self.vb.resonCount - 1
 		if args:IsPlayer() then
-			countdownResonanceFades:Cancel()
+			--countdownResonanceFades:Cancel()
 			timerUnstableResonance:Stop()
 			playerAffected = false
 		end
@@ -857,6 +854,12 @@ do
 			DBM:AddMsg(L.DBMConfigMsg:format(msg))
 		elseif msg == "SetFour" then
 			self.vb.tridentOceanicon, self.vb.tempestStormIcon, self.vb.voidIcon = 6, 1, 3--Square, Star, Diamond
+			DBM:AddMsg(L.DBMConfigMsg:format(msg))
+		elseif msg == "SetFive" then
+			self.vb.tridentOceanicon, self.vb.tempestStormIcon, self.vb.voidIcon = 6, 7, 3--Square, Cross, Diamond
+			DBM:AddMsg(L.DBMConfigMsg:format(msg))
+		elseif msg == "SetSix" then
+			self.vb.tridentOceanicon, self.vb.tempestStormIcon, self.vb.voidIcon = 5, 7, 3--Moon, Cross, Diamond
 			DBM:AddMsg(L.DBMConfigMsg:format(msg))
 		end
 	end
