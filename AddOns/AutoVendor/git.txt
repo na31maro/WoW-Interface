@@ -1,0 +1,4 @@
+Generate key at:
+https://wow.curseforge.com/account/api-tokens
+
+Use old Curseforge username + key for Git login
