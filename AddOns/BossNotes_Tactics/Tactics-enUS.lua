@@ -777,7 +777,7 @@ L["encounter:76021"] = "Face adds away from party and side-step Eruption. Interr
 L["encounter:79912"] = "Kill trash waves for boss to come out. Dodge skyreaver’s breath and spit, side-step Tharbek’s charge. Avoid axe, DPS should stay behind skyreaver. Ranged DPS dot the flying hatchlings. Use damage reduction if you have Iron Axe debuff.\nHEROIC CHANGES... Tank damage is high because boss dismounts at 50% and both skyreaver and boss are active. Same abilities, also summons four guards when boss is at 30% health. Tank pick up fast or they hurt, can also be stunned or otherwise CCed."
 L["encounter:76585"] = "Boss spits and sets fire to portions of bridge that disorient and heavily damage players. Watch where boss is facing during Engulfing Fire and run to opposite direction to avoid. Gather whelplings, AOE down. Avoid fire puddles. Dispel boss enrage.\nHEROIC CHANGES... No real changes to heroic, but Engulfing Flames is less predictable. Boss enrage hits harder, make sure to try and dispel if you can or pop hero/lust to push through it."
 L["encounter:77120"] = "Boss puts cyclone on someone – kite it away from the rest of the party. Hurls blade that ricochets, spread out. At 60%, she gets on drake and adds come out. Avoid fire on bridge. After 40sec, boss comes back and resumes as the fight was in start.\nHEROIC CHANGES... Boss also knocks back and can knock off platform. Tank can avoid by holding her in middle until last phase, when you must be careful due to Burning Breath from adds. Adds also knock back when they come out, so be careful!"
---]]
+
 --Legion By Horrorbrood
 --Dungeons
 --Eye of Azshara
@@ -916,7 +916,21 @@ L["encounter:108678"] = "Shar'thos-"
 L["encounter:106981"] = "The Soultakers-"
 L["encounter:112350"] = "Withered J'im-"
 --BFA
+
+--]]
 ----------------------------BFA---------------------
+---opmega
+
+L["encounter:150222"] = "."
+L["encounter:150712"] = "."--Naeno Megacrash 153755
+L["encounter:150159"] = "."
+L["encounter:150190"] = "."
+L["encounter:144244"] = "." --145185
+L["encounter:144246"] = "."
+L["encounter:144248"] = "."
+L["encounter:150396"] = "."--144249
+
+
 --atal'dazar
 
 L["encounter:129614"] = "Priestess Alun'za"
@@ -981,6 +995,18 @@ L["encounter:133389"] = "Galvazzt"
 L["encounter:133392"] = "Avatar of Sethraliss"
 -----BFA WORLD BOSSES
 ---|cff1eff00Heroic|r\n\n
+----
+L["encounter:155144"] = "."
+L["encounter:154926"] = "."
+L["encounter:152364"] = "."
+L["encounter:153142"] = "."
+L["encounter:152128"] = "."
+L["encounter:152853"] = "."
+L["encounter:150859"] = "."
+L["encounter:54853"] = "."
+
+
+----
 
 L["encounter:132701"] = "T'zane"
 L["encounter:132253"] = "ji'arak"

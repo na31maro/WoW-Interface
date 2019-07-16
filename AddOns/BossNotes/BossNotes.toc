@@ -1,4 +1,4 @@
-﻿## Interface: 80100
+﻿## Interface: 80200
 ## Title: Boss Notes
 ## Notes: Provides shareable notes and other information for your guild, party and raid community. English only supported for legion
 ## Notes-deDE: Bietet teilbare Notizen und weitere Informationen für deine Gilden-, Gruppen- und Raid-Community an.

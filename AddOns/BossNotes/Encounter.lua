@@ -23,6 +23,59 @@ BOSS_NOTES_ENCOUNTERS = {
 		instanceSetId = "BFARaid",
 		raid = true,
 		instances = {
+			{
+				--Azsharas Eternal Palace
+				instanceId = "AEPR",
+				npcIds = {},
+				encounters = {
+					{
+						-- "Commander Sivara"
+						encounterId = 155144,
+						npcIds = {155144}
+					},
+					{
+						-- "Blackwater Behemoth"
+						encounterId = 154926,
+						npcIds = {154926}
+					},
+					{
+						-- "Radiance of Azshara"
+						encounterId = 152364,
+						npcIds = {152364}
+					},
+					{
+						-- "Lady Ashvane"
+						encounterId = 153142,
+						npcIds = {153142}
+					},
+					{
+						-- "Orgozoa"
+						encounterId = 152128,
+						npcIds = {}
+					},
+					{
+						-- "The Queen's Court"
+						encounterId = 152853,
+						npcIds = {152853, 146100}
+					},
+					{
+						-- "Za'qul"
+						encounterId = 150859,
+						npcIds = {150859}
+					},
+					{
+						-- "Queen Azshara"
+						encounterId = 54853,
+						npcIds = {54853}
+					},
+				},
+
+},
+		
+		
+		
+		
+		
 		{
 				--Crucible of Storms
 				instanceId = "COSR",
@@ -169,6 +222,58 @@ BOSS_NOTES_ENCOUNTERS = {
 		instanceSetId = "BFADungeon",
 		raid = false,
 		instances = {
+						{
+				--Operation:Mechagon
+				instanceId = "OPMEG",
+				npcIds = {},
+				encounters = {
+					{
+						-- "Gunker"
+						encounterId = 150222,
+						npcIds = {150222}
+					},
+					
+					{
+						-- "Trixie Tazer"
+						encounterId = 150712,
+						npcIds = {150712, 153755}
+					},
+					{
+						-- "King Gobbamak"
+						encounterId = 150159,
+						npcIds = {150159}
+					},
+					
+					{
+						-- "HK-8 Aerial Opression Unit"
+						encounterId = 150190,
+						npcIds = {150190}
+					},
+					{
+						-- "Tussle Tonks"
+						encounterId = 144244,
+						npcIds = {144244, 145185}
+					},
+					
+					{
+						-- "K.U.-J.O."
+						encounterId = 144246,
+						npcIds = {144246}
+					},
+					{
+						-- "Head Machanist Sparkflux"
+						encounterId = 144248,
+						npcIds = {144248}
+					},
+					
+					{
+						-- "King Mechagon"
+						encounterId = 150396,
+						npcIds = {150396, 144249}
+					},
+
+				},
+			},	
 			{
 				--atal'dazar
 				instanceId = "ATALDAZAR",
@@ -454,7 +559,7 @@ BOSS_NOTES_ENCOUNTERS = {
 			},
 				},
 	},
-	
+--[[	
 	{
 		-- Legion Dungeons - Added by Horrorbrood
 		instanceSetId = "LegionDungeon",
@@ -831,26 +936,26 @@ BOSS_NOTES_ENCOUNTERS = {
 			{
 				--Cathedral of Eternal Night 3/30/17
 				instanceId = "COEN",
-				npcIds = {120792--[[Illidan Stormrage]], 120374--[[Felguard Destroyer]], 
-						118690--[[Wrathguard Invader]], 119169--[[Fulminating Lasher]], 
-						98167--[[Void Tendril]], 118700--[[Felblight Stalker]], 
-						118724--[[Helblaze Felbringer]], 69791--[[Fire Spirit]], 
-						117855--[[Illidan Stormrage]], 120366--[[Hellblaze Temptress]], 
-						120646--[[Book of Arcane Monstrosities]], 119978--[[Fulminating Lasher]], 
-						119977--[[Stranglevine Lasher]], 120312--[[Maiev Shadowsong]], 
-						118713--[[Felstrider Orbcaster]], 118801--[[Imp]], 
-						118714--[[Hellblaze Temptress]], 117590--[[Shadow of Mephistroth]], 
-						118723--[[Gazerax]], 120556--[[Dreadwing]], 
-						118719--[[Wyrmtongue Scavenger]], 118718--[[Book of Eternal Winter]], 
-						119930--[[Dreadwing]], 118705--[[Nal'asha]], 
-						119923--[[Helblaze Soulmender]], 118706--[[Necrotic Spiderling]], 
-						120405--[[Dreadwing]], 116576--[[Maiev Shadowsong]], 
-						118712--[[Felstrider Enforcer]], 118717--[[Helblaze Imp]], 
-						122238--[[Wondrous Library]], 120727--[[Book of Everlasting Silence]], 
-						118703--[[Felborne Botanist]], 121710--[[Heave Cudgel]], 
-						120014--[[Choking Vines]], 
-						117193--[[Agronox]], 120746--[[Mephistroth]], 
-						118804--[[Domatrax]], 117194--[[Thrashbite the Scornful]]},
+				npcIds = {120792Illidan Stormrage , 120374Felguard Destroyer , 
+						118690Wrathguard Invader , 119169Fulminating Lasher , 
+						98167Void Tendril , 118700Felblight Stalker , 
+						118724Helblaze Felbringer , 69791Fire Spirit , 
+						117855Illidan Stormrage , 120366Hellblaze Temptress , 
+						120646Book of Arcane Monstrosities , 119978Fulminating Lasher , 
+						119977Stranglevine Lasher , 120312Maiev Shadowsong , 
+						118713Felstrider Orbcaster , 118801Imp , 
+						118714Hellblaze Temptress , 117590Shadow of Mephistroth , 
+						118723Gazerax , 120556Dreadwing , 
+						118719Wyrmtongue Scavenger , 118718Book of Eternal Winter , 
+						119930Dreadwing , 118705Nal'asha , 
+						119923Helblaze Soulmender , 118706Necrotic Spiderling , 
+						120405Dreadwing , 116576Maiev Shadowsong , 
+						118712Felstrider Enforcer , 118717Helblaze Imp , 
+						122238Wondrous Library , 120727Book of Everlasting Silence , 
+						118703Felborne Botanist , 121710Heave Cudgel , 
+						120014Choking Vines , 
+						117193Agronox , 120746Mephistroth , 
+						118804Domatrax , 117194Thrashbite the Scornful },
 				encounters = {
 					{
 						-- "Agronox"
@@ -1248,7 +1353,7 @@ BOSS_NOTES_ENCOUNTERS = {
 			},
 		},
 	},
---[[	
+	
 	{
 		-- Draenor Dungeons - Added by Linty Druid
 		instanceSetId = "DraenorDungeon",

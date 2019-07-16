@@ -1,6 +1,6 @@
 -- English, the default
 
-MAPCOORDS_VERSION 	= "0.29"
+MAPCOORDS_VERSION 	= "0.30"
 
 -- Chat notifications
 MAPCOORDS_HWorld	= "MapCoords > Now hiding all coords on worldmap"

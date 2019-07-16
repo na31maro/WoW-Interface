@@ -8,6 +8,8 @@
 -- |cff0055FF = blau/blue
 -- ***
 -- Changelog:
+-- 0.30 by Jim-Bim
+-- - TOC Update for 8.2
 -- 0.29 by Jim-Bim
 -- - TOC Update for 8.1
 -- 0.28 by Jim-Bim

@@ -1,15 +1,14 @@
-# [2.13.1](https://github.com/WeakAuras/WeakAuras2/tree/2.13.1) (2019-06-25)
+# [2.13.4](https://github.com/WeakAuras/WeakAuras2/tree/2.13.4) (2019-07-07)
 
-[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/2.13.0...2.13.1)
+[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/2.13.3...2.13.4)
 
 ## Highlights
 
- Swallow PlaySound file errors 
+ Bug fix for corrupted custom options 
 
 ## Commits
 
-emptyrivers (2):
+emptyrivers (1):
 
-- also guard against errors when setting a sound in conditions
-- wrap PlaySound and friends in pcall
+- delete corrupted custom options (#1435)
 

@@ -1784,6 +1784,17 @@ L["encounter:121124"] = "Apocron"
 L["encounter:117239"] = "Brutallus"
 ----------------------------BFA---------------------
 L["BFADungeon"] = "BFA Dungeons"
+--OPMEG
+L["instance:OPMEG"]="Operation Mechagon"
+L["encounter:150222"] = "Gunker"
+L["encounter:150712"] = "Trixie Tazer"--Naeno Megacrash 153755
+L["encounter:150159"] = "King Gobbamak"
+L["encounter:150190"] = "HK-8 Aerial Opression Unit"
+L["encounter:144244"] = "Tussle Tonks" --145185
+L["encounter:144246"] = "K.U.-J.O."
+L["encounter:144248"] = "Head Machanist Sparkflux"
+L["encounter:150396"] = "King Mechagon"--144249
+-----
 --atal'dazar
 L["instance:ATALDAZAR"]="Atal'dezar"
 L["encounter:129614"] = "Priestess Alun'za"
@@ -1856,6 +1867,16 @@ L["encounter:137374"] = "The lion's Roar"
 L["encounter:136385"] = "Azurethos, The Winged Typhoon"
 L["encounter:140163"] = "Warbringer Yenajz"
 L["encounter:138794"] = "Dunegorger Kraulok"
+-------------------------------------------------
+L["instance:AEPR"]="Azsharas Eternal Palace"
+L["encounter:155144"] = "Commander Sivara"
+L["encounter:154926"] = "Blackwater Behemoth"
+L["encounter:152364"] = "Radiance of Azshara"
+L["encounter:153142"] = "Lady Ashvane"
+L["encounter:152128"] = "Orgozoa" --146099 add
+L["encounter:152853"] = "The Queen's Court" --146100
+L["encounter:150859"] = "Za'qul"
+L["encounter:54853"] = "Queen Azshara"
 -------------------------------------------------
 L["instance:BODR"]="Battle of Dazar'alor"
 L["encounter:144680"] = "Frida Ironbellows"

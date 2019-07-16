@@ -68,9 +68,9 @@ local function showRealDate(curseDate)
 end
 
 DBM = {
-	Revision = parseCurseDate("20190626180414"),
-	DisplayVersion = "8.2.1", -- the string that is shown as version
-	ReleaseRevision = releaseDate(2019, 6, 26) -- the date of the latest stable version that is available, optionally pass hours, minutes, and seconds for multiple releases in one day
+	Revision = parseCurseDate("20190715041643"),
+	DisplayVersion = "8.2.4", -- the string that is shown as version
+	ReleaseRevision = releaseDate(2019, 7, 14) -- the date of the latest stable version that is available, optionally pass hours, minutes, and seconds for multiple releases in one day
 }
 DBM.HighestRelease = DBM.ReleaseRevision --Updated if newer version is detected, used by update nags to reflect critical fixes user is missing on boss pulls
 
@@ -444,7 +444,7 @@ local delayedFunction
 local dataBroker
 local voiceSessionDisabled = false
 
-local fakeBWVersion, fakeBWHash = 148, "8b115ac"
+local fakeBWVersion, fakeBWHash = 154, "6c6da67"
 local versionQueryString, versionResponseString = "Q^%d^%s", "V^%d^%s"
 
 local enableIcons = true -- set to false when a raid leader or a promoted player has a newer version of DBM
@@ -1107,6 +1107,7 @@ do
 			if eventSub6 == "SPELL_" then
 				args.spellId, args.spellName = extraArg1, extraArg2
 				if event == "SPELL_AURA_APPLIED" or event == "SPELL_AURA_REFRESH" or event == "SPELL_AURA_REMOVED" then
+					args.amount = extraArg5
 					if not args.sourceName then
 						args.sourceName = args.destName
 						args.sourceGUID = args.destGUID
@@ -3268,8 +3269,8 @@ function DBM:LoadModOptions(modId, inCombat, first)
 							self:Debug("Migrated "..option.." to option defaults", 2)
 						end
 					--Fix options for custom special warning sounds not in addons folder that are not using soundkit IDs
-					elseif option:find("SWSound") and (testBuild or wowTOC >= 80200) then
-						if savedOptions[id][profileNum][option] and (type(savedOptions[id][profileNum][option]) == "string") then
+					elseif option:find("SWSound") then
+						if savedOptions[id][profileNum][option] and (type(savedOptions[id][profileNum][option]) == "string") and (savedOptions[id][profileNum][option] ~= "") and (savedOptions[id][profileNum][option] ~= "None") then
 							local searchMsg = (savedOptions[id][profileNum][option]):lower()
 							if not searchMsg:find("addons") then
 								savedOptions[id][profileNum][option] = mod.DefaultOptions[option]
@@ -3648,53 +3649,51 @@ do
 		self.Options.CoreSavedRevision = self.Revision
 		--Migrate user sound options to soundkit Ids if selected media doesn't exist in Interface\\AddOns
 		--This will in the short term, screw with people trying to use LibSharedMedia sound files on 8.1.5 until LSM has migrated as well.
-		if (testBuild or wowTOC >= 80200) then
-			local migrated = false
-			if type(self.Options.RaidWarningSound) == "string" then
-				local searchMsg = self.Options.RaidWarningSound:lower()
-				if not searchMsg:find("addons") then
-					self.Options.RaidWarningSound = self.DefaultOptions.RaidWarningSound
-					migrated = true
-				end
+		local migrated = false
+		if type(self.Options.RaidWarningSound) == "string" and self.Options.RaidWarningSound ~= "" then
+			local searchMsg = self.Options.RaidWarningSound:lower()
+			if not searchMsg:find("addons") then
+				self.Options.RaidWarningSound = self.DefaultOptions.RaidWarningSound
+				migrated = true
 			end
-			if type(self.Options.SpecialWarningSound) == "string" then
-				local searchMsg = self.Options.SpecialWarningSound:lower()
-				if not searchMsg:find("addons") then
-					self.Options.SpecialWarningSound = self.DefaultOptions.SpecialWarningSound
-					migrated = true
-				end
+		end
+		if type(self.Options.SpecialWarningSound) == "string" and self.Options.SpecialWarningSound ~= "" then
+			local searchMsg = self.Options.SpecialWarningSound:lower()
+			if not searchMsg:find("addons") then
+				self.Options.SpecialWarningSound = self.DefaultOptions.SpecialWarningSound
+				migrated = true
 			end
-			if type(self.Options.SpecialWarningSound2) == "string" then
-				local searchMsg = self.Options.SpecialWarningSound2:lower()
-				if not searchMsg:find("addons") then
-					self.Options.SpecialWarningSound2 = self.DefaultOptions.SpecialWarningSound2
-					migrated = true
-				end
+		end
+		if type(self.Options.SpecialWarningSound2) == "string" and self.Options.SpecialWarningSound2 ~= "" then
+			local searchMsg = self.Options.SpecialWarningSound2:lower()
+			if not searchMsg:find("addons") then
+				self.Options.SpecialWarningSound2 = self.DefaultOptions.SpecialWarningSound2
+				migrated = true
 			end
-			if type(self.Options.SpecialWarningSound3) == "string" then
-				local searchMsg = self.Options.SpecialWarningSound3:lower()
-				if not searchMsg:find("addons") then
-					self.Options.SpecialWarningSound3 = self.DefaultOptions.SpecialWarningSound3
-					migrated = true
-				end
+		end
+		if type(self.Options.SpecialWarningSound3) == "string" and self.Options.SpecialWarningSound3 ~= "" then
+			local searchMsg = self.Options.SpecialWarningSound3:lower()
+			if not searchMsg:find("addons") then
+				self.Options.SpecialWarningSound3 = self.DefaultOptions.SpecialWarningSound3
+				migrated = true
 			end
-			if type(self.Options.SpecialWarningSound4) == "string" then
-				local searchMsg = self.Options.SpecialWarningSound4:lower()
-				if not searchMsg:find("addons") then
-					self.Options.SpecialWarningSound4 = self.DefaultOptions.SpecialWarningSound4
-					migrated = true
-				end
+		end
+		if type(self.Options.SpecialWarningSound4) == "string" and self.Options.SpecialWarningSound4 ~= "" then
+			local searchMsg = self.Options.SpecialWarningSound4:lower()
+			if not searchMsg:find("addons") then
+				self.Options.SpecialWarningSound4 = self.DefaultOptions.SpecialWarningSound4
+				migrated = true
 			end
-			if type(self.Options.SpecialWarningSound5) == "string" then
-				local searchMsg = self.Options.SpecialWarningSound5:lower()
-				if not searchMsg:find("addons") then
-					self.Options.SpecialWarningSound5 = self.DefaultOptions.SpecialWarningSound5
-					migrated = true
-				end
+		end
+		if type(self.Options.SpecialWarningSound5) == "string" and self.Options.SpecialWarningSound5 ~= "" then
+			local searchMsg = self.Options.SpecialWarningSound5:lower()
+			if not searchMsg:find("addons") then
+				self.Options.SpecialWarningSound5 = self.DefaultOptions.SpecialWarningSound5
+				migrated = true
 			end
-			if migrated then
-				self:AddMsg(DBM_CORE_SOUNDKIT_MIGRATION)
-			end
+		end
+		if migrated then
+			self:AddMsg(DBM_CORE_SOUNDKIT_MIGRATION)
 		end
 	end
 end
@@ -4322,7 +4321,6 @@ do
 		if timer > 60 then
 			return
 		end
-		--TODO, create a light weight mini countdown object to be used by Pull and Pizza and Combat Timers
 		if not dummyMod then
 			local threshold = DBM.Options.PTCountThreshold2
 			threshold = floor(threshold)
@@ -4334,7 +4332,6 @@ do
 		end
 		--Cancel any existing pull timers before creating new ones, we don't want double countdowns or mismatching blizz countdown text (cause you can't call another one if one is in progress)
 		if not DBM.Options.DontShowPT2 then--and DBM.Bars:GetBar(DBM_CORE_TIMER_PULL)
-			--DBM.Bars:CancelBar(DBM_CORE_TIMER_PULL)
 			dummyMod.timer:Stop()
 			--fireEvent("DBM_TimerStop", "pull")
 		end
@@ -4347,7 +4344,6 @@ do
 		if timer == 0 then return end--"/dbm pull 0" will strictly be used to cancel the pull timer (which is why we let above part of code run but not below)
 		DBM:FlashClientIcon()
 		if not DBM.Options.DontShowPT2 then
-			--DBM.Bars:CreateBar(timer, DBM_CORE_TIMER_PULL, 132349)
 			dummyMod.timer:Start(timer, DBM_CORE_TIMER_PULL)
 			--fireEvent("DBM_TimerStart", "pull", DBM_CORE_TIMER_PULL, timer, "132349", "utilitytimer", nil, 0)
 		end
@@ -4411,7 +4407,6 @@ do
 	do
 		local dummyMod2 -- dummy mod for the break timer
 		function breakTimerStart(self, timer, sender)
-			--TODO, create a light weight mini countdown object to be used by Pull and Break and Pizza and Combat Timers
 			if not dummyMod2 then
 				local threshold = DBM.Options.PTCountThreshold2
 				threshold = floor(threshold)
@@ -4422,7 +4417,6 @@ do
 			end
 			--Cancel any existing break timers before creating new ones, we don't want double countdowns or mismatching blizz countdown text (cause you can't call another one if one is in progress)
 			if not DBM.Options.DontShowPT2 then--and DBM.Bars:GetBar(DBM_CORE_TIMER_BREAK)
-				--DBM.Bars:CancelBar(DBM_CORE_TIMER_BREAK)
 				dummyMod2.timer:Stop()
 				--fireEvent("DBM_TimerStop", "break")
 			end
@@ -4431,7 +4425,6 @@ do
 			if timer == 0 then return end--"/dbm break 0" will strictly be used to cancel the break timer (which is why we let above part of code run but not below)
 			self.Options.tempBreak2 = timer.."/"..time()
 			if not self.Options.DontShowPT2 then
-				--self.Bars:CreateBar(timer, DBM_CORE_TIMER_BREAK, 237538)
 				dummyMod2.timer:Start(timer, DBM_CORE_TIMER_BREAK)
 				--fireEvent("DBM_TimerStart", "break", DBM_CORE_TIMER_BREAK, timer, "237538", "utilitytimer", nil, 0)
 			end
@@ -5476,7 +5469,7 @@ do
 			self:FlashClientIcon()
 			local voice = DBM.Options.ChosenVoicePack
 			local path = 8585--"Sound\\Creature\\CThun\\CThunYouWillDIe.ogg"
-			if not voiceSessionDisabled or voice ~= "None" then
+			if not voiceSessionDisabled and voice ~= "None" then
 				path = "Interface\\AddOns\\DBM-VP"..voice.."\\checkhp.ogg"
 			end
 			self:PlaySound(path)
@@ -5979,7 +5972,6 @@ do
 				local dummyMod = self:GetModByName("PullTimerCountdownDummy")
 				if dummyMod then--stop pull timer
 					dummyMod.text:Cancel()
-					--self.Bars:CancelBar(DBM_CORE_TIMER_PULL)
 					dummyMod.timer:Stop()
 					--fireEvent("DBM_TimerStop", "pull")
 					TimerTracker_OnEvent(TimerTracker, "PLAYER_ENTERING_WORLD")
@@ -6581,7 +6573,7 @@ do
 	end
 
 	function DBM:PlaySoundFile(path, ignoreSFX, validate)
-		if self.Options.SilentMode then return end
+		if self.Options.SilentMode or path == "" or path == "None" then return end
 		playSound(self, path, ignoreSFX, validate)
 	end
 
@@ -6773,16 +6765,19 @@ end
 
 function DBM:SendTimerInfo(mod, target)
 	for i, v in ipairs(mod.timers) do
-		for _, uId in ipairs(v.startedTimers) do
-			local elapsed, totalTime, timeLeft
-			if select("#", string.split("\t", uId)) > 1 then
-				elapsed, totalTime = v:GetTime(select(2, string.split("\t", uId)))
-			else
-				elapsed, totalTime = v:GetTime()
-			end
-			timeLeft = totalTime - elapsed
-			if timeLeft > 0 and totalTime > 0 then
-				SendAddonMessage("D4", ("TI\t%s\t%s\t%s\t%s"):format(mod.id, timeLeft, totalTime, uId), "WHISPER", target)
+		--Pass on any timer that has no type, or has one that isn't an ai timer
+		if not v.type or v.type and v.type ~= "ai" then
+			for _, uId in ipairs(v.startedTimers) do
+				local elapsed, totalTime, timeLeft
+				if select("#", string.split("\t", uId)) > 1 then
+					elapsed, totalTime = v:GetTime(select(2, string.split("\t", uId)))
+				else
+					elapsed, totalTime = v:GetTime()
+				end
+				timeLeft = totalTime - elapsed
+				if timeLeft > 0 and totalTime > 0 then
+					SendAddonMessage("D4", ("TI\t%s\t%s\t%s\t%s"):format(mod.id, timeLeft, totalTime, uId), "WHISPER", target)
+				end
 			end
 		end
 	end
@@ -9488,6 +9483,14 @@ do
 	end
 	yellPrototype.Show = yellPrototype.Yell
 
+	--Force override to use say message, even when object defines "YELL"
+	function yellPrototype:Say(...)
+		if DBM.Options.DontSendYells or self.yellType and self.yellType == "position" and DBM:UnitBuff("player", voidForm) and DBM.Options.FilterVoidFormSay then return end
+		if not self.option or self.mod.Options[self.option] then
+			SendChatMessage(pformat(self.text, ...), "SAY")
+		end
+	end
+
 	function yellPrototype:Schedule(t, ...)
 		return schedule(t, self.Yell, self.mod, self, ...)
 	end
@@ -10647,7 +10650,7 @@ do
 		local id = self.id..pformat((("\t%s"):rep(select("#", ...))), ...)
 		local bar = DBM.Bars:GetBar(id)
 		fireEvent("DBM_TimerUpdate", id, elapsed, totalTime)
-		if bar.countdown and bar.countdown > 0 then
+		if bar and bar.countdown and bar.countdown > 0 then
 			DBM:Unschedule(playCountSound, id)
 			if not bar.fade then--Don't start countdown voice if it's faded bar
 				playCountdown(id, totalTime-elapsed, bar.countdown, bar.countdownMax)--timerId, timer, voice, count
@@ -11622,15 +11625,15 @@ do
 			return DBM:GetRaidSubgroup(DBM:GetUnitFullName(v1)) < DBM:GetRaidSubgroup(DBM:GetUnitFullName(v2))
 		end
 
-		local function clearSortTable()
-			twipe(iconSortTable)
-			iconSet = 0
+		local function clearSortTable(scanID)
+			iconSortTable[scanID] = nil
+			iconSet[scanID] = nil
 		end
 
-		function bossModPrototype:SetIconByAlphaTable(returnFunc)
-			tsort(iconSortTable)--Sorted alphabetically
-			for i = 1, #iconSortTable do
-				local target = iconSortTable[i]
+		function bossModPrototype:SetIconByAlphaTable(returnFunc, scanID)
+			tsort(iconSortTable[scanID])--Sorted alphabetically
+			for i = 1, #iconSortTable[scanID] do
+				local target = iconSortTable[scanID][i]
 				if i > 8 then
 					DBM:Debug("|cffff0000Too many players to set icons, reconsider where using icons|r", 2)
 					return
@@ -11644,84 +11647,104 @@ do
 					self[returnFunc](self, target, i)--Send icon and target to returnFunc. (Generally used by announce icon targets to raid chat feature)
 				end
 			end
-			C_TimerAfter(1.5, clearSortTable)--Table wipe delay so if icons go out too early do to low fps or bad latency, when they get new target on table, resort and reapplying should auto correct teh icon within .2-.4 seconds at most.
+			DBM:Schedule(1.5, clearSortTable, scanID)--Table wipe delay so if icons go out too early do to low fps or bad latency, when they get new target on table, resort and reapplying should auto correct teh icon within .2-.4 seconds at most.
 		end
 
-		function bossModPrototype:SetAlphaIcon(delay, target, maxIcon, returnFunc)
+		function bossModPrototype:SetAlphaIcon(delay, target, maxIcon, returnFunc, scanID)
 			if not target then return end
 			if DBM.Options.DontSetIcons or not enableIcons or DBM:GetRaidRank(playerName) == 0 then
 				return
 			end
+			scanID = scanID or 1
 			local uId = DBM:GetRaidUnitId(target)
 			if uId or UnitExists(target) then--target accepts uid, unitname both.
 				uId = uId or target
+				if not iconSortTable[scanID] then iconSortTable[scanID] = {} end
+				if not iconSet[scanID] then iconSet[scanID] = 0 end
 				local foundDuplicate = false
-				for i = #iconSortTable, 1, -1 do
-					if iconSortTable[i] == uId then
+				for i = #iconSortTable[scanID], 1, -1 do
+					if iconSortTable[scanID][i] == uId then
 						foundDuplicate = true
 						break
 					end
 				end
 				if not foundDuplicate then
-					iconSet = iconSet + 1
-					tinsert(iconSortTable, uId)
+					iconSet[scanID] = iconSet[scanID] + 1
+					tinsert(iconSortTable[scanID], uId)
 				end
 				self:UnscheduleMethod("SetIconByAlphaTable")
-				if maxIcon and iconSet == maxIcon then
-					self:SetIconByAlphaTable(returnFunc)
+				if maxIcon and iconSet[scanID] == maxIcon then
+					self:SetIconByAlphaTable(returnFunc, scanID)
 				elseif self:LatencyCheck() then--lag can fail the icons so we check it before allowing.
-					self:ScheduleMethod(delay or 0.5, "SetIconByAlphaTable", returnFunc)
+					self:ScheduleMethod(delay or 0.5, "SetIconByAlphaTable", returnFunc, scanID)
 				end
 			end
 		end
 
-		function bossModPrototype:SetIconBySortedTable(startIcon, reverseIcon, returnFunc)
-			tsort(iconSortTable, sort_by_group)
-			local icon = startIcon or 1
-			for i, v in ipairs(iconSortTable) do
+		function bossModPrototype:SetIconBySortedTable(startIcon, reverseIcon, returnFunc, scanID)
+			tsort(iconSortTable[scanID], sort_by_group)
+			local icon, CustomIcons
+			if startIcon and type(startIcon) == "table" then--Specific gapped icons
+				CustomIcons = true
+				icon = 1
+			else
+				icon = startIcon or 1
+			end
+			for i, v in ipairs(iconSortTable[scanID]) do
 				if not self.iconRestore[v] then
 					local oldIcon = self:GetIcon(v) or 0
 					self.iconRestore[v] = oldIcon
 				end
-				SetRaidTarget(v, icon)--do not use SetIcon function again. It already checked in SetSortedIcon function.
-				if reverseIcon then
-					icon = icon - 1
-				else
+				if CustomIcons then
+					SetRaidTarget(v, startIcon[icon])--do not use SetIcon function again. It already checked in SetSortedIcon function.
 					icon = icon + 1
-				end
-				if returnFunc then
-					self[returnFunc](self, v, icon)--Send icon and target to returnFunc. (Generally used by announce icon targets to raid chat feature)
+					if returnFunc then
+						self[returnFunc](self, v, startIcon[icon])--Send icon and target to returnFunc. (Generally used by announce icon targets to raid chat feature)
+					end
+				else
+					SetRaidTarget(v, icon)--do not use SetIcon function again. It already checked in SetSortedIcon function.
+					if reverseIcon then
+						icon = icon - 1
+					else
+						icon = icon + 1
+					end
+					if returnFunc then
+						self[returnFunc](self, v, icon)--Send icon and target to returnFunc. (Generally used by announce icon targets to raid chat feature)
+					end
 				end
 			end
-			C_TimerAfter(1.5, clearSortTable)--Table wipe delay so if icons go out too early do to low fps or bad latency, when they get new target on table, resort and reapplying should auto correct teh icon within .2-.4 seconds at most.
+			DBM:Schedule(1.5, clearSortTable, scanID)--Table wipe delay so if icons go out too early do to low fps or bad latency, when they get new target on table, resort and reapplying should auto correct teh icon within .2-.4 seconds at most.
 		end
 
-		function bossModPrototype:SetSortedIcon(delay, target, startIcon, maxIcon, reverseIcon, returnFunc)
+		function bossModPrototype:SetSortedIcon(delay, target, startIcon, maxIcon, reverseIcon, returnFunc, scanID)
 			if not target then return end
 			if DBM.Options.DontSetIcons or not enableIcons or DBM:GetRaidRank(playerName) == 0 then
 				return
 			end
+			scanID = scanID or 1
 			if not startIcon then startIcon = 1 end
-			startIcon = startIcon and startIcon >= 0 and startIcon <= 8 and startIcon or 8
+			startIcon = startIcon or 8
 			local uId = DBM:GetRaidUnitId(target)
 			if uId or UnitExists(target) then--target accepts uid, unitname both.
 				uId = uId or target
+				if not iconSortTable[scanID] then iconSortTable[scanID] = {} end
+				if not iconSet[scanID] then iconSet[scanID] = 0 end
 				local foundDuplicate = false
-				for i = #iconSortTable, 1, -1 do
-					if iconSortTable[i] == uId then
+				for i = #iconSortTable[scanID], 1, -1 do
+					if iconSortTable[scanID][i] == uId then
 						foundDuplicate = true
 						break
 					end
 				end
 				if not foundDuplicate then
-					iconSet = iconSet + 1
-					tinsert(iconSortTable, uId)
+					iconSet[scanID] = iconSet[scanID] + 1
+					tinsert(iconSortTable[scanID], uId)
 				end
 				self:UnscheduleMethod("SetIconBySortedTable")
-				if maxIcon and iconSet == maxIcon then
-					self:SetIconBySortedTable(startIcon, reverseIcon, returnFunc)
+				if maxIcon and iconSet[scanID] == maxIcon then
+					self:SetIconBySortedTable(startIcon, reverseIcon, returnFunc, scanID)
 				elseif self:LatencyCheck() then--lag can fail the icons so we check it before allowing.
-					self:ScheduleMethod(delay or 0.5, "SetIconBySortedTable", startIcon, reverseIcon, returnFunc)
+					self:ScheduleMethod(delay or 0.5, "SetIconBySortedTable", startIcon, reverseIcon, returnFunc, scanID)
 				end
 			end
 		end
