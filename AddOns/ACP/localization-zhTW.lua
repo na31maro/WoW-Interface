@@ -1,11 +1,11 @@
-if not ACP then return end
+﻿if not ACP then return end
 
 --@non-debug@
 
 if (GetLocale() == "zhTW") then
 	ACP:UpdateLocale(
 
-{
+L = {
 	["*** Enabling <%s> %s your UI ***"] = "*** 啟用<%s>，%s你的使用者介面 ***",
 	["*** Unknown Addon <%s> Required ***"] = "*** 需要未知的插件<%s> ***",
 	["ACP: Some protected addons aren't loaded. Reload now?"] = "ACP: 部分受保護的插件沒有被載入。現在重載介面?",
@@ -73,6 +73,7 @@ if (GetLocale() == "zhTW") then
 	["Version"] = "版本",
 	["when performing a reloadui."] = "重載介面後不會被停用。"
 }
+
 
     )
 end

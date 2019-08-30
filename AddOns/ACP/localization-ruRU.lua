@@ -1,11 +1,11 @@
-if not ACP then return end
+﻿if not ACP then return end
 
 --@non-debug@
 
 if (GetLocale() == "ruRU") then
 	ACP:UpdateLocale(
 
-{
+L = {
 	["*** Enabling <%s> %s your UI ***"] = "*** Включаю <%s> %s вашего интерфейса ***",
 	["*** Unknown Addon <%s> Required ***"] = "*** Неизвестная модификация <%s> требуется ***",
 	["ACP: Some protected addons aren't loaded. Reload now?"] = "ACP: Некоторые защищенные модификации не загружены. Перезагрузить сейчас?",
@@ -64,16 +64,17 @@ if (GetLocale() == "ruRU") then
 	["Remove from current selection"] = "Убрать из текущего выделения",
 	["Rename"] = "Переименовать",
 	--[[Translation missing --]]
-	--[[ ["Resurse-ToolTip"] = "",--]] 
+	["Resurse-ToolTip"] = "When enabling an addon, attempt to enable any addons the addon depends on",
 	["Save"] = "Сохранить",
 	["Save the current addon list to [%s]?"] = "Сохранить текущий список модификаций в [%s]?",
 	["Set "] = "Набор ",
 	["Sets"] = "Наб.",
 	["Status"] = "Статус",
-	["Use SHIFT to override the current enabling of dependancies behaviour."] = "Используйте SHIFT чтобы изменить поведение зависимостей.",
+	["Use SHIFT to override the current enabling of dependancies behaviour."] = "Используйте SHIFT, чтобы изменить поведение зависимостей.",
 	["Version"] = "Версия",
-	["when performing a reloadui."] = "когда производиться перезагрузка ПИ."
+	["when performing a reloadui."] = "когда производится перезагрузка интерфейса."
 }
+
 
     )
 end

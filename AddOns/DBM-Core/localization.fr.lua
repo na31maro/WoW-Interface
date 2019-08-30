@@ -1,4 +1,4 @@
-if GetLocale() ~= "frFR" then return end
+﻿if GetLocale() ~= "frFR" then return end
 DBM_HOW_TO_USE_MOD					= "Bienvenue sur DBM. Tapez /dbm help pour une liste des commandes supportées. Pour accédez aux options, tapez /dbm dans la fenêtre de discussion pour commencer la configuration. Chargez des zones spécifiques manuellement pour configurer tous les paramètres spécifiques aux boss selon vos envies. DBM essaie de le faire pour vous en analysant votre spécialisation au premier lancement, mais nous savons que de toute façon certaines personnes souhaitant activer d'autres options."
 
 DBM_CORE_LOAD_MOD_ERROR				= "Erreur lors du chargement des modules %s: %s"
@@ -361,11 +361,6 @@ DBM_CORE_AUTO_ICONS_OPTION_TEXT2        = "Placer des icônes sur $spell:%s"
 DBM_CORE_AUTO_ARROW_OPTION_TEXT         = "Afficher la flèche DBM en direction de la cible affectée par $spell:%s"
 DBM_CORE_AUTO_ARROW_OPTION_TEXT2        = "Afficher la flèche DBM pour s'éloigner de la cible affectée par $spell:%s"
 DBM_CORE_AUTO_ARROW_OPTION_TEXT3		= "Show DBM Arrow to move toward specific location for $spell:%s"
-DBM_CORE_AUTO_VOICE_OPTION_TEXT			= "Play spoken alerts for $spell:%s"
-DBM_CORE_AUTO_VOICE2_OPTION_TEXT		= "Play spoken alerts for phase changes"
-DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT		= "Compte à rebours sonore pour $spell:%s"
-DBM_CORE_AUTO_COUNTDOWN_OPTION_TEXT2	= "Compte à rebours sonore pour lorsque $spell:%s se dissipe"
-DBM_CORE_AUTO_COUNTOUT_OPTION_TEXT		= "Compte à rebours sonore pour la durée de $spell:%s"
 
 DBM_CORE_AUTO_YELL_OPTION_TEXT.yell		= "Crie quand vous êtes affecté par $spell:%s"
 DBM_CORE_AUTO_YELL_OPTION_TEXT.count	= "Crie (avec compte) quand vous êtes affecté par $spell:%s"

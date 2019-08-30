@@ -297,8 +297,7 @@ end
 ---------------------------------------------------------------
 local Mouse = ConsolePortMouseHandle
 Mouse:Execute([[ id, isEnabled = 0, true ]])
-Mouse.FadeInRef = db.UIFrameFadeIn
-Mouse.FadeOutRef = db.UIFrameFadeOut
+Mouse.FadeInRef, Mouse.FadeOutRef = db.GetFaders()
 Mouse.Line:SetTexture(1243535)
 Mouse.Line:SetVertexColor(1, .75, .75)
 
@@ -664,7 +663,7 @@ function Mouse:TrackUnit(fauxUnit, blocked, forceCache)
 		self:TogglePortrait(false)
 	else -- cached last target might have loot, check proximity (insecure).
 		if ( not blocked and self.cachedUnit ) then
-			self:DispatchLootCheck(.35, 10, true)
+			self:DispatchLootCheck(.35, 20, true)
 		end
 		self:TogglePortrait(false)
 		self:FadeOut()

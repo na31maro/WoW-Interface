@@ -685,7 +685,7 @@
 				if (self.baseframe.stretch_direction == "top") then
 					for _, instancia in _ipairs (self.stretchToo) do
 						instancia.baseframe:SetHeight (self.baseframe:GetHeight())
-						local mod = (self.baseframe:GetHeight() - instancia.baseframe._place.altura) / 2
+						local mod = (self.baseframe:GetHeight() - (instancia.baseframe._place.altura or instancia.baseframe:GetHeight())) / 2
 						instancia:RestoreMainWindowPositionNoResize (instancia.baseframe._place, nil, mod)
 					end
 				elseif (self.baseframe.stretch_direction == "bottom") then
@@ -2489,9 +2489,9 @@
 						else
 							bookmark.atributo = bookmark.atributo or 1
 							bookmark.sub_atributo = bookmark.sub_atributo or 1
-							this_block.label.text = _detalhes.sub_atributos [bookmark.atributo].lista [bookmark.sub_atributo]
-							this_block.icon.texture = _detalhes.sub_atributos [bookmark.atributo].icones [bookmark.sub_atributo] [1]
-							this_block.icon.texcoord = _detalhes.sub_atributos [bookmark.atributo].icones [bookmark.sub_atributo] [2]
+							this_block.label.text = _detalhes.sub_atributos [bookmark.atributo] and _detalhes.sub_atributos [bookmark.atributo].lista [bookmark.sub_atributo]
+							this_block.icon.texture = _detalhes.sub_atributos [bookmark.atributo] and _detalhes.sub_atributos [bookmark.atributo].icones [bookmark.sub_atributo] [1]
+							this_block.icon.texcoord = _detalhes.sub_atributos [bookmark.atributo] and _detalhes.sub_atributos [bookmark.atributo].icones [bookmark.sub_atributo] [2]
 							this_block.bg:SetVertexColor (.4, .4, .4, .6)
 						end
 						

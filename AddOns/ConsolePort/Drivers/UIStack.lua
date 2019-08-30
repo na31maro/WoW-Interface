@@ -11,7 +11,7 @@ local 	Core,
 		-- General functions
 		After, SetHook, IsLoaded,
 		-- Table functions
-		pairs, next,
+		pairs, next, unravel,
 		-- Stacks: all frames, visible frames, show/hide hooks
 		frames, visible, hooks, forbidden, obstructors,
 		-- Boolean checks (default nil)
@@ -19,13 +19,14 @@ local 	Core,
 		-------------------------------------
 		ConsolePort,
 		C_Timer.After, hooksecurefunc, IsAddOnLoaded,
-		pairs, next, {}, {}, {}, {}, {}
+		pairs, next, db.table.unravel, {}, {}, {}, {}, {}
 ---------------------------------------------------------------
-
-function Core:HasUIFocus() return hasUIFocus end
-function Core:SetUIFocus(...) hasUIFocus = ... end
-function Core:LockUICore(...) isLocked = ... end
-function Core:IsUICoreLocked() return isLocked end
+-- Externals:
+---------------------------------------------------------------
+function Core:HasUIFocus()         return hasUIFocus   end
+function Core:SetUIFocus(...)      hasUIFocus = ...    end
+function Core:LockUICore(...)      isLocked = ...      end
+function Core:IsUICoreLocked()     return isLocked     end
 function Core:IsCursorObstructed() return isObstructed end
 
 ---------------------------------------------------------------
@@ -66,7 +67,7 @@ for flag, nodes in pairs({
 		QuestFrameCompleteButton,
 		QuestFrameCompleteQuestButton,
 		QuestTitleButton1,
-		QuestMapFrame.DetailsFrame.BackButton,
+		(QuestMapFrame and QuestMapFrame.DetailsFrame.BackButton),
 	},
 	ignoreNode = {
 		LootFrameCloseButton,
@@ -74,7 +75,7 @@ for flag, nodes in pairs({
 		WorldMapTitleButton,
 	},
 	ignoreMenu = {
-		ObjectiveTrackerFrame.HeaderMenu.MinimizeButton,
+		(ObjectiveTrackerFrame and ObjectiveTrackerFrame.HeaderMenu.MinimizeButton),
 		MinimapZoomIn,
 		MinimapZoomOut,
 	},
@@ -109,7 +110,7 @@ local function showHook(self)
 	end
 end
 
--- Use After to circumvent node jumping when closing multiple frames,
+-- Use C_Timer.After to circumvent node jumping when closing multiple frames,
 -- which leads to the cursor ending up in an unexpected place on re-show.
 -- E.g. close 5 bags, cursor was in 1st bag, ends up in 5th bag on re-show.
 local function hideHook(self, explicit)
@@ -251,8 +252,12 @@ function Core:UpdateFrames()
 end
 
 -- Returns a stack of visible frames.
-function Core:GetFrameStack()
+function Core:IterateVisibleCursorFrames()
 	return pairs(visible)
+end
+
+function Core:GetVisibleCursorFrames()
+	return unravel(visible)
 end
 
 function Core:IsFrameVisibleToCursor(...)
@@ -261,4 +266,4 @@ function Core:IsFrameVisibleToCursor(...)
 		returns[i] = visible[frame] or false
 	end
 	return unpack(returns)
-end 
+end

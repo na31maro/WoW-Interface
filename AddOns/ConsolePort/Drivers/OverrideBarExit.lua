@@ -1,3 +1,4 @@
+if CPAPI:IsClassicVersion() then return end
 ---------------------------------------------------------------
 -- OverrideBarExit.lua: Exit vehicle/override/possess bar.
 ---------------------------------------------------------------
@@ -32,7 +33,7 @@ function OBExit:SetHotkey(name, mod)
 	if ( name and mod ) then
 		if not self.HotKey and ExitButton then
 			-- hack: use ctrl+shift here to spawn two mod icons
-			self.HotKey = db.CreateHotKey(ExitButton, nil, 'CTRL-SHIFT-', name)
+			self.HotKey = db.CreateHotkey(ExitButton, nil, 'CTRL-SHIFT-', name)
 			self.HotKey:SetPoint('TOPRIGHT', ExitButton, 0, 0)
 		end
 		if 	self.HotKey then
@@ -67,11 +68,7 @@ function OBExit:OnNewBinding()
 	-- if there's no explicit binding, use cvar binding or a binding that isn't going to be in conflict.
 	-- need to consider the cvar can be invalid (not nil), which allows user to disable this functionality.
 	local cvarBinding, exitVehicleBinding = db('exitVehicleBinding')
-	if (cvarBinding ~= nil) then
-		exitVehicleBinding = cvarBinding
-	else
-		exitVehicleBinding = EXIT_VEHICLE_BINDING
-	end
+	exitVehicleBinding = (cvarBinding ~= nil) and cvarBinding or EXIT_VEHICLE_BINDING
 	name, mod = ConsolePort:GetCurrentBindingOwner(exitVehicleBinding)
 
 	-- no eligible bindings found at this point, bail out.

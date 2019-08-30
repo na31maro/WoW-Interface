@@ -7,7 +7,7 @@
 -- secure frames with the 'unit' attribute assigned.
 
 local 	addOn, db = ...
-local 	Flash, FadeIn, FadeOut = db.UIFrameFlash, db.UIFrameFadeIn, db.UIFrameFadeOut
+local 	Flash, FadeIn, FadeOut = db.UIFrameFlash, db.GetFaders()
 ---------------------------------------------------------------
 local 	Cursor = ConsolePortRaidCursor
 ---------------------------------------------------------------
@@ -27,9 +27,6 @@ do
 	Cursor:SetFrameRef('SetFocus', Cursor.SetFocus)
 	Cursor:SetFrameRef('SetTarget', Cursor.SetTarget)
 	Cursor:SetFrameRef('Mouse', ConsolePortMouseHandle)
-	---------------------------------------------------------------
-	Cursor:SetFrameRef('actionBar', MainMenuBarArtFrame)
-	Cursor:SetFrameRef('overrideBar', OverrideActionBar)
 	---------------------------------------------------------------
 	ConsolePort:RegisterSpellHeader(Cursor)
 	Cursor:Execute(format([[
@@ -298,9 +295,13 @@ do
 
 		-- Cache default bars right away
 		CurrentNode = self:GetFrameRef('actionBar')
-		self:Run(GetNodes)
+		if CurrentNode then
+			self:Run(GetNodes)
+		end
 		CurrentNode = self:GetFrameRef('overrideBar')
-		self:Run(GetNodes)
+		if CurrentNode then
+			self:Run(GetNodes)
+		end
 	]])
 	Cursor:SetAttribute('pageupdate', [[
 		if IsEnabled then
@@ -408,7 +409,7 @@ function Cursor:OnEvent(event, ...)
 		FadeOut(self.CastBar, 0.2, self.CastBar:GetAlpha(), 0)
 
 	elseif event == 'UNIT_SPELLCAST_START' then
-		local name, _, texture, startTime, endTime = UnitCastingInfo('player')
+		local name, _, texture, startTime, endTime = CPAPI:GetPlayerCastingInfo()
 
 		local targetRelation = self:GetAttribute('relation')
 		local spellRelation = IsHarmfulSpell(name) and 'harm' or IsHelpfulSpell(name) and 'help'

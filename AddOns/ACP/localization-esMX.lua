@@ -1,11 +1,11 @@
-if not ACP then return end
+﻿if not ACP then return end
 
 --@non-debug@
 
 if (GetLocale() == "esMX") then
 	ACP:UpdateLocale(
 
-{
+L = {
 	["*** Enabling <%s> %s your UI ***"] = "*** Activando <%s> %s su IU ***",
 	["*** Unknown Addon <%s> Required ***"] = "*** Addon desconocido <%s> requerido ***",
 	["ACP: Some protected addons aren't loaded. Reload now?"] = "ACP: Algunos Addons protegidos no se encuentran cargados. ¿Recargar ahora?",
@@ -64,7 +64,7 @@ if (GetLocale() == "esMX") then
 	["Remove from current selection"] = "Eliminar de la selección actual",
 	["Rename"] = "Renombrar",
 	--[[Translation missing --]]
-	--[[ ["Resurse-ToolTip"] = "",--]] 
+	["Resurse-ToolTip"] = "When enabling an addon, attempt to enable any addons the addon depends on",
 	["Save"] = "Guardar",
 	["Save the current addon list to [%s]?"] = "¿Guardar la lista actual de Addons en [%s]?",
 	["Set "] = "Establecido",
@@ -74,6 +74,7 @@ if (GetLocale() == "esMX") then
 	["Version"] = "Versión",
 	["when performing a reloadui."] = "cuando realice \"Recargar IU\"."
 }
+
 
     )
 end

@@ -9,8 +9,8 @@ local getmetatable, setmetatable, rawset, next, select = getmetatable, setmetata
 ---------------------------------------
 -- Upvalued API:
 local GetGUID, GetName, IsDead, Exists, IsCombat = UnitGUID, UnitName, UnitIsDead, UnitExists
-local IsUnit, IsOpponent, IsAttackable = UnitIsUnit, UnitThreatSituation, UnitCanAttack
-local IsPlayer, IsFriend, IsEnemy, IsBattlePet, IsControlled = UnitIsPlayer, UnitIsFriend, UnitIsEnemy, UnitIsBattlePet, UnitPlayerControlled
+local IsUnit, IsAttackable, IsOpponent = UnitIsUnit, UnitCanAttack, CPAPI.UnitThreatSituation
+local IsPlayer, IsFriend, IsEnemy, IsControlled, IsBattlePet = UnitIsPlayer, UnitIsFriend, UnitIsEnemy, UnitPlayerControlled, CPAPI.UnitIsBattlePet
 local GetNamePlate = C_NamePlate.GetNamePlateForUnit
 local CanLoot = CanLootUnit
 
@@ -35,7 +35,7 @@ end
 
 local function IsNPC(unit)
 	local unitType, ID = GetUnitProperties(unit)
-	return 	not IsBattlePet(unit) and		-- unit should not be battlepet
+	return 	not IsBattlePet(nil, unit) and	-- unit should not be battlepet
 			not IsPlayer(unit) and			-- unit should not be player
 			not IsControlled(unit) and 		-- unit should not be bodyguard
 			not IsEnemy('player', unit) and -- unit should not be enemy
@@ -53,11 +53,18 @@ local function ToggleHealthBarForUnit(unit)
 		local nameplate = GetNamePlate(unit)
 		local unitFrame = nameplate and nameplate.UnitFrame
 		local healthBar = unitFrame and unitFrame.healthBar
-		if healthBar then
+		local levelInfo = unitFrame and unitFrame.LevelFrame
+		if healthBar or levelInfo then
 			local isFriend = IsFriend('player', unit)
 			local isTarget = IsUnit('target', unit)
 			local isCombat = IsOpponent('player', unit)
-			healthBar:SetShown(isCombat or not (isFriend or not isTarget))
+			local show = isCombat or not (isFriend or not isTarget)
+			if healthBar then
+				healthBar:SetShown(show)
+			end
+			if levelInfo then
+				levelInfo:SetShown(show)
+			end
 		end
 	end
 end
@@ -228,7 +235,7 @@ function AI:OnShow()
 		pcall(self.RegisterEvent, self, event)
 	end
 	if not nameOnlyMode then
-		self:UnregisterEvent('UNIT_THREAT_LIST_UPDATE')
+		pcall(self.UnregisterEvent, self, 'UNIT_THREAT_LIST_UPDATE')
 	end
 end
 

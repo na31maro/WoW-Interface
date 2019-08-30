@@ -37,7 +37,7 @@ function ConsolePort:LoadEvents()
 	end
 	self:UnregisterAllEvents()
 	for event in pairs(Events) do
-		self:RegisterEvent(event)
+		pcall(self.RegisterEvent, self, event)
 	end
 end
 
@@ -167,8 +167,8 @@ end
 function Events:SPELLS_CHANGED()
 	self:SetupRaidCursor()
 	self:UpdateCameraDriver()
-	self:AddUpdateSnippet(self.UpdateMouseDriver)
-	self:AddUpdateSnippet(self.SetupUtilityRing)
+	self:RunOOC(self.UpdateMouseDriver)
+	self:RunOOC(self.SetupUtilityRing)
 	self:UnregisterEvent('SPELLS_CHANGED')
 	Events.SPELLS_CHANGED = nil
 	if InCombatLockdown() then
@@ -182,9 +182,11 @@ function Events:ACTIVE_TALENT_GROUP_CHANGED()
 		-- Set new bindings
 		db.Bindings = bindingSet
 		-- Dispatch updated bindings
+		self:SetUIFocus(false)
 		self:LoadBindingSet(bindingSet)
 		self:OnNewBindings(bindingSet)
 		self:LoadHotKeyTextures()
+		self:UpdateFrames()
 		-- Check whether bindings are empty
 		if not next(bindingSet) then
 			local popupData = StaticPopupDialogs["CONSOLEPORT_IMPORTBINDINGS"]
@@ -236,7 +238,7 @@ function Events:OnConsolePortLoaded(name)
 		self:LoadCameraSettings()
 		self:OnNewBindings()
 		self:CreateConfigPanel()
-		self:CreateActionButtons()
+		self:CreateSecureButtons()
 		self:SetupCursor()
 		self:ToggleUICore()
 		self:LoadUIControl()

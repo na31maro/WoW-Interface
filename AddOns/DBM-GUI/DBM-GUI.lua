@@ -43,7 +43,7 @@
 --
 
 
-local revision =(string.sub("20190626175612", 1, -5))
+local revision =(string.sub("20190726170811", 1, -5))
 local FrameTitle = "DBM_GUI_Option_"	-- all GUI frames get automatically a name FrameTitle..ID
 
 local PanelPrototype = {}
@@ -240,6 +240,7 @@ local function MixinSharedMedia3(mediatype, mediatable)
 		local LSM = LibStub("LibSharedMedia-3.0")
 		soundsRegistered = true
 		--Embedded Sound Clip media
+		LSM:Register("sound", "AirHorn (DBM)", [[Interface\AddOns\DBM-Core\sounds\AirHorn.ogg]])
 		LSM:Register("sound", "Jaina: Beware", [[Interface\AddOns\DBM-Core\sounds\SoundClips\beware.ogg]])
 		LSM:Register("sound", "Jaina: Beware (reverb)", [[Interface\AddOns\DBM-Core\sounds\SoundClips\beware_with_reverb.ogg]])
 		LSM:Register("sound", "Thrall: That's Incredible!", [[Interface\AddOns\DBM-Core\sounds\SoundClips\incredible.ogg]])
@@ -407,11 +408,31 @@ do
 	end
 
 	local sounds = MixinSharedMedia3("sound", {
+		--Inject basically dummy values for ordering special warnings to just use default SW sound assignments
 		{ sound=true, text = L.None, value = "None" },
 		{ sound=true, text = "SW 1", value = 1 },
 		{ sound=true, text = "SW 2", value = 2 },
 		{ sound=true, text = "SW 3", value = 3 },
 		{ sound=true, text = "SW 4", value = 4 },
+
+		--Inject DBMs custom media that's not available to LibSharedMedia because it uses SoundKit Id (which LSM doesn't support)
+		--{ sound=true, text = "AirHorn (DBM)", value = "Interface\\AddOns\\DBM-Core\\sounds\\AirHorn.ogg" },
+		{ sound=true, text = "Algalon: Beware!", value = 15391 },
+		{ sound=true, text = "BB Wolf: Run Away", value = 9278 },
+		{ sound=true, text = "Blizzard Raid Emote", value = 37666 },
+		{ sound=true, text = "C'Thun: You Will Die!", value = 8585 },
+		{ sound=true, text = "Headless Horseman: Laugh", value = 12506 },
+		{ sound=true, text = "Illidan: Not Prepared", value = 68563 },
+		{ sound=true, text = "Illidan: Not Prepared2", value = 12506 },
+		{ sound=true, text = "Kaz'rogal: Marked", value = 11052 },
+		{ sound=true, text = "Kil'Jaeden: Destruction", value = 12506 },
+		{ sound=true, text = "Loatheb: I see you", value = 128466 },
+		{ sound=true, text = "Lady Malande: Flee", value = 11482 },
+		{ sound=true, text = "Milhouse: Light You Up", value = 49764 },
+		{ sound=true, text = "Night Elf Bell", value = 11742 },
+		{ sound=true, text = "PvP Flag", value = 8174 },
+		{ sound=true, text = "Void Reaver: Marked", value = 11213 },
+		{ sound=true, text = "Yogg Saron: Laugh", value = 15757 },
 	})
 
 	local tcolors = {
@@ -425,12 +446,23 @@ do
 		{ text = L.CBTImportant, value = 7 },
 	}
 
-	local cvoice = {
+	local function MixinCountTable(baseTable)
+		-- DBM values (baseTable) first, mediatable values afterwards
+		local result = baseTable
+		for i=1,#DBM.Counts do
+			local mediatext = DBM.Counts[i].text
+			local mediapath = DBM.Counts[i].path
+			tinsert(result, {text=mediatext, value=mediapath})
+		end
+		return result
+	end
+
+	local cvoice = MixinCountTable({
 		{ text = L.None, value = 0 },
 		{ text = L.CVoiceOne, value = 1 },
 		{ text = L.CVoiceTwo, value = 2 },
 		{ text = L.CVoiceThree, value = 3 },
-	}
+	})
 
 	function PanelPrototype:CreateCheckButton(name, autoplace, textleft, dbmvar, dbtvar, mod, modvar, globalvar, isTimer)
 		if not name then
@@ -474,8 +506,10 @@ do
 				end)
 				dropdown2 = self:CreateDropdown(nil, cvoice, nil, nil, function(value)
 					mod.Options[modvar.."CVoice"] = value
-					if value > 0 then
-						local countPlay = value == 3 and DBM.Options.CountdownVoice3v2 or value == 2 and DBM.Options.CountdownVoice2 or DBM.Options.CountdownVoice
+					if type(value) == "string" then
+						DBM:PlayCountSound(1, nil, value)
+					elseif value > 0 then
+						local countPlay = value == 3 and DBM.Options.CountdownVoice3 or value == 2 and DBM.Options.CountdownVoice2 or DBM.Options.CountdownVoice
 						DBM:PlayCountSound(1, countPlay)
 					end
 				end, 20, 25, button)
@@ -2707,24 +2741,25 @@ local function CreateOptionsMenu()
 		end
 
 		local Sounds = MixinSharedMedia3("sound", {
-			{	text	= L.NoSound,			value	= "" },
-			{	text	= "PvP Flag",			value 	= 8174, 		sound=true },--"Sound\\Spells\\PVPFlagTaken.ogg"
-			{	text	= "Blizzard",			value 	= 37666, 		sound=true },--"Sound\\interface\\UI_RaidBossWhisperWarning.ogg"
-			{	text	= "Beware!",			value 	= 15391, 		sound=true },--"Sound\\Creature\\AlgalonTheObserver\\UR_Algalon_BHole01.ogg"
-			{	text	= "AirHorn",			value 	= "Interface\\AddOns\\DBM-Core\\sounds\\AirHorn.ogg", 		sound=true },
-			{	text	= "Destruction",		value 	= 12506, 		sound=true },--"Sound\\Creature\\KilJaeden\\KILJAEDEN02.ogg"
-			{	text	= "NotPrepared",		value 	= 11466, 		sound=true },--"Sound\\Creature\\Illidan\\BLACK_Illidan_04.ogg"
-			{	text	= "NotPrepared2",		value 	= 68563, 		sound=true },--"Sound\\Creature\\Illidan_Stormrage\\VO_703_Illidan_Stormrage_03.ogg"
-			{	text	= "RunAwayLittleGirl",	value 	= 9278, 		sound=true },--"Sound\\Creature\\HoodWolf\\HoodWolfTransformPlayer01.ogg"
-			{	text	= "NightElfBell",		value 	= 11742, 		sound=true },--"Sound\\Doodad\\BellTollNightElf.ogg"
-			{	text	= "Headless Horseman: Laugh", value = 11965, sound = true },
-			{	text	= "Yogg Saron: Laugh", value = 15757, sound = true },
-			{	text	= "Loatheb: I see you", value = 128466, sound = true },
-			{	text	= "Lady Malande: Flee", value = 11482, sound = true },
-			{	text	= "Milhouse: Light You Up", value = 49764, sound = true },
-			{	text	= "Void Reaver: Marked", value = 11213, sound = true },
-			{	text	= "Kaz'rogal: Marked", value = 11052, sound = true },
-			{	text	= "C'Thun: You Will Die!", value = 8585, sound = true }
+			{ text = L.NoSound, value = "" },
+			--Inject DBMs custom media that's not available to LibSharedMedia because it uses SoundKit Id (which LSM doesn't support)
+			--{ sound=true, text = "AirHorn (DBM)", value = "Interface\\AddOns\\DBM-Core\\sounds\\AirHorn.ogg" },
+			{ sound=true, text = "Algalon: Beware!", value = 15391 },
+			{ sound=true, text = "BB Wolf: Run Away", value = 9278 },
+			{ sound=true, text = "Blizzard Raid Emote", value = 37666 },
+			{ sound=true, text = "C'Thun: You Will Die!", value = 8585 },
+			{ sound=true, text = "Headless Horseman: Laugh", value = 12506 },
+			{ sound=true, text = "Illidan: Not Prepared", value = 68563 },
+			{ sound=true, text = "Illidan: Not Prepared2", value = 12506 },
+			{ sound=true, text = "Kaz'rogal: Marked", value = 11052 },
+			{ sound=true, text = "Kil'Jaeden: Destruction", value = 12506 },
+			{ sound=true, text = "Loatheb: I see you", value = 128466 },
+			{ sound=true, text = "Lady Malande: Flee", value = 11482 },
+			{ sound=true, text = "Milhouse: Light You Up", value = 49764 },
+			{ sound=true, text = "Night Elf Bell", value = 11742 },
+			{ sound=true, text = "PvP Flag", value = 8174 },
+			{ sound=true, text = "Void Reaver: Marked", value = 11213 },
+			{ sound=true, text = "Yogg Saron: Laugh", value = 15757 },
 		})
 
 		local SpecialWarnSoundDropDown = specArea:CreateDropdown(L.SpecialWarnSound, Sounds, "DBM", "SpecialWarningSound", function(value)
@@ -3004,7 +3039,6 @@ local function CreateOptionsMenu()
 			DBM.Options.CountdownVoice = value
 			DBM:PlayCountSound(1, DBM.Options.CountdownVoice)
 			DBM:BuildVoiceCountdownCache()
-			DBM:BuildVoiceCountdownCacheTwo()
 		end)
 		CountSoundDropDown:SetPoint("TOPLEFT", spokenGeneralArea.frame, "TOPLEFT", 0, -20)
 
@@ -3012,15 +3046,13 @@ local function CreateOptionsMenu()
 			DBM.Options.CountdownVoice2 = value
 			DBM:PlayCountSound(1, DBM.Options.CountdownVoice2)
 			DBM:BuildVoiceCountdownCache()
-			DBM:BuildVoiceCountdownCacheTwo()
 		end)
 		CountSoundDropDown2:SetPoint("LEFT", CountSoundDropDown, "RIGHT", 50, 0)
 
-		local CountSoundDropDown3 = spokenGeneralArea:CreateDropdown(L.CountdownVoice3, DBM.Counts, "DBM", "CountdownVoice3v2", function(value)
-			DBM.Options.CountdownVoice3v2 = value
-			DBM:PlayCountSound(1, DBM.Options.CountdownVoice3v2)
+		local CountSoundDropDown3 = spokenGeneralArea:CreateDropdown(L.CountdownVoice3, DBM.Counts, "DBM", "CountdownVoice3", function(value)
+			DBM.Options.CountdownVoice3 = value
+			DBM:PlayCountSound(1, DBM.Options.CountdownVoice3)
 			DBM:BuildVoiceCountdownCache()
-			DBM:BuildVoiceCountdownCacheTwo()
 		end)
 		CountSoundDropDown3:SetPoint("TOPLEFT", CountSoundDropDown, "TOPLEFT", 0, -45)
 
@@ -3063,8 +3095,8 @@ local function CreateOptionsMenu()
 
 	do
 		local Sounds = MixinSharedMedia3("sound", {
-			{	text	= L.NoSound,						value	= "None" },
-			{	text	= "Muradin: Charge",				value 	= 16971, 		sound=true },--"Sound\\Creature\\MuradinBronzebeard\\IC_Muradin_Saurfang02.ogg"
+			{	text	= L.NoSound,			value	= "None" },
+			{	text	= "Muradin: Charge",	value 	= 16971, 		sound=true },--"Sound\\Creature\\MuradinBronzebeard\\IC_Muradin_Saurfang02.ogg"
 		})
 
 		local eventSoundsPanel	 	= DBM_GUI_Frame:CreateNewPanel(L.Panel_EventSounds, "option")
@@ -3127,7 +3159,7 @@ local function CreateOptionsMenu()
 		end)
 		VictorySoundDropdown3:SetPoint("TOPLEFT", DungeonMusicDropDown, "TOPLEFT", 0, -45)
 
-		local TurtleDropDown = eventSoundsGeneralArea:CreateDropdown(L.EventTurtleMusic, useCombined and DBM.Music or DBM.BattleMusic, "DBM", "EventSoundTurle", function(value)
+		local TurtleDropDown = eventSoundsGeneralArea:CreateDropdown(L.EventTurtleMusic, DBM.Music, "DBM", "EventSoundTurle", function(value)
 			DBM.Options.EventSoundTurle = value
 			if value ~= "Random" then
 				if not DBM.Options.tempMusicSetting then
