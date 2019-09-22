@@ -301,18 +301,14 @@ L = {
 		["Show Chat%d Arrows"] = "Navigationspfeile im Chat%d anzeigen",
 		["showbnet_desc"] = "Geselligkeitsmenü anzeigen",
 		["showbnet_name"] = "Geselligkeitsmenü anzeigen",
-		--[[Translation missing --]]
-		["showchannel_desc"] = "Show Channel Button",
-		--[[Translation missing --]]
-		["showchannel_name"] = "Show Channel Button",
+		["showchannel_desc"] = "Kanalschaltfläche anzeigen",
+		["showchannel_name"] = "Kanalschaltfläche anzeigen",
 		["showmenu_desc"] = "Chatmenü anzeigen",
-		["showmenu_name"] = "Menü anzeigen",
+		["showmenu_name"] = "Zeige das Menü",
 		["showminimize_desc"] = "Zeigt den Schalter zum Minimieren an",
 		["showminimize_name"] = "Zeige Minimieren-Knopf",
-		--[[Translation missing --]]
-		["showvoice_desc"] = "Show Voice Buttons",
-		--[[Translation missing --]]
-		["showvoice_name"] = "Show Voice Buttons",
+		["showvoice_desc"] = "Sprachschaltflächen anzeigen",
+		["showvoice_name"] = "Sprachschaltflächen anzeigen",
 		["Toggle showing chat arrows for each chat window."] = "Anzeige der Navigationspfeile für jedes Chatfenster ein- und ausschalten.",
 		["Toggles navigation arrows on and off."] = "Schaltet die Anzeige der Navigationspfeile an und aus",
 	}
@@ -481,18 +477,14 @@ L = {
 		["Show Chat%d Arrows"] = "显示聊天%d箭头",
 		["showbnet_desc"] = "显示社交菜单",
 		["showbnet_name"] = "显示社交菜单",
-		--[[Translation missing --]]
-		["showchannel_desc"] = "Show Channel Button",
-		--[[Translation missing --]]
-		["showchannel_name"] = "Show Channel Button",
+		["showchannel_desc"] = "显示频道按钮",
+		["showchannel_name"] = "显示频道按钮",
 		["showmenu_desc"] = "显示聊天菜单",
 		["showmenu_name"] = "显示菜单",
 		["showminimize_desc"] = "显示最小化按钮",
 		["showminimize_name"] = "显示最小化按钮",
-		--[[Translation missing --]]
-		["showvoice_desc"] = "Show Voice Buttons",
-		--[[Translation missing --]]
-		["showvoice_name"] = "Show Voice Buttons",
+		["showvoice_desc"] = "显示声音按钮",
+		["showvoice_name"] = "显示声音按钮",
 		["Toggle showing chat arrows for each chat window."] = "为各个聊天窗口显示上下翻页箭头",
 		["Toggles navigation arrows on and off."] = "切换导航箭头开与关",
 	}

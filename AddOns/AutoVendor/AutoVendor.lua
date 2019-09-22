@@ -179,7 +179,18 @@ local defaults = {
 			[38506] = "Don Carlos' Famous Hat",
 			[116913] = "Peon's Mining Pick",
 			[116916] = "Gorepetal's Gentle Grasp",
-			[113547] = "Bouquet of Dried Flowers"
+			[113547] = "Bouquet of Dried Flowers",
+			[168804] = "Powered Piscine Procurement Pole",
+			[86125] = "Kafa Press",
+			[19969] = "Nat Pagle's Extreme Anglin' Boots",
+			[88710] = "Nat's Hat",
+			[155459] = "Anglin' Art's Sandals",
+			[155484] = "Anglin' Art's Stompers",
+			[155476] = "Anglin' Art's Waders",
+			[155468] = "Anglin' Art's Treads",
+			[19970] = "Arcanite Fishing Pole",
+			[19979] = "Hook of the Master Angler",
+			[133755] = "Underlight Angler"
 		},
 		junk = {
 		},

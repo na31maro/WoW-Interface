@@ -1,12 +1,18 @@
-tag eb001f5e2d96aba0cdb77cf7dc27798c41a2927b v80200-1.2.0
+tag 9f3e610b7b87fc485cec4e6b84943464d39c8f15 v80200-1.2.2
 Author:	Jim Whitehead <jnwhiteh@gmail.com>
-Date:	Mon Aug 26 21:40:16 2019 +0200
+Date:	Tue Sep 3 07:46:43 2019 +0200
 
-Taggingg v80200-1.2.0
+Tagging v80200-1.2.2
 
-commit 5ee054e086a3c4160fd288019ac338ac7561fc38
+commit 296b4074fc42df01e8a874f802a7a45b9917b748
 Author: Jim Whitehead <jnwhiteh@gmail.com>
-Date:   Mon Aug 26 21:39:39 2019 +0200
+Date:   Tue Sep 3 07:46:01 2019 +0200
 
-    Fix issue with talent config
+    Fix issue with talent spec bindings
+
+commit 98e3d16d42ad45bfb8a529a06607219ca2a5a03c
+Author: Jim Whitehead <jnwhiteh@gmail.com>
+Date:   Thu Aug 29 07:30:14 2019 +0200
+
+    Shuffle some talent code
 

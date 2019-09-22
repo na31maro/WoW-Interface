@@ -1,10 +1,10 @@
-lightweight tag b64a74af93c5b08c34dbcf00038a115f73172778 v63
+lightweight tag 09a8ed49da2a4a32c4ac456087dbacc7fe212f0e v64
 Author:	Olaf Keijsers <noreply@autovendor>
-Date:	Thu Jun 27 19:38:26 2019 +0200
+Date:	Sun Sep 1 10:51:49 2019 +0200
 
-commit b64a74af93c5b08c34dbcf00038a115f73172778
+commit 09a8ed49da2a4a32c4ac456087dbacc7fe212f0e
 Author: Olaf Keijsers <noreply@autovendor>
-Date:   Thu Jun 27 19:38:26 2019 +0200
+Date:   Sun Sep 1 10:51:49 2019 +0200
 
-    Removed superfluous debug statements.
+    Updated Russian localization, added a bunch of items that should not be sold.
 

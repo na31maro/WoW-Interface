@@ -545,8 +545,7 @@ L = {
     end
 
     -- Disable blizz timestamps
---    SetCVar("showTimestamps", "none")
---    InterfaceOptionsSocialPanelTimestamps.cvar = "none"
+    self:RawHook("ChatFrame_MessageEventHandler", true)
 
     self:RawHook("ChatChannelDropDown_PopOutChat", true)
 
@@ -562,6 +561,14 @@ L = {
   end
 
   local hookedFrames = {}
+
+  function module:ChatFrame_MessageEventHandler(...)
+    local ctsf = CHAT_TIMESTAMP_FORMAT
+    CHAT_TIMESTAMP_FORMAT = nil
+    local ret = self.hooks["ChatFrame_MessageEventHandler"](...)
+    CHAT_TIMESTAMP_FORMAT = ctsf
+    return ret
+  end
 
   function module:Prat_FramesUpdated(info, name, chatFrame, ...)
     if not hookedFrames[chatFrame:GetName()] then
@@ -618,7 +625,7 @@ L = {
       if cf and cf:GetJustifyH() == "RIGHT" then
         text = text .. (space and " " or "") .. Timestamp(self:GetTime(fmt))
       else
-        text = Timestamp(self:GetTime(fmt)) .. "|c00000000|r" .. (space and " " or "") .. text
+        text = Timestamp(self:GetTime(fmt)) .. (space and " " or "") .. text
       end
     end
 
