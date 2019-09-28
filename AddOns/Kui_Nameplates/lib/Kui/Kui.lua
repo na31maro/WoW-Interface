@@ -1,10 +1,13 @@
-local MAJOR, MINOR = 'Kui-1.0', 37
+local MAJOR, MINOR = 'Kui-1.0', 42
 local kui = LibStub:NewLibrary(MAJOR, MINOR)
 
 if not kui then
     -- already registered
     return
 end
+
+local CLASSIC = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+kui.CLASSIC = CLASSIC
 
 -- media # XXX LEGACY #########################################################
 local media = "Interface\\AddOns\\Kui_Media\\"
@@ -42,29 +45,138 @@ local ct = { -- classification table
     worldboss = { 'b',  'boss'       }
 }
 -- functions ###################################################################
-kui.table_to_string = function(tbl,depth)
-    if depth and depth >= 3 then
-        return '{ ... }'
+local function SortedTableIndex(tbl)
+    local index = {}
+    for k in pairs(tbl) do
+        tinsert(index,k)
     end
-    local str
-    for k,v in pairs(tbl) do
-        if type(v) ~= 'userdata' then
-            if type(v) == 'table' then
-                v = kui.table_to_string(v,(depth and depth+1 or 1))
-            elseif type(v) == 'function' then
-                v = 'function'
-            elseif type(v) == 'string' then
-                v = '"'..v..'"'
+    table.sort(index,function(a,b)
+        local str_a,str_b=tostring(a),tostring(b)
+        if str_a and not str_b then
+            return true
+        elseif str_b and not str_a then
+            return false
+        else
+            return strlower(str_a) < strlower(str_b)
+        end
+    end)
+    return index
+end
+kui.table_to_string = function(in_tbl,max_depth)
+    -- convert simple table to string (with restrictions)
+    if not max_depth then
+        max_depth = 3
+    end
+    local function loop(tbl,depth)
+        if depth and depth >= max_depth then
+            return '{..}'
+        else
+            local str
+            local tbl_index = SortedTableIndex(tbl)
+
+            for _,k in ipairs(tbl_index) do
+                local v = tbl[k]
+
+                if type(k) == 'string' or tostring(k) then
+                    k = tostring(k)
+                else
+                    k = '('..type(k)..')'
+                end
+
+                if type(v) == 'table' then
+                    v = loop(v,depth and depth+1 or 1)
+                elseif type(v) == 'number' then
+                    v = tonumber(string.format('%.3f',v))
+                elseif type(v) == 'string' or tostring(v) then
+                    v = tostring(v)
+                else
+                    v = '('..type(v)..')'
+                end
+
+                str = (str and str..',' or '')..k..'='..v
             end
 
-            if type(k) == 'string' then
-                k = '"'..k..'"'
-            end
-
-            str = (str and str..'|cff999999,|r ' or '|cff999999{|r ')..'|cffffff99['..tostring(k)..']|r |cff999999=|r |cffffffff'..tostring(v)..'|r'
+            return str and '{'..str..'}' or '{}'
         end
     end
-    return (str or '{ ')..' }'
+    return loop(in_tbl)
+end
+function kui.string_to_table(in_str)
+    -- convert string from above function back to table
+    -- (with restrictions)
+    local out_table = {}
+    local out_length = 0
+    local function loop(str,nested_table)
+        if str == '{}' or str == '{..}' then
+            return {}
+        end
+        if strfind(str,'{') == 1 then
+            -- remove surrounding brackets
+            str = strsub(str,2,strlen(str)-1)
+        end
+
+        local next_comma,next_equals = strfind(str,','),strfind(str,'=')
+        if nested_table or next_equals and not next_comma then
+            -- parse "key=value" into final array
+            local k = strsub(str,1,next_equals-1)
+            local v = strsub(str,next_equals+1)
+
+            -- convert key
+            if tonumber(k) then
+                k = tonumber(k)
+            end
+
+            -- convert value
+            if strlower(v) == 'true' then
+                v = true
+            elseif strlower(v) == 'false' then
+                v = false
+            elseif strlower(v) == 'nil' then
+                v = nil
+            elseif tonumber(v) then
+                v = tonumber(v)
+            elseif strfind(v,'{') == 1 then
+                -- convert nested tables
+                v = kui.string_to_table(v)
+            end
+
+            out_table[k] = v
+            out_length = out_length + 1
+            return
+        end
+
+        local next_open = strfind(str,'{')
+        if next_open and next_equals and next_open == next_equals + 1 then
+            -- this value is a nested table,
+            -- find the comma after the end (or the end of the string)
+            -- XXX doesn't handle double-nested tables
+            next_comma = strfind(str,',',strfind(str,'}'))
+            if next_comma then
+                loop(strsub(str,1,next_comma-1),true)
+                -- and continue...
+                loop(strsub(str,next_comma+1))
+            else
+                -- this is the final value
+                loop(str,true)
+            end
+            return
+        end
+
+        if next_comma and next_equals and next_equals < next_comma then
+            -- parse each delimited section
+            loop(strsub(str,1,next_comma-1))
+            -- and continue with the remaining text
+            loop(strsub(str,next_comma+1))
+            return
+        end
+    end
+    loop(in_str)
+
+    if out_length == 0 then
+        return
+    else
+        return out_table,out_length
+    end
 end
 kui.print = function(...)
     local msg
@@ -129,7 +241,13 @@ kui.GetUnitColour = function(unit, str)
     end
 end
 kui.UnitLevel = function(unit, long, real)
-    local level = real and UnitLevel(unit) or UnitEffectiveLevel(unit)
+    local level
+    if CLASSIC then
+        level = UnitLevel(unit) or 0
+    else
+        level = real and UnitLevel(unit) or UnitEffectiveLevel(unit)
+    end
+
     local classification = UnitClassification(unit)
     local diff = GetQuestDifficultyColor(level <= 0 and 999 or level)
 
@@ -277,7 +395,6 @@ end
 -- editbox debug popup #########################################################
 do
     local debugpopup
-
     local function Popup_Show(self)
         self.ScrollFrame:Show()
         self.Background:Show()
@@ -285,10 +402,15 @@ do
     end
     local function Popup_Hide(self)
         self:ClearFocus()
-        self:SetText("")
+        self:orig_Hide()
         self.ScrollFrame:Hide()
         self.Background:Hide()
-        self:orig_Hide()
+
+        if type(self.callback) == 'function' then
+            -- run input callback
+            self.callback(self:GetText())
+        end
+        self:SetText("")
     end
     local function Popup_AddText(self,v)
         if not v then return end
@@ -368,11 +490,17 @@ do
 
         debugpopup = p
     end
-
-    kui.DebugPopup = function()
+    function kui:DebugPopup(callback)
         -- create/get and return reference to debug EditBox
         CreateDebugPopup()
+
+        -- disable and hide popup if already visible
+        debugpopup.callback = nil
         debugpopup:Hide()
+
+        if type(callback) == 'function' then
+            debugpopup.callback = callback
+        end
         return debugpopup
     end
 end

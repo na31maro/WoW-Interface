@@ -3,9 +3,8 @@
 -- By Kesava at curse.com
 -- All rights reserved
 --------------------------------------------------------------------------------
--- element create/update functions
--- draw layers -----------------------------------------------------------------
---
+-- layout's element create/update functions
+-- draw layers reference -------------------------------------------------------
 -- HealthBar/CastBar ###########################################################
 -- ARTWORK
 -- powerbar spark = 7
@@ -35,13 +34,12 @@
 -- threat brackets = 0
 -- frame glow = -5
 -- target glow = -5
---
 --------------------------------------------------------------------------------
 local addon = KuiNameplates
 local kui = LibStub('Kui-1.0')
 local LSM = LibStub('LibSharedMedia-3.0')
 local KSL = LibStub('KuiSpellList-2.0')
-local core = KuiNameplatesCore
+local core = KuiNameplatesCore --luacheck:globals KuiNameplatesCore
 
 -- frame fading plugin - called by some update functions
 local plugin_fading
@@ -532,7 +530,7 @@ do
     local ABSORB_ENABLE,ABSORB_STRIPED,ABSORB_COLOUR
 
     function core:configChangedAbsorb()
-        ABSORB_ENABLE = self.profile.absorb_enable
+        ABSORB_ENABLE = not kui.CLASSIC and self.profile.absorb_enable
         ABSORB_STRIPED = self.profile.absorb_striped
         ABSORB_COLOUR = self.profile.colour_absorb
 
@@ -1709,30 +1707,36 @@ do
 
     local function UpdateAuras(f)
         -- enable/disable aura frames on frame update
-        if not AURAS_ENABLED or
-           (not AURAS_ON_PERSONAL and f.state.personal) or
-           (not AURAS_ON_FRIENDS and f.state.friend and not f.state.personal) or
-           (not AURAS_ON_ENEMIES and not f.state.friend) or
-           (not AURAS_ON_MINUS and f.state.minus)
-        then
-            f.Auras.frames.core_dynamic:Disable()
-        else
-            f.Auras.frames.core_dynamic:Enable(true)
-            AuraFrame_UpdateIconSize(f.Auras.frames.core_dynamic,f.state.minus)
+        if not f.Auras or not f.Auras.frames then return end
+        if f.Auras.frames.core_dynamic then
+            if not AURAS_ENABLED or
+               (not AURAS_ON_PERSONAL and f.state.personal) or
+               (not AURAS_ON_FRIENDS and f.state.friend and not f.state.personal) or
+               (not AURAS_ON_ENEMIES and not f.state.friend) or
+               (not AURAS_ON_MINUS and f.state.minus)
+            then
+                f.Auras.frames.core_dynamic:Disable()
+            else
+                f.Auras.frames.core_dynamic:Enable(true)
+                AuraFrame_UpdateIconSize(f.Auras.frames.core_dynamic,f.state.minus)
+            end
         end
-
-        if not AURAS_SHOW_PURGE or f.state.friend then
-            f.Auras.frames.core_purge:Disable()
-        else
-            -- only show purge on enemies
-            f.Auras.frames.core_purge:Enable(true)
-            AuraFrame_UpdateIconSize(f.Auras.frames.core_purge)
+        if f.Auras.frames.core_purge then
+            if not AURAS_SHOW_PURGE or f.state.friend then
+                f.Auras.frames.core_purge:Disable()
+            else
+                -- only show purge on enemies
+                f.Auras.frames.core_purge:Enable(true)
+                AuraFrame_UpdateIconSize(f.Auras.frames.core_purge)
+            end
         end
     end
     function core:CreateAuras(f)
         -- for both frames:
         -- initial icon size set by AuraFrame_UpdateIconSize < UpdateAuras
         -- frame width & point set by AuraFrame_UpdateFrameSize < _UpdateIconSize
+        f.UpdateAuras = UpdateAuras
+
         local auras = f.handler:CreateAuraFrame({
             id = 'core_dynamic',
             max = 10,
@@ -1772,8 +1776,6 @@ do
 
         auras.sibling = purge
         purge.sibling = auras
-
-        f.UpdateAuras = UpdateAuras
     end
 
     -- callbacks
@@ -2403,6 +2405,7 @@ function core:InitialiseElements()
     plugin_fading = addon:GetPlugin('Fading')
     plugin_classpowers = addon:GetPlugin('ClassPowers')
 
+    -- initialise classpowers...
     self.ClassPowers = {
         on_target = self.profile.classpowers_on_target,
         icon_size = Scale(self.profile.classpowers_size),
@@ -2431,13 +2434,12 @@ function core:InitialiseElements()
         plugin_pb.colours['MANA'] = { .30, .37, .74 }
     end
 
+    -- initialise boss mods...
     self.BossModIcon = {
         icon_size = Scale(self.profile.bossmod_icon_size),
         icon_x_offset = self.profile.bossmod_x_offset,
         icon_y_offset = self.profile.bossmod_y_offset,
         control_visibility = self.profile.bossmod_control_visibility,
         clickthrough = self.profile.bossmod_clickthrough,
-        lines = self.profile.bossmod_lines,
-        line_width = self.profile.bossmod_line_width,
     }
 end

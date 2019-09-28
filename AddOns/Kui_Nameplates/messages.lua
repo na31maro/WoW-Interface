@@ -458,11 +458,9 @@ function messages.RemoveCallback(table,target,name,func)
     end
 end
 function messages.HasCallback(table,name)
-    if  table.__CALLBACKS and table.__CALLBACKS[name] and table.callbacks and
-        table.callbacks[name] and #table.callbacks[name] > 0
-    then
-        return true
-    end
+    return (table.__CALLBACKS and table.__CALLBACKS[name] and
+            table.callbacks and table.callbacks[name] and
+            #table.callbacks[name] > 0)
 end
 function messages.RunCallback(table,name,...)
     -- run this plugin's named callback
@@ -500,7 +498,10 @@ local function plugin_Enable(table)
         table.enabled = true
 
         if type(table.OnEnable) == 'function' then
-            table:OnEnable()
+            if table:OnEnable() == false then
+                -- plugin rejected enable
+                table.enabled = nil
+            end
         end
     end
 end
@@ -560,8 +561,8 @@ function addon:GetPlugin(name)
 end
 -------------------------------------------------- external element registrar --
 -- elements are just plugins with a lower default priority
-function addon:NewElement(name,priority,max_minor)
-    local ele = self:NewPlugin(name,tonumber(priority) or 0,max_minor,true)
+function addon:NewElement(name,priority,max_minor,enable_on_load)
+    local ele = self:NewPlugin(name,tonumber(priority) or 0,max_minor,enable_on_load)
     ele.plugin = nil
     ele.element = true
     return ele
@@ -569,7 +570,7 @@ end
 ------------------------------------------------------------ layout registrar --
 function addon:Layout()
     if self.layout then
-        self:ui_print('More than one layout is enabled.')
+        self:ui_print('More than one layout tried to load. This is bad.')
         return
     end
 

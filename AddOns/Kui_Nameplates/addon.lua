@@ -7,7 +7,8 @@
 --------------------------------------------------------------------------------
 _G['KuiNameplates'] = CreateFrame('Frame')
 local addon = KuiNameplates
-addon.MAJOR,addon.MINOR = 2,4
+local kui = LibStub('Kui-1.0')
+addon.MAJOR,addon.MINOR = 2,5
 
 --[===[@debug@
 addon.debug = true
@@ -59,11 +60,24 @@ end
 function addon:Frames()
     return ipairs(framelist)
 end
+function addon:GetNameplateForUnit(unit)
+    -- return nameplate.kui for unit if it exists
+    assert(unit)
+    local f = C_NamePlate.GetNamePlateForUnit(unit)
+    if f and f.kui then return f.kui end
+end
 function addon:GetActiveNameplateForUnit(unit)
     -- return nameplate.kui for unit, if extant, visible and maybe functional
-    local f = C_NamePlate.GetNamePlateForUnit(unit)
-    if f and f.kui and f.kui.unit and f.kui:IsShown() then
-        return f.kui
+    assert(unit)
+    local f = self:GetNameplateForUnit(unit)
+    if f and f.unit and f:IsShown() then return f end
+end
+function addon:GetNameplateForGuid(guid)
+    assert(guid)
+    for _,f in self:Frames() do
+        if f.unit and f.guid == guid and f:IsShown() then
+            return f
+        end
     end
 end
 --------------------------------------------------------------------------------
@@ -76,7 +90,8 @@ function addon:NAME_PLATE_CREATED(frame)
 end
 function addon:NAME_PLATE_UNIT_ADDED(unit)
     local f = C_NamePlate.GetNamePlateForUnit(unit)
-    if not f then return end
+    if not f or not f.kui then return end
+    f = f.kui
 
     if addon.debug_units then
         self:print('unit |cff88ff88added|r: '..unit..' ('..UnitName(unit)..')')
@@ -84,7 +99,7 @@ function addon:NAME_PLATE_UNIT_ADDED(unit)
 
     if not self.USE_BLIZZARD_PERSONAL or not UnitIsUnit(unit,'player') then
         -- don't process anything for the personal nameplate if disabled
-        f.kui.handler:OnUnitAdded(unit)
+        f.handler:OnUnitAdded(unit)
     end
 end
 function addon:NAME_PLATE_UNIT_REMOVED(unit)
@@ -172,18 +187,23 @@ local function OnEvent(self,event,...)
     end
 
     -- disable the default class resource bars
-    --luacheck: globals NamePlateDriverFrame DeathKnightResourceOverlayFrame ClassNameplateBarMageFrame
-    --luacheck: globals ClassNameplateBarWindwalkerMonkFrame ClassNameplateBarPaladinFrame
-    --luacheck: globals ClassNameplateBarRogueDruidFrame ClassNameplateBarWarlockFrame
-    --luacheck: globals ClassNameplateManaBarFrame ClassNameplateBrewmasterBarFrame
-    if NamePlateDriverFrame and not self.USE_BLIZZARD_PERSONAL then
+    --luacheck:globals NamePlateDriverFrame
+    if NamePlateDriverFrame and not self.USE_BLIZZARD_PERSONAL and not kui.CLASSIC then
+        --luacheck:globals DeathKnightResourceOverlayFrame
         DeathKnightResourceOverlayFrame:UnregisterAllEvents()
+        --luacheck:globals ClassNameplateBarMageFrame
         ClassNameplateBarMageFrame:UnregisterAllEvents()
+        --luacheck:globals ClassNameplateBarWindwalkerMonkFrame
         ClassNameplateBarWindwalkerMonkFrame:UnregisterAllEvents()
+        --luacheck:globals ClassNameplateBarPaladinFrame
         ClassNameplateBarPaladinFrame:UnregisterAllEvents()
+        --luacheck:globals ClassNameplateBarRogueDruidFrame
         ClassNameplateBarRogueDruidFrame:UnregisterAllEvents()
+        --luacheck:globals ClassNameplateBarWarlockFrame
         ClassNameplateBarWarlockFrame:UnregisterAllEvents()
+        --luacheck:globals ClassNameplateManaBarFrame
         ClassNameplateManaBarFrame:UnregisterAllEvents()
+        --luacheck:globals ClassNameplateBrewmasterBarFrame
         ClassNameplateBrewmasterBarFrame:UnregisterAllEvents()
 
         NamePlateDriverFrame:SetClassNameplateManaBar(nil)

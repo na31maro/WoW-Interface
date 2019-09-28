@@ -159,7 +159,7 @@ function HANDLE:SetTypeMultiplier(multiplier)
 	self.step = 22.5 * multiplier
 	self.size = 360 / self.step
 	self:SetAttribute('locked', false)
-	self:Dispatch()
+	self:SetMovementBindings()
 end
 
 ConsolePort:RegisterVarCallback('stickRadialType', HANDLE.SetTypeMultiplier, HANDLE)
@@ -207,6 +207,16 @@ function HANDLE:GetIndexForAngle(angle)
 	return (index < 0 and index + size) or (index > 0 and index) or (size)
 end
 
+function HANDLE:GetDirectionForKey(key)
+	for direction, set in pairs(self:GetCurrentMovementBindings()) do
+		for _, setkey in ipairs(set) do
+			if (setkey == key) then
+				return direction
+			end
+		end
+	end
+end
+
 ---------------------------------------------------------------
 local ENV_RADIAL = {
 	---------------------------------------------------------------
@@ -215,11 +225,10 @@ local ENV_RADIAL = {
 		local key, down = ...
 		BIT[key] = down and true or nil
 
-		local index = self:RunAttribute('_bits')
-		self:SetAttribute('index', index)
-		self:CallMethod('OnButtonFocused', tostring(index))
+		local index = self:RunAttribute('_setindex', self:RunAttribute('_bits'))
+		self:CallMethod('OnButtonFocused', index)
 
-		local button = self:GetFrameRef(tostring(index))
+		local button = self:GetFrameRef(index)
 		if button then
 			self:SetBindingClick(true, 'BUTTON1', button, 'RightButton')
 		else
@@ -232,7 +241,15 @@ local ENV_RADIAL = {
 	]];
 	---------------------------------------------------------------
 	['_getindex'] = [[
-		return tostring(self:GetAttribute('index'))
+		local index = self:GetAttribute('index')
+		return tostring(index)
+	]];
+	---------------------------------------------------------------
+	['_setindex'] = [[
+		local index = ...
+		local newindex = tostring(index)
+		self:SetAttribute('index', newindex)
+		return newindex
 	]];
 	---------------------------------------------------------------
 	['_onstate-cursor'] = [[
@@ -258,7 +275,7 @@ local ENV_RADIAL = {
 					self:SetAttribute(actionType, actionID)
 				end
 			end
-			self:SetAttribute('index', nil)
+			self:RunAttribute('_setindex', nil)
 		end
 	]];
 	---------------------------------------------------------------
@@ -337,7 +354,7 @@ function HANDLE:Dispatch()
 	end
 end
 
-function HANDLE:RegisterRadialFrame(frame, id)
+function HANDLE:RegisterFrame(frame, id)
 	assert(C_Widget.IsFrameWidget(frame), 'Invalid frame registered on radial handler.')
 	self:SetFrameRef(id or frame:GetName(), frame)
 	frame:SetFrameRef('HANDLE', self)

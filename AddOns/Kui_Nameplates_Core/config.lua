@@ -233,8 +233,6 @@ local default_config = {
     bossmod_x_offset = 0,
     bossmod_y_offset = 35,
     bossmod_clickthrough = false,
-    bossmod_lines = true,
-    bossmod_line_width = 3,
 
     cvar_enable = false,
     cvar_show_friendly_npcs = GetCVarDefault('nameplateShowFriendlyNPCs')=="1",
@@ -242,16 +240,16 @@ local default_config = {
     cvar_personal_show_always = GetCVarDefault('nameplatePersonalShowAlways')=="1",
     cvar_personal_show_combat = GetCVarDefault('nameplatePersonalShowInCombat')=="1",
     cvar_personal_show_target = GetCVarDefault('nameplatePersonalShowWithTarget')=="1",
-    cvar_max_distance = GetCVarDefault('nameplateMaxDistance'),
-    cvar_clamp_top = GetCVarDefault('nameplateOtherTopInset'),
-    cvar_clamp_bottom = GetCVarDefault('nameplateOtherBottomInset'),
-    cvar_self_clamp_top = GetCVarDefault('nameplateSelfTopInset'),
-    cvar_self_clamp_bottom = GetCVarDefault('nameplateSelfBottomInset'),
-    cvar_overlap_v = GetCVarDefault('nameplateOverlapV'),
+    cvar_max_distance = tonumber(GetCVarDefault('nameplateMaxDistance')),
+    cvar_clamp_top = tonumber(GetCVarDefault('nameplateOtherTopInset')),
+    cvar_clamp_bottom = tonumber(GetCVarDefault('nameplateOtherBottomInset')),
+    cvar_self_clamp_top = tonumber(GetCVarDefault('nameplateSelfTopInset')),
+    cvar_self_clamp_bottom = tonumber(GetCVarDefault('nameplateSelfBottomInset')),
+    cvar_overlap_v = tonumber(GetCVarDefault('nameplateOverlapV')),
     cvar_disable_scale = true,
     cvar_disable_alpha = true,
     cvar_self_alpha = 1,
-    cvar_occluded_mult = GetCVarDefault('nameplateOccludedAlphaMult'),
+    cvar_occluded_mult = tonumber(GetCVarDefault('nameplateOccludedAlphaMult')),
 
     -- point+offset variables
     auras_cd_point_x = 1,
@@ -264,16 +262,16 @@ local default_config = {
     auras_count_offset_y = -2,
 }
 -- local functions #############################################################
+local GLOBAL_SCALE
 local function Scale(v)
-    if not tonumber(core.profile.global_scale) or
-       core.profile.global_scale == 1
-    then
+    if not tonumber(GLOBAL_SCALE) or GLOBAL_SCALE == 1 then
         return v
     else
-        return floor((v*core.profile.global_scale)+.5)
+        return floor((v*GLOBAL_SCALE)+.5)
     end
 end
 local function UpdateClickboxSize()
+    if kui.CLASSIC then return end -- XXX functions exist, but break display
     local o_width = (Scale(core.profile.frame_width) * addon.uiscale) + 10
     local o_height = (Scale(core.profile.frame_height) * addon.uiscale) + 20
 
@@ -594,6 +592,7 @@ function configChanged.classpowers_enable(v)
     end
 end
 local function configChangedClassPowers()
+    if not core.ClassPowers then return end
     core.ClassPowers.on_target = core.profile.classpowers_on_target
     core.ClassPowers.icon_size = core.profile.classpowers_size
     core.ClassPowers.bar_width = core.profile.classpowers_bar_width
@@ -606,6 +605,8 @@ configChanged.classpowers_bar_width = configChangedClassPowers
 configChanged.classpowers_bar_height = configChangedClassPowers
 
 local function configChangedClassPowersColour()
+    if not core.ClassPowers then return end
+
     local class = select(2,UnitClass('player'))
     if core.profile['classpowers_colour_'..strlower(class)] then
         core.ClassPowers.colours[class] =  core.profile['classpowers_colour_'..strlower(class)]
@@ -694,8 +695,6 @@ local function configChangedBossMod()
     core.BossModIcon.icon_y_offset = core.profile.bossmod_y_offset
     core.BossModIcon.control_visibility = core.profile.bossmod_control_visibility
     core.BossModIcon.clickthrough = core.profile.bossmod_clickthrough
-    core.BossModIcon.lines = core.profile.bossmod_lines
-    core.BossModIcon.line_width = core.profile.bossmod_line_width
 
     if addon:GetPlugin('BossMods').enabled then
         addon:GetPlugin('BossMods'):UpdateConfig()
@@ -706,8 +705,6 @@ configChanged.bossmod_icon_size = configChangedBossMod
 configChanged.bossmod_x_offset = configChangedBossMod
 configChanged.bossmod_y_offset = configChangedBossMod
 configChanged.bossmod_clickthrough = configChangedBossMod
-configChanged.bossmod_lines = configChangedBossMod
-configChanged.bossmod_line_width = configChangedBossMod
 
 local function UpdateCVars()
     SetCVar('nameplateShowFriendlyNPCs',core.profile.cvar_show_friendly_npcs)
@@ -792,6 +789,7 @@ configChanged.cvar_self_alpha = configChangedCVar
 configChanged.cvar_occluded_mult = configChangedCVar
 
 function configChanged.global_scale()
+    GLOBAL_SCALE = core.profile.global_scale
     configChanged.frame_glow_size(core.profile.frame_glow_size)
     configChanged.state_icons()
     configChangedCastBar()

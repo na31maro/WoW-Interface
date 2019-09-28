@@ -111,6 +111,8 @@
 local addon = KuiNameplates
 local kui = LibStub('Kui-1.0')
 local ele = addon:NewElement('Auras',1)
+local AuraLib
+local UnitAura = _G['UnitAura']
 
 local strlower,tinsert,tsort,     pairs,ipairs =
       strlower,tinsert,table.sort,pairs,ipairs
@@ -419,6 +421,11 @@ end
 local function AuraFrame_ShouldShowAura(self,spellid,name,duration,caster,can_purge,nps_own,nps_all,index)
     if not name or not spellid then return end
     name = strlower(name)
+
+    if kui.CLASSIC then
+        -- show all own auras on classic
+        nps_own = true
+    end
 
     local own = (caster == 'player' or caster == 'pet' or caster == 'vehicle')
     local cbr = ele:RunCallback('DisplayAura',self,spellid,name,duration,
@@ -803,17 +810,20 @@ function ele:UpdateConfig()
 end
 -- messages ####################################################################
 function ele:Show(f)
+    if not self.enabled then return end
     self:FactionUpdate(f)
 end
 function ele:Hide(f)
-    if not f.Auras then return end
+    if not self.enabled then return end
+    if not f.Auras or not f.Auras.frames then return end
     for _,frame in pairs(f.Auras.frames) do
         frame:Hide()
     end
 end
 function ele:FactionUpdate(f)
     -- update each aura frame on this nameplate
-    if not f.Auras then return end
+    if not self.enabled then return end
+    if not f.Auras or not f.Auras.frames then return end
     for _,auras_frame in pairs(f.Auras.frames) do
         auras_frame:FactionUpdate()
         auras_frame:Update()
@@ -822,9 +832,17 @@ end
 -- events ######################################################################
 function ele:UNIT_AURA(_,f)
     -- update each aura frame on this nameplate
-    if not f.Auras then return end
+    if not self.enabled then return end
+    if not f.Auras or not f.Auras.frames then return end
     for _,auras_frame in pairs(f.Auras.frames) do
         auras_frame:Update()
+    end
+end
+-- aura lib callback ###########################################################
+local function AuraLib_UNIT_BUFF(_,unit)
+    local f = addon:GetActiveNameplateForUnit(unit)
+    if f then
+        ele:UNIT_AURA(nil,f)
     end
 end
 -- register ####################################################################
@@ -833,6 +851,15 @@ function ele:OnEnable()
     self:RegisterMessage('Hide')
     self:RegisterMessage('FactionUpdate')
     self:RegisterUnitEvent('UNIT_AURA')
+
+    if AuraLib then
+        AuraLib.RegisterCallback(self,'UNIT_BUFF',AuraLib_UNIT_BUFF)
+    end
+end
+function ele:OnDisable()
+    if AuraLib then
+        AuraLib.UnregisterAllCallbacks(self)
+    end
 end
 function ele:Initialised()
     if type(addon.layout.Auras) ~= 'table' then
@@ -850,4 +877,14 @@ function ele:Initialise()
     self:RegisterCallback('PostCreateAuraFrame')
     self:RegisterCallback('PostUpdateAuraFrame')
     self:RegisterCallback('DisplayAura',true)
+
+    if kui.CLASSIC then
+        AuraLib = LibStub('LibClassicDurations',true)
+        if not AuraLib then return end
+
+        AuraLib:Register('KuiNameplates')
+        UnitAura = function(...)
+            return AuraLib:UnitAura(...)
+        end
+    end
 end
