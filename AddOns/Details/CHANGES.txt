@@ -1,38 +1,28 @@
-lightweight tag 1d230f61ee94e5c46c6dc3c7f06b9ef46f10b5db v8.2.0.7203.140
+lightweight tag 0281d28a569e6b463445e01605e94703e12328a8 v8.2.5.7225.140
 Author:	Tercio Jose <terciob19@hotmail.com>
-Date:	Sat Sep 28 13:46:19 2019 -0300
+Date:	Wed Oct 30 20:17:49 2019 -0300
 
-commit 1d230f61ee94e5c46c6dc3c7f06b9ef46f10b5db
+commit 0281d28a569e6b463445e01605e94703e12328a8
 Author: Tercio Jose <terciob19@hotmail.com>
-Date:   Sat Sep 28 13:46:19 2019 -0300
+Date:   Wed Oct 30 20:17:49 2019 -0300
 
-    Fixed issue with the latest wow patch 82505
+    Framework Update
     
-    Fixes for the client change: "Chat channel 'SAY' cannot be used in open world anymore".
+    To version 155.
 
-commit b4c9a55cc2b5a30d097635d67270154e7c6de856
+commit 5e05d6b824214e15e4ff3ddbb12526e510c67b01
 Author: Tercio Jose <terciob19@hotmail.com>
-Date:   Sat Sep 21 13:40:38 2019 -0300
+Date:   Sun Oct 27 18:13:54 2019 -0300
 
-    General Bug Fixes
+    Added LibTranslit-1.0
     
-    - Fixed custom displays import.
-    - Fixed 'Dynamic Overall Data' tooltip script.
-    - When using /details it tells the version of the addon much more clear.
+    In reference to previous commit.
 
-commit 9e376e803520ba63d04dd97caf189976f5000094
+commit b700d874917f44d5686fd46fe054e36e691c3222
 Author: Tercio Jose <terciob19@hotmail.com>
-Date:   Mon Sep 16 18:14:59 2019 -0300
+Date:   Sun Oct 27 18:07:15 2019 -0300
 
-    Major Library Updates
-
-commit 09cb8a7ab92883b8cdaa8e635bec124e8eba64ee
-Author: Tercio Jose <terciob19@hotmail.com>
-Date:   Sat Sep 7 19:17:06 2019 -0300
-
-    General Updates.
+    Merging pull request 'Add support for transliteration' by Vardex.
     
-    - localizations updates.
-    - string bug fixes.
-    - coments updates.
+    This commit adds the code changes in Details! that is required to make the new library work.
 

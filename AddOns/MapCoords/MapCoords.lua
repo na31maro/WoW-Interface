@@ -8,6 +8,10 @@
 -- |cff0055FF = blau/blue
 -- ***
 -- Changelog:
+-- 0.32 by Jim-Bim
+-- - Added Russian localization (thanks to Hubbotu!)
+-- 0.31 by Jim-Bim
+-- - Fixed issues with Classic
 -- 0.30 by Jim-Bim
 -- - TOC Update for 8.2
 -- 0.29 by Jim-Bim
@@ -360,15 +364,7 @@ function MapCoordsPlayer_OnUpdate()
 		MapCoordsPlayerPortraitCoords:SetText("")
 	end
 	
-	local currentPlayers;
-	
-	local v, b, d, t = GetBuildInfo();
-	
-	if (t >= 50000) then
-		currentPlayers = GetNumSubgroupMembers();
-	else
-		currentPlayers = GetNumPartyMembers();
-	end
+	local currentPlayers = GetNumSubgroupMembers();
 	
 	if (MapCoords2["portrait party1"] == true and currentPlayers >= 1 and PartyMemberFrame1:IsVisible()) then
 		local posX, posY = MapPositionToXY("party1")
@@ -451,6 +447,9 @@ function MapCoordsWorldMap_OnUpdate()
 
 	if (WorldMapMixin.isMaximized) then
 		MapCoordsWorldMap:SetPoint("CENTER", WorldMapFrame.BorderFrame, "BOTTOM", 0, 10)
+		MapCoordsWorldMap:SetTextColor(GameFontNormal:GetTextColor())
+	elseif (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC) then
+		MapCoordsWorldMap:SetPoint("CENTER", WorldMapFrame.BorderFrame, "BOTTOM", 0, 15)
 		MapCoordsWorldMap:SetTextColor(GameFontNormal:GetTextColor())
 	else
         local offset = 0

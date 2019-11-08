@@ -1,6 +1,6 @@
 -- English, the default
 
-MAPCOORDS_VERSION 	= "0.30"
+MAPCOORDS_VERSION 	= "0.32"
 
 -- Chat notifications
 MAPCOORDS_HWorld	= "MapCoords > Now hiding all coords on worldmap"
@@ -143,6 +143,78 @@ MAPCOORDS_MM        = "Zeige Koordinaten unter der Minimap"
 MAPCOORDS_MOP		= "Sonstige Optionen:"
 MAPCOORDS_SDCD		= "Zeige Dezimalen f\195\188r die Koordinaten"
 
+--Russian
+elseif (GetLocale() == "ruRU") then
+
+-- Chat notifications
+MAPCOORDS_HWorld	= "MapCoords > Скрыть координаты с карты мира"
+MAPCOORDS_SWorld	= "MapCoords > Показать координаты на карте мира"
+MAPCOORDS_HCursor	= "MapCoords > Скрыть координаты курсора на карте мира"
+MAPCOORDS_SCursor	= "MapCoords > Показать координаты курсора на карте мира"
+MAPCOORDS_HWPlayer	= "MapCoords > Скрыть координаты игрока на карте мира"
+MAPCOORDS_SWPlayer	= "MapCoords > Показать координаты игрока на карте мира"
+MAPCOORDS_HPortrait	= "MapCoords > Скрыть отображение координат"
+MAPCOORDS_SPortrait	= "MapCoords > Показать отображение координат"
+MAPCOORDS_HPlayer	= "MapCoords > Скрыть отображение координат игрока"
+MAPCOORDS_SPlayer	= "MapCoords > Показать отображение координат игрока"
+MAPCOORDS_HAParty	= "MapCoords > Скрыть отображение координат членов группы"
+MAPCOORDS_SAParty	= "MapCoords > Показать отображение координат членов группы"
+MAPCOORDS_HParty1	= "MapCoords > Скрыть отображение координат первого члена группы"
+MAPCOORDS_SParty1	= "MapCoords > Показать отображение координат первого члена группы"
+MAPCOORDS_HParty2	= "MapCoords > Скрыть отображение координат второго члена группы"
+MAPCOORDS_SParty2	= "MapCoords > Показать отображение координат второго члена группы"
+MAPCOORDS_HParty3	= "MapCoords > Скрыть отображение координат третьего члена группы"
+MAPCOORDS_SParty3	= "MapCoords > Показать отображение координат третьего члена группы"
+MAPCOORDS_HParty4	= "MapCoords > Скрыть отображение координат четвертого члена группы"
+MAPCOORDS_SParty4	= "MapCoords > Показать отображение координат четвертого члена группы"
+MAPCOORDS_HMinimap  = "MapCoords > Скрыть координаты на мини-карте"
+MAPCOORDS_SMinimap  = "MapCoords > Показать координаты на мини-карте"
+
+-- Slash information
+MAPCOORDS_SLASH1	= "Команды:"
+MAPCOORDS_SLASH2	= "-- Координаты на Карте Мира --"
+MAPCOORDS_SLASH3	= "-- Другие координаты --"
+MAPCOORDS_SLASH4	= "Курсор: "
+MAPCOORDS_SLASH5	= "Игрок: "
+
+MAPCOORDS_WMON		= "/mc [worldmap|w] -Вкл.- Переключает отображение координат на карте мира"
+MAPCOORDS_WMOFF		= "/mc [worldmap|w] -Выкл.- Переключает отображение координат на карте мира"
+MAPCOORDS_WMCON		= "/mc [worldmap cursor|wc|w c] -Вкл.- Переключает отображение координат курсора на карте мира"
+MAPCOORDS_WMCOFF	= "/mc [worldmap cursor|wc|w c] -Выкл.- Переключает отображение координат курсора на карте мира"
+MAPCOORDS_WMPON		= "/mc [worldmap player|wp|w p] -Вкл.- Переключает отображение координат игрока на карте мира"
+MAPCOORDS_WMPOFF	= "/mc [worldmap player|wp|w p] -Выкл.- Переключает отображение координат игрока на карте мира"
+MAPCOORDS_APON		= "/mc [portrait|p] -Вкл.- Переключает отображение всех портретных координат"
+MAPCOORDS_APOFF		= "/mc [portrait|p] -Выкл.- Переключает отображение всех портретных координат"
+MAPCOORDS_YPON		= "/mc [player] -Вкл.- Переключает отображение ваших координат под портретом"
+MAPCOORDS_YPOFF		= "/mc [player] -Выкл.- Переключает отображение ваших координат под портретом"
+MAPCOORDS_APMON		= "/mc [party] -Вкл.- Переключает отображение координат ваших членов группы"
+MAPCOORDS_APMOFF	= "/mc [party] -Выкл.- Переключает отображение координат ваших членов группы"
+MAPCOORDS_P1ON		= "/mc [party1|party 1|p 1|p1] -Вкл.- Переключает отображение координат первого участника"
+MAPCOORDS_P1OFF		= "/mc [party1|party 1|p 1|p1] -Выкл.- Переключает отображение координат первого участника"
+MAPCOORDS_P2ON		= "/mc [party2|party 2|p 2|p2] -Вкл.- Переключает отображение координат второго участника"
+MAPCOORDS_P2OFF		= "/mc [party2|party 2|p 2|p2] -Выкл.- Переключает отображение координат второго участника"
+MAPCOORDS_P3ON		= "/mc [party3|party 3|p 3|p3] -Вкл.- Переключает отображение координат третьего участника"
+MAPCOORDS_P3OFF		= "/mc [party3|party 3|p 3|p3] -Выкл.- Переключает отображение координат третьего участника"
+MAPCOORDS_P4ON		= "/mc [party4|party 4|p 4|p4] -Вкл.- Переключает отображение координат четвертого участника"
+MAPCOORDS_P4OFF		= "/mc [party4|party 4|p 4|p4] -Выкл.- Переключает отображение координат четвертого участника"
+MAPCOORDS_MMON      = "/mc [minimap|m] -Вкл.- Переключает отображение координат на мини-карте"
+MAPCOORDS_MMOFF     = "/mc [minimap|m] -Выкл.- Переключает отображение координат на мини-карте"
+MAPCOORDS_ABOUT		= "/mc [about|a] -- Показывает информацию об аддоне"
+
+-- Option texts
+MAPCOORDS_WMOP		= "Координаты на Карте Мира:"
+MAPCOORDS_WMOP1		= "Показать координаты игроков на карте мира"
+MAPCOORDS_WMOP2		= "Показать координаты курсора на карте мира"
+MAPCOORDS_PTOP		= "Другие координаты:"
+MAPCOORDS_PTP		= "Показать координаты под портретом игрока"
+MAPCOORDS_PTG1		= "Показать координаты для члена группы 1"
+MAPCOORDS_PTG2		= "Показать координаты для члена группы 2"
+MAPCOORDS_PTG3		= "Показать координаты для члена группы 3"
+MAPCOORDS_PTG4		= "Показать координаты для члена группы 4"
+MAPCOORDS_MM        = "Показать координаты под мини-картой"
+MAPCOORDS_MOP		= "Разные варианты:"
+MAPCOORDS_SDCD		= "Использовать десятичные дроби в отображении координат"
+
 -- French
 elseif (GetLocale() == "frFR") then
 
@@ -159,7 +231,7 @@ MAPCOORDS_HPlayer	= "MapCoords > Les coordonn\195\169es sont d\195\169sormais d\
 MAPCOORDS_SPlayer	= "MapCoords > Les coordonn\195\169es sont d\195\169sormais activ\195\169es sur le portrait du joueur"
 MAPCOORDS_HAParty	= "MapCoords > Les coordonn\195\169es sont d\195\169sormais d\195\169sactiv\195\169es sur les portraits de tous les membres du groupe"
 MAPCOORDS_SAParty	= "MapCoords > Les coordonn\195\169es sont d\195\169sormais activ\195\169es sur les portraits de tous les membres du groupe"
-MAPCOORDS_HParty1	= "MapCoords > Les coordonn\195\169es sont d\195\169sormais d\195\169sactiv�es sur le portrait du premier membre du groupe"
+MAPCOORDS_HParty1	= "MapCoords > Les coordonn\195\169es sont d\195\169sormais d\195\169sactivées sur le portrait du premier membre du groupe"
 MAPCOORDS_SParty1	= "MapCoords > Les coordonn\195\169es sont d\195\169sormais activ\195\169es sur le portrait du premier membre du groupe"
 MAPCOORDS_HParty2	= "MapCoords > Les coordonn\195\169es sont d\195\169sormais d\195\169sactiv\195\169es sur le portrait du deuxi\195\168me membre du groupe"
 MAPCOORDS_SParty2	= "MapCoords > Les coordonn\195\169es sont d\195\169sormais activ\195\169es sur le portrait du deuxi\195\168me membre du groupe"

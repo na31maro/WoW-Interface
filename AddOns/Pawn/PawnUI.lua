@@ -566,7 +566,7 @@ function PawnUIFrame_DeleteScaleButton_OnOK(ConfirmationText)
 end
 
 function PawnUI_ScalesTab_SelectFrame()
-	if GetExpansionLevel() == 0 then
+	if VgerCore.IsClassic then
 		PawnUIFrame_AutoManualDivider:Hide()
 		PawnUIFrame_AutoSelectScalesOnButton:Hide()
 		PawnUIFrame_AutoSelectScalesOffButton:Hide()
@@ -1215,7 +1215,7 @@ end
 
 -- Performs an item comparison.  If the item in either index 1 or index 2 is currently empty, no
 -- item comparison is made and the function silently exits.
-function PawnUI_CompareItems()
+function PawnUI_CompareItems(IsAutomatedRefresh)
 	-- Before doing anything else, clear out the existing comparison data.
 	PawnUICompareItemScore1:SetText("")
 	PawnUICompareItemScore2:SetText("")
@@ -1392,6 +1392,18 @@ function PawnUI_CompareItems()
 			PawnUICompareItemScoreArrow2:Show()
 		end
 	end
+
+	-- Hack for WoW Classic: after a moment, refresh the whole thing, because we might have gotten
+	-- incomplete data from the tooltip the first time.
+	if not IsAutomatedRefresh and VgerCore.IsClassic then
+		local AutomatedRefresh = function()
+			if PawnUIComparisonItems[1] then PawnUIComparisonItems[1] = PawnGetItemData(PawnUIComparisonItems[1].Link) end
+			if PawnUIComparisonItems[2] then PawnUIComparisonItems[2] = PawnGetItemData(PawnUIComparisonItems[2].Link) end
+			PawnUI_CompareItems(true)
+		end
+		C_Timer.After(0.5, AutomatedRefresh)
+		C_Timer.After(1.0, AutomatedRefresh)
+	end
 end
 
 -- Deletes all comparison stat and header lines.
@@ -1493,6 +1505,33 @@ function PawnUILinkItemInChat(Item)
 	end
 end
 
+-- Gets all of the text from an item tooltip and then puts it into a box where it can be copied.
+function PawnUIGetAllTextForItem(Item)
+	if not Item or not Item.Link then return end
+	local Tooltip = _G[PawnPrivateTooltipName]
+	VgerCore.Assert(Tooltip, "Failed to find the private tooltip.")
+
+	Tooltip:SetHyperlink(Item.Link)
+
+	local NumLines = Tooltip:NumLines()
+	local i
+	local AllText = ""
+	for i = 1, NumLines do
+		local LeftLine = _G[PawnPrivateTooltipName .. "TextLeft" .. i]
+		AllText = AllText .. LeftLine:GetText() .. "\n"
+		local RightLine = _G[PawnPrivateTooltipName .. "TextRight" .. i]
+		if RightLine then
+			local RightText = RightLine:GetText()
+			if RightText and RightText ~= "" then
+				AllText = AllText .. "    " .. RightText .. "\n"
+			end
+		end
+	end
+	AllText = AllText .. "\n/pawn compare " .. PawnGetItemIDsForDisplay(Item.Link, false)
+
+	PawnUIShowCopyableString(Item.Name, AllText)
+end
+
 -- Called when one of the two upper item slots are clicked.
 function PawnUICompareItemIcon_OnClick(Index)
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -1521,6 +1560,13 @@ function PawnUICompareItemIcon_OnClick(Index)
 		if Index == 2 then PawnUI_AutoCompare() end
 		return
 	end
+
+	-- Are they holding down Alt to copy and paste text from the item?
+	if PawnUIComparisonItems[Index] and IsAltKeyDown() then
+		PawnUIGetAllTextForItem(PawnUIComparisonItems[Index])
+		return
+	end
+
 end
 
 -- Shows the tooltip for an item comparison slot.
@@ -1767,7 +1813,7 @@ function PawnUIOptionsTabPage_OnShow()
 	PawnUIFrame_UpgradeTrackingList_UpdateSelection()
 
 	-- Advisor options
-	if GetExpansionLevel() == 0 then
+	if VgerCore.IsClassic then
 		-- The bag upgrade advisor isn't supported on Classic.
 		PawnUIFrame_ShowBagUpgradeAdvisorCheck:Hide()
 	else
@@ -1910,7 +1956,7 @@ function PawnUIAboutTabPage_OnShow()
 	if Version then 
 		PawnUIFrame_AboutVersionLabel:SetText(format(PawnUIFrame_AboutVersionLabel_Text, Version))
 	end
-	if GetExpansionLevel() == 0 then
+	if VgerCore.IsClassic then
 		-- WoW Classic doesn't use the Mr. Robot scales, so hide that logo and information.
 		PawnUIFrame_MrRobotLogo:Hide()
 		PawnUIFrame_MrRobotLabel:Hide()
@@ -2359,7 +2405,7 @@ function PawnUI_EnsureLoaded()
 		PawnUIOpenedYet = true
 		PawnUIFrame_ScaleSelector_Refresh()
 		PawnUIFrame_ShowScaleCheck_Label:SetText(format(PawnUIFrame_ShowScaleCheck_Label_Text, UnitName("player")))
-		if GetExpansionLevel() == 0 then
+		if VgerCore.IsClassic then
 			-- WoW Classic doesn't have gems or specs.
 			PawnUIFrameTab4:Hide()
 			PawnUIFrame_IgnoreGemsWhileLevelingCheck:Hide()
@@ -2429,6 +2475,7 @@ end
 -- Note: Successfully tested with strings of about 900 characters.
 function PawnUIShowCopyableString(Prompt, Value, CallbackFunction)
 	PawnUIGetStringCore(Prompt, Value, false, CallbackFunction, nil)
+	PawnUIStringDialog_TextBox:HighlightText()
 end
 
 -- Core function called by PawnUIGetString.
@@ -2436,6 +2483,7 @@ function PawnUIGetStringCore(Prompt, DefaultValue, Cancelable, OKCallbackFunctio
 	PawnUIStringDialog_PromptText:SetText(Prompt)
 	PawnUIStringDialog_TextBox:SetText("") -- Causes the insertion point to move to the end on the next SetText
 	PawnUIStringDialog_TextBox:SetText(DefaultValue)
+
 	if Cancelable then
 		PawnUIStringDialog_OKButton:Show()
 		PawnUIStringDialog_OKButton:SetText(OKAY)
@@ -2446,6 +2494,7 @@ function PawnUIGetStringCore(Prompt, DefaultValue, Cancelable, OKCallbackFunctio
 	end
 	PawnUIStringDialog.OKCallbackFunction = OKCallbackFunction
 	PawnUIStringDialog.CancelCallbackFunction = CancelCallbackFunction
+
 	PawnUIStringDialog:Show()
 	PawnUIStringDialog_TextBox:SetFocus()
 end

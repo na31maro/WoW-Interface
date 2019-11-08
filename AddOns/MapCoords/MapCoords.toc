@@ -1,11 +1,12 @@
 ## Interface: 80200
 ## Author: ReCover, Jim-Bim, Urmelus (TOC Update)
-## Version: 0.30
+## Version: 0.32
 ## Title: MapCoords
 ## DefaultState: Enabled
 ## Notes: Shows cursor/player coords on worldmap and shows coords below your and your party members portrait (use "/mc or "/mapcoords")
 ## Notes-deDE: Zeigt Spieler/Mauszeiger Koordinaten auf der Karte und unter dem Portrait an (Nutze "/mc" oder "/mcapcoords")
-## Notes-frFR: Affiche les coordonn�es du curseur/joueur sur la carte du monde ainsi que les coordonn�es sous votre portrait et ceux des membres de votre groupe (utiliser "/mc" ou "/mapcoords")
+## Notes-frFR: Affiche les coordonnées du curseur/joueur sur la carte du monde ainsi que les coordonnées sous votre portrait et ceux des membres de votre groupe (utiliser "/mc" ou "/mapcoords")
+## Notes-ruRU: Показывает координаты курсора /игрока на карте мира и отображает координаты под портретом вашего персонажа и вашего члена группы (используйте "/mc" ou "/mapcoords")
 ## SavedVariables: MapCoords2
 
 MapCoords.xml

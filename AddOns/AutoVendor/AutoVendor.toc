@@ -3,7 +3,7 @@
 ## Notes: Automatically sells useless stuff and repairs your gear
 ## SavedVariables: AutoVendorDB
 ## Author: Olafski
-## Version: 64
+## Version: 65
 embeds.xml
 Locale\enUS.lua
 Locale\ruRU.lua
