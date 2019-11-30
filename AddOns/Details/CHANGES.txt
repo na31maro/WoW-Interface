@@ -1,28 +1,24 @@
-lightweight tag 0281d28a569e6b463445e01605e94703e12328a8 v8.2.5.7225.140
+lightweight tag 94322afa1666f1b507de050513a5c63831c3d2ea v8.2.5.7228.140
 Author:	Tercio Jose <terciob19@hotmail.com>
-Date:	Wed Oct 30 20:17:49 2019 -0300
+Date:	Wed Nov 27 18:07:33 2019 -0300
 
-commit 0281d28a569e6b463445e01605e94703e12328a8
+commit 94322afa1666f1b507de050513a5c63831c3d2ea
 Author: Tercio Jose <terciob19@hotmail.com>
-Date:   Wed Oct 30 20:17:49 2019 -0300
+Date:   Wed Nov 27 18:07:33 2019 -0300
 
-    Framework Update
+    Fixed non-existing localizations
     
-    To version 155.
+    Should fix the error given when opening the options panel.
 
-commit 5e05d6b824214e15e4ff3ddbb12526e510c67b01
+commit 340c72a91932f3c3f7b5630a8274c2e8528be27b
 Author: Tercio Jose <terciob19@hotmail.com>
-Date:   Sun Oct 27 18:13:54 2019 -0300
+Date:   Tue Nov 26 13:49:35 2019 -0300
 
-    Added LibTranslit-1.0
-    
-    In reference to previous commit.
+    Update issue templates
 
-commit b700d874917f44d5686fd46fe054e36e691c3222
+commit 7cfac6258d9e0fedff0724b8c588512f3c6dd738
 Author: Tercio Jose <terciob19@hotmail.com>
-Date:   Sun Oct 27 18:07:15 2019 -0300
+Date:   Tue Nov 26 13:31:45 2019 -0300
 
-    Merging pull request 'Add support for transliteration' by Vardex.
-    
-    This commit adds the code changes in Details! that is required to make the new library work.
+    Update issue templates
 

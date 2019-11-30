@@ -273,7 +273,7 @@ L.SpamBlockNoNameplateLines	= "Do not show Nameplate Aura lines (aura icons stil
 L.SpamBlockNoCountdowns		= "Do not play countdown sounds"
 L.SpamBlockNoYells			= "Do not send chat yells"
 L.SpamBlockNoNoteSync		= "Do not accept shared notes"
-L.SpamBlockNoReminders		= "Do not show any login, recommendation, or update messages (NOT recommended)"
+L.SpamBlockNoReminders		= "Do not show any login, recommendation, missing mod, or hotfix messages"
 
 L.Area_Restore				= "DBM Restore Options (Whether DBM restores previous user state when mods finish)"
 L.SpamBlockNoIconRestore	= "Do not save icon states and restore them on combat end"
@@ -339,9 +339,10 @@ L.ShowRespawn				= "Show boss respawn timer after a wipe"
 L.ShowQueuePop				= "Show time remaining to accept a queue pop (LFG,BG,etc)"
 --
 L.Area_AutoLogging			= "Auto Logging Options"
-L.AutologBosses				= "Automatically record boss encounters using blizzard combat log (Use /dbm pull before bosses to start logging early for pre pots and other events.)"
-L.AdvancedAutologBosses		= "Automatically record boss encounters with Transcriptor"
-L.LogOnlyRaidBosses			= "Only record raid boss encounters from current expansion (exclude Raid Finder/party/scenario/old content)"
+L.AutologBosses				= "Automatically record dungeons/raids using blizzard combat log"
+L.AdvancedAutologBosses		= "Automatically record dungeons/raids with Transcriptor"
+L.RecordOnlyBosses			= "Only record Bosses (Excludes all trash. Use '/dbm pull' before bosses to capture pre pull pots &amp; ENCOUNTER_START)"
+L.LogOnlyNonTrivial			= "Only record non trivial content (excludes Raid Finder/dungeons/scenarios/old content)"
 --
 L.Area_3rdParty				= "3rd Party Addon Options"
 L.ShowBBOnCombatStart		= "Perform Big Brother buff check on combat start"
