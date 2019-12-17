@@ -1,24 +1,14 @@
-lightweight tag 94322afa1666f1b507de050513a5c63831c3d2ea v8.2.5.7228.140
+lightweight tag c0ee4a7f9e38ff5ade61165d752833cd3678731d v8.2.5.7229.140
 Author:	Tercio Jose <terciob19@hotmail.com>
-Date:	Wed Nov 27 18:07:33 2019 -0300
+Date:	Sun Dec 15 11:02:12 2019 -0300
 
-commit 94322afa1666f1b507de050513a5c63831c3d2ea
+commit c0ee4a7f9e38ff5ade61165d752833cd3678731d
 Author: Tercio Jose <terciob19@hotmail.com>
-Date:   Wed Nov 27 18:07:33 2019 -0300
+Date:   Sun Dec 15 11:02:12 2019 -0300
 
-    Fixed non-existing localizations
+    Removed the chat message Details! sent everytime after a logon
     
-    Should fix the error given when opening the options panel.
-
-commit 340c72a91932f3c3f7b5630a8274c2e8528be27b
-Author: Tercio Jose <terciob19@hotmail.com>
-Date:   Tue Nov 26 13:49:35 2019 -0300
-
-    Update issue templates
-
-commit 7cfac6258d9e0fedff0724b8c588512f3c6dd738
-Author: Tercio Jose <terciob19@hotmail.com>
-Date:   Tue Nov 26 13:31:45 2019 -0300
-
-    Update issue templates
+    - Removed the chat message Details! sent everytime after a logon
+    - Using Ace3 lib from Aug 12, 2019.
+    - Using Details! Framework v161 for Retail.
 

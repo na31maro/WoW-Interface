@@ -1,13 +1,17 @@
 # BigWigs
 
-## [v169](https://github.com/BigWigsMods/BigWigs/tree/v169) (2019-11-06)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v168.2...v169)
+## [v170](https://github.com/BigWigsMods/BigWigs/tree/v170) (2019-12-05)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v169...v170)
 
-- Update luacheck file  
 - bump version  
-- Plugins/AutoReply: Update BNet usage.  
-- EternalPalace/QueenAzshara: Drycoded fix for the duration of Essence of Azeroth.  
-- Nyalotha/Options: Add empty options files  
-- Nyalotha/Shadhar: temp error fix  
-- Nyalotha: cleanups  
-- Nyalotha: Skeleton modules for all bosses  
+- EternalPalace/QueenAzshara: Use spellId not spellName when checking essence duration, closes #727  
+- ruRU update (#728)  
+- Nyalotha/NZoth: Remove initial say from Gift of NZoth  
+- Nyalotha: Fix spell ids  
+- Nyalotha: Hivemind, Skitra and Nzoth updates for PTR  
+- Nyalotha/Wrathion: Add missing flag  
+- Nyalotha/Wrathion: Cleanups  
+- Nyalotha/Wrathion: Initial PTR update  
+- Nyalotha/Vexiona: Fix locale  
+- Nyalotha/Vexiona: Cleanups  
+- Nyalotha/Vexiona: PTR updates  
