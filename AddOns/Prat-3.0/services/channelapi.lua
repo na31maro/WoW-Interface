@@ -30,7 +30,7 @@
 -- Imports
 local _G = _G
 local type = type
-local strsub = strsub
+local select = select
 local wipe = table.wipe
 local pairs = pairs
 local tostring = tostring
@@ -42,8 +42,9 @@ setfenv(1, select(2, ...))
 
 do
   local chanTable = {}
-  local function buildChanTable(t, name, num, ...)
+  local function buildChanTable(t, num, name, _, ...)
     if name and num then
+      name = _G.ChatFrame_ResolveChannelName(name)
       t[num] = name
       t[name] = num
       return buildChanTable(t, ...)
@@ -69,7 +70,7 @@ do
       end
     end
 
-    for k,v in pairs(t) do
+    for k, v in pairs(t) do
       if type(k) == "string" then
         t[k:lower()] = v
       end
@@ -110,7 +111,7 @@ end
 local name, header, collapsed, channelNumber, active, count, category, voiceEnabled, voiceActive;
 function GetChannelCategory(num)
   num = GetChannelNumber(num)
-  for i=1,_G.GetNumDisplayChannels(),1 do
+  for i = 1, _G.GetNumDisplayChannels(), 1 do
     name, header, collapsed, channelNumber, count, active, category, voiceEnabled, voiceActive = _G.GetChannelDisplayInfo(i)
 
     if channelNumber == num then
@@ -121,6 +122,9 @@ end
 
 local name, t
 function IsPrivateChannel(num)
-  return tostring(GetChannelCategory(num)) == "CHANNEL_CATEGORY_CUSTOM"
+  return select(4, _G.GetChannelName(num))
 end
 
+function IsCustomChannel(num)
+  return GetChannelCategory(num) == "CHANNEL_CATEGORY_CUSTOM"
+end

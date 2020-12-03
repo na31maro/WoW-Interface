@@ -90,6 +90,7 @@ Prat:AddModuleToLoad(function()
     ["Don't overwrite existing links"] = true,
     ["Don't overwrite existing alt <-> main links when importing or adding new alts."] = true,
     [".*[Aa]lts?$"] = true,
+    [".*[Tt]wink.*$"] = true,
     ["(.-)'s? [Aa]lt"] = "%f[%a\192-\255]([%a\192-\255]+)%f[^%a\128-\255]'s [Aa]lt",
     ["([^%s%p%d%c%z]+)'s alt"] = "%f[%a\192-\255]([%a\192-\255]+)%f[^%a\128-\255]'s [Aa]lt",
     ['ERROR: some function sent a blank message!'] = true,
@@ -149,9 +150,10 @@ L = {
 		["%d alts found for %s: %s"] = true,
 		["%s alts imported from LOKWhoIsWho"] = true,
 		["%s total alts linked to mains"] = true,
-		["(.-)'s? [Aa]lt"] = "%f[%a\\192-\\255]([%a\\192-\\255]+)%f[^%a\\128-\\255]'s [Aa]lt",
-		["([^%s%p%d%c%z]+)'s alt"] = "%f[%a\\192-\\255]([%a\\192-\\255]+)%f[^%a\\128-\\255]'s [Aa]lt",
+		["(.-)'s? [Aa]lt"] = "%f[%aÀ-ÿ]([%aÀ-ÿ]+)%f[^%a-ÿ]'s [Aa]lt",
+		["([^%s%p%d%c%z]+)'s alt"] = "%f[%aÀ-ÿ]([%aÀ-ÿ]+)%f[^%a-ÿ]'s [Aa]lt",
 		[".*[Aa]lts?$"] = true,
+		[".*[Tt]wink.*$"] = true,
 		["<alt name> (eg, /altnames del Personyouthoughtwassomeonesaltbutreallyisnt)"] = true,
 		["<main> (eg /altnames listalts Fin)"] = true,
 		["<search term> (eg, /altnames find fin)"] = true,
@@ -215,6 +217,7 @@ L = {
 		["No arg string given to :addAlt()"] = true,
 		["no characters called \"%s\" found; nothing deleted"] = true,
 		["No Guild Greet database found"] = true,
+		["No main name suPLied to link %s to"] = true,
 		["No main name supplied to link %s to"] = true,
 		["no matches found"] = true,
 		["quiet"] = "Be quiet",
@@ -252,10 +255,12 @@ L = {
 		["%s alts imported from LOKWhoIsWho"] = "%s alts imported from LOKWhoIsWho",
 		["%s total alts linked to mains"] = "%s nb total de reroll liés au personnage principal",
 		--[[Translation missing --]]
-		["(.-)'s? [Aa]lt"] = "%f[%a\\192-\\255]([%a\\192-\\255]+)%f[^%a\\128-\\255]'s [Aa]lt",
+		["(.-)'s? [Aa]lt"] = "%f[%aÀ-ÿ]([%aÀ-ÿ]+)%f[^%a-ÿ]'s [Aa]lt",
 		--[[Translation missing --]]
-		["([^%s%p%d%c%z]+)'s alt"] = "%f[%a\\192-\\255]([%a\\192-\\255]+)%f[^%a\\128-\\255]'s [Aa]lt",
+		["([^%s%p%d%c%z]+)'s alt"] = "%f[%aÀ-ÿ]([%aÀ-ÿ]+)%f[^%a-ÿ]'s [Aa]lt",
 		[".*[Aa]lts?$"] = ".*[Rr]erolls?$",
+		--[[Translation missing --]]
+		[".*[Tt]wink.*$"] = ".*[Tt]wink.*$",
 		--[[Translation missing --]]
 		["<alt name> (eg, /altnames del Personyouthoughtwassomeonesaltbutreallyisnt)"] = "<alt name> (eg, /altnames del Personyouthoughtwassomeonesaltbutreallyisnt)",
 		--[[Translation missing --]]
@@ -363,6 +368,8 @@ L = {
 		--[[Translation missing --]]
 		["No Guild Greet database found"] = "No Guild Greet database found",
 		--[[Translation missing --]]
+		["No main name suPLied to link %s to"] = "No main name suPLied to link %s to",
+		--[[Translation missing --]]
 		["No main name supplied to link %s to"] = "No main name supplied to link %s to",
 		--[[Translation missing --]]
 		["no matches found"] = "no matches found",
@@ -415,43 +422,44 @@ L = {
   
 L = {
 	["AltNames"] = {
-		["%d alts found for %s: %s"] = "%d Alts gefunden für %s: %s",
-		["%s alts imported from LOKWhoIsWho"] = "%s Alts importiert von LOKWhoIsWho",
-		["%s total alts linked to mains"] = "Insgesamt %s Alts mit Haupt-Charakteren verknüpft",
+		["%d alts found for %s: %s"] = "%d Alternativen gefunden für %s: %s",
+		["%s alts imported from LOKWhoIsWho"] = "%s Alternativen importiert von LOKWhoIsWho",
+		["%s total alts linked to mains"] = "%s Gesamtalternativen im Zusammenhang mit Haupt-Charakteren verknüpft",
 		["(.-)'s? [Aa]lt"] = " %f[%a\\192-\\255]([%a\\192-\\255]+)%f[^%a\\128-\\255]s [Aa]lt",
 		["([^%s%p%d%c%z]+)'s alt"] = "%f[%a\\192-\\255]([%a\\192-\\255]+)%f[^%a\\128-\\255]s [Aa]lt",
 		[".*[Aa]lts?$"] = true,
-		["<alt name> (eg, /altnames del Personyouthoughtwassomeonesaltbutreallyisnt)"] = "<Altname> (z.B. /altnames del FalscherAltname)",
-		["<main> (eg /altnames listalts Fin)"] = "<main> (z.b. /altnames listalts Shylera)",
-		["<search term> (eg, /altnames find fin)"] = "<Suchbegriff> (z.b. /altnames find Shy)",
-		["Alt"] = true,
-		["alt"] = "Alt",
-		["alt name exists: %s -> %s; not overwriting as set in preferences"] = "Alt-Name vorhanden: %s -> %s; wir nicht überschrieben, wie in der Auswahl eingestellt.",
-		["AltNames"] = "AltName",
-		["Alts:"] = true,
-		["autoguildalts_desc"] = "Automatisch den Import von der Gildenliste im Hintergrund ausführen.",
-		["autoguildalts_name"] = "Auto-Import der Gilden-Alts",
+		[".*[Tt]wink.*$"] = true,
+		["<alt name> (eg, /altnames del Personyouthoughtwassomeonesaltbutreallyisnt)"] = "<Alt.Name> (z.b. /alternative Namen gelöscht, Personvonderdudachtest, sieseieineAlternative, aberwirklichnichtist)",
+		["<main> (eg /altnames listalts Fin)"] = "<Haupt->  (z.b. /alternative Namen Liste)",
+		["<search term> (eg, /altnames find fin)"] = "<Suchbegriff> (z.b. /alternative Namen finden)",
+		["Alt"] = "Alternative",
+		["alt"] = "alternative",
+		["alt name exists: %s -> %s; not overwriting as set in preferences"] = "Alternativname existiert: %s -> %s; nicht wie in den Einstellungen festgelegt überschreiben",
+		["AltNames"] = "Alternative Namen",
+		["Alts:"] = "Alternativen:",
+		["autoguildalts_desc"] = "Führe den Import aus dem Gildenplan automatisch aus",
+		["autoguildalts_name"] = "Alternative Gilde automatisch importieren",
 		["Be quiet"] = "Stumm schalten",
 		["character removed: %s"] = "Charakter entfernt: %s",
 		["Class colour"] = "Klassenfarbe",
 		["Clear all"] = "Alle löschen",
-		["Clear all links between alts and main names."] = "Alle Verknüpfungen zwischen Alt- und Haupt-Charakternamen löschen",
+		["Clear all links between alts and main names."] = "Löscht alle Verknüpfungen zwischen Alternativen und Hauptnamen.",
 		["Colour"] = "Farbe",
 		["Delete a character's link to another character as their main."] = "Die Verknüpfung eines Charakters zu einem anderen (Haupt-)Charakter löschen.",
-		["Delete alt"] = "Alts löschen",
+		["Delete alt"] = "Alternative löschen",
 		["Disabled"] = "Inaktiv",
-		["Display a player's alts in the tooltip"] = "Die Altnamen eines Spielers im Tooltip anzeigen.",
+		["Display a player's alts in the tooltip"] = "Zeigt die Alternativen eines Spielers im Tooltip an",
 		["Display a player's main name in the tooltip"] = "Den Namen des Hauptcharakters eines Spielers im Tooltip anzeigen.",
 		["Display main names in the same colour as that of the alt's class (taking the data from the PlayerNames module if it is enabled)"] = "Namen der Hauptcharaktere in Klassenfarbe des Alts anzeigen (Daten werden vom Modul PlayerNames geliefert, falls aktiviert).",
 		["Display main names in the same colour as that of the main's class (taking the data from the PlayerNames module if it is enabled)"] = "Namen der Hauptcharaktere in Klassenfarbe des Hauptcharakters anzeigen (Daten werden vom Modul PlayerNames geliefert, falls aktiviert).",
 		["Don't overwrite existing alt <-> main links when importing or adding new alts."] = "Vorhandenen Alt nicht überschreiben <-> Verknüpfungen zu Hauptcharakteren während des Imports oder des Hinzufügens von neuen Alts.",
-		["Don't overwrite existing links"] = "Bestehende Verknüpfungen nicht überschreiben",
+		["Don't overwrite existing links"] = "Überschreibe keine vorhandenen Links",
 		["don't use"] = "Nicht verwenden",
 		["Don't use data from the PlayerNames module at all"] = "Daten vom Modul SpielerNamen nicht verwenden.",
-		["ERROR: some function sent a blank message!"] = "ERROR: eine Funktion hat eine leere Nachricht hinterlassen.",
+		["ERROR: some function sent a blank message!"] = "FEHLER: Eine Funktion hat eine leere Nachricht gesendet!",
 		["Find characters"] = "Charaktersuche",
-		["Fix alts"] = "Alts reparieren",
-		["Fix corrupted entries in your list of alt names."] = "Korrupte Einträge in deiner Liste der Alt-Namen reparieren.",
+		["Fix alts"] = "Alternativen reparieren",
+		["Fix corrupted entries in your list of alt names."] = "Korrigiert beschädigte Einträge in der Liste der Alternativnamen.",
 		["Found alt: %s => main: %s"] = "Alt gefunden: %s => Haupt: %s",
 		["guild member alts found and imported: %s"] = "Alt-Chars eines Gildenmitglieds gefunden und importiert: %s",
 		["Import from Guild Greet database"] = "Importiere von der Gilden-Begrüßungs-Datenbank",
@@ -479,13 +487,14 @@ L = {
 		["mainpos_desc"] = "Wo der Name eines Hauptchars dargestellt werden soll, wenn diese mit ihrem Alt-Char zocken.",
 		["mainpos_name"] = "Hauptchar-Name Position",
 		["module_desc"] = "Erlaubt das Verknüpfen von Alt-Chars mit deren Hauptchars, was dann neben deren Namen angezeigt werden kann, wenn sie in Chat-Mitteilungen erscheinen (standard = aus).",
-		["no alts found for character "] = "Keine Alt-Chars für diesen Charakter gefunden.",
-		["no alts or mains found matching \"%s\""] = "Keine Alt-Chars oder Hauptchars gefunden, die mit \"%s\" übereinstimmen.",
+		["no alts found for character "] = "Keine Alternativen für Charakter gefunden",
+		["no alts or mains found matching \"%s\""] = "Es wurden keine Alternativen oder Hauptcharaktere gefunden, die mit \"%s\" übereinstimmen",
 		["No arg string given to :addAlt()"] = "Kein Parameter angegeben für: :addAlt()",
-		["no characters called \"%s\" found; nothing deleted"] = "Keine Charaktere mit dem Namen \"%s\" gefunden; es wurde nichts gelöscht.",
-		["No Guild Greet database found"] = "Keine Gilden-Begrüßungs-Datenbank gefunden.",
+		["no characters called \"%s\" found; nothing deleted"] = "Es wurden keine Charaktere mit dem Namen \"%s\" gefunden; nichts gelöscht",
+		["No Guild Greet database found"] = "Keine Gildenbegrüßungs-Datenbank gefunden",
+		["No main name suPLied to link %s to"] = "Es wurde kein Hauptname für den Link zu %s angegeben",
 		["No main name supplied to link %s to"] = "Kein Hauptcharname geliefert, mit dem %s verknüpft werden kann.",
-		["no matches found"] = "Keine Übereinstimmungen gefunden.",
+		["no matches found"] = "Keine Übereinstimmungen gefunden",
 		["quiet"] = "Sei ruhig",
 		["quiet_desc"] = "Ob Meldungen an den Chat-Rahmen gesendet werden oder nicht.",
 		["quiet_name"] = true,
@@ -499,7 +508,7 @@ L = {
 		["Use class colour (from the PlayerNames module)"] = "Klassenfarbe verwenden (vom Modul \"PlayerNames\") ",
 		["use class colour of alt"] = "Klassenfarbe für Alt-Char verwenden.",
 		["use class colour of main"] = "Klassenfarbe des Hauptchars verwenden",
-		["Use LibAlts Data"] = "Daten von LibAlts benutzen",
+		["Use LibAlts Data"] = "Daten zu liberalen Alternativen benutzen",
 		["Use the data available via the shared alt information library."] = "Verwende die vorhandenen Daten über die gemeinsam genutzte Alt-Informations-Sammlung.",
 		["Various ways to import a main's alts from other addons"] = "Verschiedene Möglichkeiten, wie man die Alts eines Hauptchars von anderen AddOns importieren kann.",
 		["warning: alt %s already linked to %s"] = "Warnung: Alt %s ist bereits mit %s verknüpft!",
@@ -521,6 +530,7 @@ L = {
 		["(.-)'s? [Aa]lt"] = "%f[%a\\192-\\255]([%a\\192-\\255]+)%f[^%a\\128-\\255]의 부캐릭터",
 		["([^%s%p%d%c%z]+)'s alt"] = "%f[%a\\192-\\255]([%a\\192-\\255]+)%f[^%a\\128-\\255]의 부 캐릭터",
 		[".*[Aa]lts?$"] = ".*부캐릭터?$",
+		[".*[Tt]wink.*$"] = ".*렙업.*$",
 		["<alt name> (eg, /altnames del Personyouthoughtwassomeonesaltbutreallyisnt)"] = "<부 캐릭터 이름> (예, /altnames del Personyouthoughtwassomeonesaltbutreallyisnt)",
 		["<main> (eg /altnames listalts Fin)"] = "<주 캐릭터> (예 /altnames listalts Fin)",
 		["<search term> (eg, /altnames find fin)"] = "<검색 구문> (예, /altnames find fin)",
@@ -584,6 +594,7 @@ L = {
 		["No arg string given to :addAlt()"] = ":addAlt()에 변수 구문이 주어지지 않았습니다",
 		["no characters called \"%s\" found; nothing deleted"] = "요청한 \"%s\" 캐릭터 찾을 수 없음; 삭제하지 못함",
 		["No Guild Greet database found"] = "길드 쪽지 데이터베이스 찾을 수 없음",
+		["No main name suPLied to link %s to"] = "%s|1을;를; 연결할 기본 이름이 없습니다.",
 		["No main name supplied to link %s to"] = "%s|1과;와; 연결할 주 캐릭터 이름 제공되지 않음",
 		["no matches found"] = "일치 하는 것 없음",
 		["quiet"] = "조용하게",
@@ -622,11 +633,13 @@ L = {
 		--[[Translation missing --]]
 		["%s total alts linked to mains"] = "%s total alts linked to mains",
 		--[[Translation missing --]]
-		["(.-)'s? [Aa]lt"] = "%f[%a\\192-\\255]([%a\\192-\\255]+)%f[^%a\\128-\\255]'s [Aa]lt",
+		["(.-)'s? [Aa]lt"] = "%f[%aÀ-ÿ]([%aÀ-ÿ]+)%f[^%a-ÿ]'s [Aa]lt",
 		--[[Translation missing --]]
-		["([^%s%p%d%c%z]+)'s alt"] = "%f[%a\\192-\\255]([%a\\192-\\255]+)%f[^%a\\128-\\255]'s [Aa]lt",
+		["([^%s%p%d%c%z]+)'s alt"] = "%f[%aÀ-ÿ]([%aÀ-ÿ]+)%f[^%a-ÿ]'s [Aa]lt",
 		--[[Translation missing --]]
 		[".*[Aa]lts?$"] = ".*[Aa]lts?$",
+		--[[Translation missing --]]
+		[".*[Tt]wink.*$"] = ".*[Tt]wink.*$",
 		--[[Translation missing --]]
 		["<alt name> (eg, /altnames del Personyouthoughtwassomeonesaltbutreallyisnt)"] = "<alt name> (eg, /altnames del Personyouthoughtwassomeonesaltbutreallyisnt)",
 		--[[Translation missing --]]
@@ -754,6 +767,8 @@ L = {
 		--[[Translation missing --]]
 		["No Guild Greet database found"] = "No Guild Greet database found",
 		--[[Translation missing --]]
+		["No main name suPLied to link %s to"] = "No main name suPLied to link %s to",
+		--[[Translation missing --]]
 		["No main name supplied to link %s to"] = "No main name supplied to link %s to",
 		--[[Translation missing --]]
 		["no matches found"] = "no matches found",
@@ -813,6 +828,7 @@ L = {
 		["(.-)'s? [Aa]lt"] = "%f[%a\\192-\\255]([%a\\192-\\255]+)%f[^%a\\128-\\255]'s [Аа]льт",
 		["([^%s%p%d%c%z]+)'s alt"] = "[Аа]льт %f[%a\\192-\\255]([%a\\192-\\255]+)%f[^%a\\128-\\255]",
 		[".*[Aa]lts?$"] = ".*[Аа]льты?$",
+		[".*[Tt]wink.*$"] = ".*[Тв]инк.*$",
 		["<alt name> (eg, /altnames del Personyouthoughtwassomeonesaltbutreallyisnt)"] = "<имя альта> (к примеру, /altnames del Загзаг)",
 		["<main> (eg /altnames listalts Fin)"] = "<основной> (к примеру: /altnames listalts Загзаг)",
 		["<search term> (eg, /altnames find fin)"] = "<элемент поиска> (к примеру, /altnames find Загзаг)",
@@ -876,6 +892,7 @@ L = {
 		["No arg string given to :addAlt()"] = "Не задано значение строки для: :addAlt()",
 		["no characters called \"%s\" found; nothing deleted"] = "не найден персонаж по имени \"%s\"; нечего удалять",
 		["No Guild Greet database found"] = "База данных Guild Greet не найдена",
+		["No main name suPLied to link %s to"] = "Нет основного имени, чтобы связать %s с",
 		["No main name supplied to link %s to"] = "Не предоставлено основное имя для связки %s к",
 		["no matches found"] = "совпадений не найдено",
 		["quiet"] = "тихий",
@@ -913,6 +930,8 @@ L = {
 		["(.-)'s? [Aa]lt"] = true,
 		["([^%s%p%d%c%z]+)'s alt"] = true,
 		[".*[Aa]lts?$"] = true,
+		--[[Translation missing --]]
+		[".*[Tt]wink.*$"] = ".*[Tt]wink.*$",
 		["<alt name> (eg, /altnames del Personyouthoughtwassomeonesaltbutreallyisnt)"] = "<马甲名称> (例, /altnames del 某个你以为是但不是的某人分身)",
 		["<main> (eg /altnames listalts Fin)"] = "<本尊> (例 /altnames listalts 顶尖战士)",
 		["<search term> (eg, /altnames find fin)"] = "<搜索条件>(例, /altnames find 顶尖战士)",
@@ -977,6 +996,8 @@ L = {
 		["No arg string given to :addAlt()"] = "无字符串参数到:addAlt()",
 		["no characters called \"%s\" found; nothing deleted"] = "未发现称作\"%s\"角色;无删除",
 		["No Guild Greet database found"] = "未发现公会欢迎数据库",
+		--[[Translation missing --]]
+		["No main name suPLied to link %s to"] = "No main name suPLied to link %s to",
 		["No main name supplied to link %s to"] = "没有本尊名称以供联结%s",
 		["no matches found"] = "无匹配发现",
 		["quiet"] = "安静",
@@ -1014,6 +1035,8 @@ L = {
 		["(.-)'s? [Aa]lt"] = "%f[%a\\192-\\255]([%a\\192-\\255]+)%f[^%a\\128-\\255]'s [Aa]lt",
 		["([^%s%p%d%c%z]+)'s alt"] = "%f[%a\\192-\\255]([%a\\192-\\255]+)%f[^%a\\128-\\255]'s [Aa]lt",
 		[".*[Aa]lts?$"] = true,
+		--[[Translation missing --]]
+		[".*[Tt]wink.*$"] = ".*[Tt]wink.*$",
 		["<alt name> (eg, /altnames del Personyouthoughtwassomeonesaltbutreallyisnt)"] = "<nombre alt> (ej, /altnames del Personyouthoughtwassomeonesaltbutreallyisnt)",
 		["<main> (eg /altnames listalts Fin)"] = "<principal> (ej /altnames listalts Fin)",
 		["<search term> (eg, /altnames find fin)"] = "<término búsqueda> (ej, /altnames find fin)",
@@ -1087,6 +1110,8 @@ L = {
 		["no characters called \"%s\" found; nothing deleted"] = "no se han encontrado personajes llamados \"%s\"; nada eliminado",
 		--[[Translation missing --]]
 		["No Guild Greet database found"] = "No Guild Greet database found",
+		--[[Translation missing --]]
+		["No main name suPLied to link %s to"] = "No main name suPLied to link %s to",
 		["No main name supplied to link %s to"] = "Sin nombre principal proporcionado para el enlace %s",
 		["no matches found"] = "Ninguna coincidencia encontrada",
 		["quiet"] = "Silencioso",
@@ -1129,6 +1154,8 @@ L = {
 		["(.-)'s? [Aa]lt"] = "%f[%a\\192-\\255]([%a\\192-\\255]+)%f[^%a\\128-\\255]'s [Aa]lt",
 		["([^%s%p%d%c%z]+)'s alt"] = "%f[%a\\192-\\255]([%a\\192-\\255]+)%f[^%a\\128-\\255]'s [Aa]lt",
 		[".*[Aa]lts?$"] = true,
+		--[[Translation missing --]]
+		[".*[Tt]wink.*$"] = ".*[Tt]wink.*$",
 		["<alt name> (eg, /altnames del Personyouthoughtwassomeonesaltbutreallyisnt)"] = "<alt name> (例如, /altnames del Personyouthoughtwassomeonesaltbutreallyisnt)",
 		["<main> (eg /altnames listalts Fin)"] = "<main> (例如 /altnames listalts Fin)",
 		["<search term> (eg, /altnames find fin)"] = "<search term> (例如, /altnames find fin)",
@@ -1209,6 +1236,8 @@ L = {
 		["No arg string given to :addAlt()"] = "No arg string given to :addAlt()",
 		["no characters called \"%s\" found; nothing deleted"] = "找不到角色\"%s\"; 沒有刪除",
 		["No Guild Greet database found"] = "找不到公會問候資料庫",
+		--[[Translation missing --]]
+		["No main name suPLied to link %s to"] = "No main name suPLied to link %s to",
 		--[[Translation missing --]]
 		["No main name supplied to link %s to"] = "No main name supplied to link %s to",
 		["no matches found"] = "找不到符合",
@@ -1301,9 +1330,7 @@ L = {
         hasEditBox = 1,
         maxLetters = 24,
         exclusive = 0,
-
         preferredIndex = 3,
-
         OnAccept = function(this, altname)
           local mainname = this.editBox:GetText()
 
@@ -1458,8 +1485,7 @@ L = {
         get = function(info) return info.handler.db.profile.tooltip_showmain end,
         set = function(info)
           info.handler.db.profile.tooltip_showmain = not info.handler.db.profile.tooltip_showmain
-          info.handler.altertooltip = info.handler.db.profile.tooltip_showalts or info.handler.db.profile
-                                      .tooltip_showmain
+          info.handler.altertooltip = info.handler.db.profile.tooltip_showalts or info.handler.db.profile.tooltip_showmain
 
           info.handler:HookTooltip()
         end,
@@ -1472,8 +1498,7 @@ L = {
         get = function(info) return info.handler.db.profile.tooltip_showalts end,
         set = function(info)
           info.handler.db.profile.tooltip_showalts = not info.handler.db.profile.tooltip_showalts
-          info.handler.altertooltip = info.handler.db.profile.tooltip_showalts or info.handler.db.profile
-                                      .tooltip_showmain
+          info.handler.altertooltip = info.handler.db.profile.tooltip_showalts or info.handler.db.profile.tooltip_showmain
 
           info.handler:HookTooltip()
         end,
@@ -1619,16 +1644,16 @@ L = {
     --self:SecureHook("UnitPopup_OnClick")
     --self:SecureHook("UnitPopup_ShowMenu")
 
-    Prat:RegisterDropdownButton("LINK_ALT")
+    --Prat:RegisterDropdownButton("LINK_ALT")
 
     -- add the bits to the context menus
-    UnitPopupButtons['LINK_ALT'] = { text = "Set Main", func = function() module:UnitPopup_LinkAltOnClick() end, arg1 = "", arg2 = "" }
+    --    UnitPopupButtons['LINK_ALT'] = { text = "Set Main", func = function() module:UnitPopup_LinkAltOnClick() end, arg1 = "", arg2 = "" }
 
     if not self.menusAdded then
---      tinsert(UnitPopupMenus['PARTY'], #UnitPopupMenus['PARTY'] - 1, 'LINK_ALT')
---      tinsert(UnitPopupMenus['FRIEND'], #UnitPopupMenus['FRIEND'] - 1, 'LINK_ALT')
---      tinsert(UnitPopupMenus['SELF'], #UnitPopupMenus['SELF'] - 1, 'LINK_ALT')
---      tinsert(UnitPopupMenus['PLAYER'], #UnitPopupMenus['PLAYER'] - 1, 'LINK_ALT')
+      --      tinsert(UnitPopupMenus['PARTY'], #UnitPopupMenus['PARTY'] - 1, 'LINK_ALT')
+      --      tinsert(UnitPopupMenus['FRIEND'], #UnitPopupMenus['FRIEND'] - 1, 'LINK_ALT')
+      --      tinsert(UnitPopupMenus['SELF'], #UnitPopupMenus['SELF'] - 1, 'LINK_ALT')
+      --      tinsert(UnitPopupMenus['PLAYER'], #UnitPopupMenus['PLAYER'] - 1, 'LINK_ALT')
       -- tinsert(UnitPopupMenus['TARGET'], getn(UnitPopupMenus['TARGET'])-1, 'LINK_ALT')
 
       self.menusAdded = true
@@ -1645,7 +1670,12 @@ L = {
   function module:AutoImportGuildAlts(b)
     if b then
       self:RegisterEvent("GUILD_ROSTER_UPDATE", function() module:importGuildAlts(nil, true) end)
-      GuildRoster()
+      -- Different functions for retail versus classic
+	  if Prat.IsRetail then
+        C_GuildInfo.GuildRoster()
+      else
+        GuildRoster()
+      end
     else
       self:UnregisterEvent("GUILD_ROSTER_UPDATE")
     end
@@ -1680,19 +1710,19 @@ L = {
   --	end
   --end
 
-  function module:UnitPopup_LinkAltOnClick()
-    local dropdownFrame = UIDROPDOWNMENU_INIT_MENU
-
-    --if (button == 'LINK_ALT') then
-    local altname = dropdownFrame.name
-    local dialog = StaticPopup_Show('MENUITEM_LINKALT', altname)
-
-    if dialog then
-      local altname = dropdownFrame.name
-      dialog.data = altname
-    end
-    --end
-  end
+  --  function module:UnitPopup_LinkAltOnClick()
+  --    local dropdownFrame = UIDROPDOWNMENU_INIT_MENU
+  --
+  --    --if (button == 'LINK_ALT') then
+  --    local altname = dropdownFrame.name
+  --    local dialog = StaticPopup_Show('MENUITEM_LINKALT', altname)
+  --
+  --    if dialog then
+  --      local altname = dropdownFrame.name
+  --      dialog.data = altname
+  --    end
+  --    --end
+  --  end
 
 
 
@@ -1720,8 +1750,7 @@ L = {
     local verbose = (not self.db.profile.quiet)
 
     if (not self.silent) and (verbose or printanyway) then
-      msg = string.format('|cffffd100' .. PL['AltNames'] .. ':|r %s', msg)
-      DEFAULT_CHAT_FRAME:AddMessage(msg)
+      self:Output(msg)
     end
   end
 
@@ -1770,7 +1799,7 @@ L = {
     name = name:gsub("'", '')
 
     name = name:lower()
-    name = name:gsub(Prat.MULTIBYTE_FIRST_CHAR,string.upper,1)
+    name = name:gsub(Prat.MULTIBYTE_FIRST_CHAR, string.upper, 1)
 
     return name
   end
@@ -1985,10 +2014,12 @@ L = {
 
     local mainname = message.PLAYERLINK
 
-    if self.db.profile.on and isAlt(mainname) then
+    local altname = isAlt(mainname) or isAlt(Ambiguate(mainname, "all"))
+
+    if self.db.profile.on and altname then
       local pres = message.PRESENCE_ID or 0
 
-      local altname = isAlt(mainname)
+
       local padfmt = self.padfmt or ' (%s)'
 
 
@@ -2105,7 +2136,13 @@ L = {
 
     for x = 1, totalmembers do
       local name, rank, rankIndex, level, class, zone, publicnote, officernote, online, status = GetGuildRosterInfo(x)
-      if name then guildMembers[string.lower(name)] = name end
+      if name then
+        --since GetGuildRosterInfo returns Playername-Realm we need to trim Realmname
+        --later we can compare Playername with officernote/publicnote
+        --nobody is typing Playername with realm into the notes
+        local shortname, realm = strsplit("-", name, 2)
+        guildMembers[string.lower(shortname)] = shortname
+      end
     end
 
 
@@ -2138,9 +2175,9 @@ L = {
       local cleanpubnote = publicnote:match(Prat.AnyNamePattern)
       local cleanoffnote = officernote:match(Prat.AnyNamePattern)
 
-      -- check for guild members with rank "alt" or "alts" or "officer alt"
-      if (rank:match(PL[".*[Aa]lts?$"]) or (altrank and rank == altrank)) and (cleanpubnote and
-                                                                              guildMembers[cleanpubnote:lower()]) then
+      -- check for guild members with rank "alt" or "alts" or "officer alt" or "twink"
+      if (rank:match(PL[".*[Aa]lts?$"]) or rank:match(PL[".*[Tt]wink.*$"]) or (altrank and rank == altrank)) and (cleanpubnote and
+        guildMembers[cleanpubnote:lower()]) then
         -- self:print(string.format('found mainname name for member %s', name))
         mainname = cleanpubnote
         -- check whether guild note is an exact match of a member's name

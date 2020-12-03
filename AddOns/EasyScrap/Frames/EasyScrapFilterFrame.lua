@@ -10,7 +10,7 @@ filterFrame.header:SetFontObject('GameFontNormalLarge')
 filterFrame.header:SetText('Manage Filters')
 filterFrame.header:SetPoint('TOP', 0, -24)
 
-local filterListFrame = CreateFrame('Frame', 'EasyScrapFilterListFrame', filterFrame)
+local filterListFrame = CreateFrame('Frame', 'EasyScrapFilterListFrame', filterFrame, BackdropTemplateMixin and "BackdropTemplate")
 filterListFrame:SetPoint('TOPLEFT', 12, -50)
 filterListFrame:SetSize(273, 200)
 filterListFrame:SetBackdrop({

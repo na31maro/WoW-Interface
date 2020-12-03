@@ -1,6 +1,6 @@
 local EasyScrap = EasyScrap
 
-local parentFrame = CreateFrame('Frame', 'EasyScrapParentFrame', ScrappingMachineFrame)
+local parentFrame = CreateFrame('Frame', 'EasyScrapParentFrame', ScrappingMachineFrame, BackdropTemplateMixin and "BackdropTemplate")
 parentFrame:SetPoint('TOP', ScrappingMachineFrame, 'BOTTOM', 0, 16)
 parentFrame:SetSize(ScrappingMachineFrame:GetWidth()-16, 294) --264
 parentFrame:EnableMouse(true)

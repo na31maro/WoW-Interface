@@ -357,9 +357,9 @@ local function getSlaveToggle(label, desc, key, module, flag, master, icon)
 	local toggle = AceGUI:Create("CheckBox")
 	toggle:SetLabel(label)
 	-- Flags to have at half width
-	if flag == C.PULSE or flag == C.CASTBAR then
+	if flag == C.PULSE then
 		toggle:SetRelativeWidth(0.5)
-	elseif flag == C.ME_ONLY or flag == C.ME_ONLY_EMPHASIZE then
+	elseif flag == C.ME_ONLY or flag == C.ME_ONLY_EMPHASIZE or flag == C.CASTBAR then
 		toggle:SetRelativeWidth(0.4)
 	else
 		toggle:SetRelativeWidth(0.3)
@@ -396,6 +396,7 @@ local icons = {
 	SAY = 2056011, -- Interface\\Icons\\UI_Chat
 	SAY_COUNTDOWN = 2056011, -- Interface\\Icons\\UI_Chat
 	VOICE = 589118, -- Interface\\Icons\\Warrior_DisruptingShout
+	NAMEPLATEBAR = 134377, -- Interface\\Icons\\inv_misc_pocketwatch_02
 }
 
 local function hasOptionFlag(dbKey, module, key)
@@ -432,6 +433,10 @@ local function advancedToggles(dbKey, module, check)
 		advancedOptions[7] = getSlaveToggle(L.BAR, L.BAR_desc, dbKey, module, C.BAR, check)
 		advancedOptions[8] = getSlaveToggle(L.CASTBAR, L.CASTBAR_desc, dbKey, module, C.CASTBAR, check)
 		--
+	end
+
+	if bit.band(dbv, C.NAMEPLATEBAR) == C.NAMEPLATEBAR and hasOptionFlag(dbKey, module, "NAMEPLATEBAR") then
+		advancedOptions[#advancedOptions + 1] = getSlaveToggle(L.NAMEPLATEBAR, L.NAMEPLATEBAR_desc, dbKey, module, C.NAMEPLATEBAR, check, icons["NAMEPLATEBAR"])
 	end
 
 	-- Flash & Pulse
@@ -672,7 +677,7 @@ local function getDefaultToggleOption(scrollFrame, dropdown, module, bossOption)
 	local showFlags = {
 		"TANK_HEALER", "TANK", "HEALER", "DISPEL",
 		"EMPHASIZE", "ME_ONLY", "ME_ONLY_EMPHASIZE", "COUNTDOWN", "FLASH", "ICON", "SAY", "SAY_COUNTDOWN",
-		"PROXIMITY", "INFOBOX", "ALTPOWER",
+		"PROXIMITY", "INFOBOX", "ALTPOWER", "NAMEPLATEBAR",
 	}
 	for i = 1, #showFlags do
 		local key = showFlags[i]
@@ -1073,7 +1078,8 @@ do
 		"MistsOfPandaria",
 		"WarlordsOfDraenor",
 		"Legion",
-		"BattleForAzeroth"
+		"BattleForAzeroth",
+		"Shadowlands"
 	}
 
 	local statusTable = {}
@@ -1106,7 +1112,7 @@ do
 		local zoneId = value:match("\001(-?%d+)$")
 		if zoneId then
 			onZoneShow(widget, tonumber(zoneId))
-		elseif value:match("^BigWigs_") and value ~= "BigWigs_BattleForAzeroth" and GetAddOnEnableState(playerName, value) == 0 then
+		elseif value:match("^BigWigs_") and value ~= "BigWigs_Shadowlands" and GetAddOnEnableState(playerName, value) == 0 then
 				local missing = AceGUI:Create("Label")
 				missing:SetText(L.missingAddOn:format(value))
 				missing:SetFontObject(GameFontHighlight)
@@ -1145,8 +1151,8 @@ do
 			local addonNameToHeader = {}
 			local defaultHeader
 			if value == "bigwigs" then
-				defaultHeader = "BigWigs_BattleForAzeroth"
-				for i = 1, 8 do
+				defaultHeader = "BigWigs_Shadowlands"
+				for i = 1, 9 do
 					local value = "BigWigs_" .. expansionHeader[i]
 					treeTbl[i] = {
 						text = EJ_GetTierInfo(i),
@@ -1156,9 +1162,9 @@ do
 					addonNameToHeader[value] = i
 				end
 			elseif value == "littlewigs" then
-				defaultHeader = "LittleWigs_BattleForAzeroth"
+				defaultHeader = "LittleWigs_Shadowlands"
 				local enabled = GetAddOnEnableState(playerName, "LittleWigs") > 0
-				for i = 1, 8 do
+				for i = 1, 9 do
 					local value = "LittleWigs_" .. expansionHeader[i]
 					treeTbl[i] = {
 						text = EJ_GetTierInfo(i),

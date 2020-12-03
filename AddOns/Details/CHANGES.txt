@@ -1,14 +1,10 @@
-lightweight tag c0ee4a7f9e38ff5ade61165d752833cd3678731d v8.2.5.7229.140
+lightweight tag 899ac439a17c19a799d30a6a2a0e2faf5cc215e1 DetailsRetail.8.3.0.7348.141
 Author:	Tercio Jose <terciob19@hotmail.com>
-Date:	Sun Dec 15 11:02:12 2019 -0300
+Date:	Mon Jul 6 11:27:35 2020 -0300
 
-commit c0ee4a7f9e38ff5ade61165d752833cd3678731d
+commit 899ac439a17c19a799d30a6a2a0e2faf5cc215e1
 Author: Tercio Jose <terciob19@hotmail.com>
-Date:   Sun Dec 15 11:02:12 2019 -0300
+Date:   Mon Jul 6 11:27:35 2020 -0300
 
-    Removed the chat message Details! sent everytime after a logon
-    
-    - Removed the chat message Details! sent everytime after a logon
-    - Using Ace3 lib from Aug 12, 2019.
-    - Using Details! Framework v161 for Retail.
+    Fixed an issue affecting the Auto Hide for some users
 

@@ -1,7 +1,7 @@
 if not WeakAuras.IsCorrectVersion() then return end
+local AddonName, OptionsPrivate = ...
 
 local L = WeakAuras.L;
-if WeakAuras.IsClassic() then return end -- Models disabled for classic
 
 local function createOptions(id, data)
   local options = {
@@ -17,23 +17,19 @@ local function createOptions(id, data)
     -- Option for modelIsDisplayInfo added below
 
     -- Option for path/id added below
-    space2 = {
-      type = "execute",
-      width = WeakAuras.normalWidth,
-      name = "",
-      order = 1.5,
-      image = function() return "", 0, 0 end,
-      hidden = function() return data.modelIsUnit end
-    },
     chooseModel = {
       type = "execute",
-      width = WeakAuras.normalWidth,
+      width = 0.15,
       name = L["Choose"],
       order = 2,
       func = function()
-        WeakAuras.OpenModelPicker(data);
+        OptionsPrivate.OpenModelPicker(data, {});
       end,
-      hidden = function() return data.modelIsUnit end
+      disabled = function() return data.modelIsUnit end,
+      imageWidth = 24,
+      imageHeight = 24,
+      control = "WeakAurasIcon",
+      image = "Interface\\AddOns\\WeakAuras\\Media\\Textures\\browse",
     },
     advance = {
       type = "toggle",
@@ -204,31 +200,31 @@ local function createOptions(id, data)
     }
     options.model_fileId = {
       type = "input",
-      width = WeakAuras.doubleWidth,
+      width = WeakAuras.doubleWidth - 0.15,
       name = L["Model"],
       order = 1
     }
   else
     options.model_path = {
       type = "input",
-      width = WeakAuras.doubleWidth,
+      width = WeakAuras.doubleWidth - 0.15,
       name = L["Model"],
       order = 1
     }
   end
 
-  for k, v in pairs(WeakAuras.BorderOptions(id, data, nil, nil, 70)) do
+  for k, v in pairs(OptionsPrivate.commonOptions.BorderOptions(id, data, nil, nil, 70)) do
     options[k] = v
   end
 
   return {
     model = options,
-    position = WeakAuras.PositionOptions(id, data, nil, nil, nil),
+    position = OptionsPrivate.commonOptions.PositionOptions(id, data, nil, nil, nil),
   };
 end
 
-local function createThumbnail(parent)
-  local borderframe = CreateFrame("FRAME", nil, parent);
+local function createThumbnail()
+  local borderframe = CreateFrame("FRAME", nil, UIParent);
   borderframe:SetWidth(32);
   borderframe:SetHeight(32);
 
@@ -237,16 +233,18 @@ local function createThumbnail(parent)
   border:SetTexture("Interface\\BUTTONS\\UI-Quickslot2.blp");
   border:SetTexCoord(0.2, 0.8, 0.2, 0.8);
 
-  local model = CreateFrame("PlayerModel", nil, WeakAuras.OptionsFrame() or UIParent);
+  local model = CreateFrame("PlayerModel", nil, borderframe);
   borderframe.model = model;
   model:SetFrameStrata("FULLSCREEN");
 
   return borderframe;
 end
 
-local function modifyThumbnail(parent, region, data, fullModify, size)
+local function modifyThumbnail(parent, region, data)
+  region:SetParent(parent)
+
   local model = region.model
-  model:SetParent(region);
+
   model:SetAllPoints(region);
   model:SetFrameStrata(region:GetParent():GetFrameStrata());
   model:SetWidth(region:GetWidth() - 2);
@@ -279,7 +277,7 @@ end
 
 local function createIcon()
   local data = {
-    model_path = "Creature/Arthaslichking/arthaslichking.m2",
+    model_path = "spells/arcanepower_state_chest.m2", -- arthas is not a thing on classic
     model_fileId = "122968", -- Creature/Arthaslichking/arthaslichking.m2
     modelIsUnit = false,
     model_x = 0,

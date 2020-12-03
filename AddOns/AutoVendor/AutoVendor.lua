@@ -43,6 +43,16 @@ local options = {
     	width = 'full',
     	confirm = function(info, val) if val then return L['Sell non-optimal confirmation'] else return false end end,
     },
+    legionArtifactRelics = {
+    	type = 'toggle',
+    	order = 4,
+    	name = L['Sell Legion artifact relics'],
+    	desc = L['Sell legion artifact relics description'],
+    	disabled = function() return not AV.enabledState end,
+    	set = function(info, val) AV.db.profile.selllegionartifact = val; AV:ResetJunkCache() end,
+    	get = function(info) return AV.db.profile.selllegionartifact end,
+    	width = 'full'
+    },
     fortunecards = { 
     	type = 'toggle',
     	order = 5,
@@ -159,6 +169,7 @@ local defaults = {
 		guildbankrepair = false,
 		soulbound = false,
 		sellnonoptimal = false,
+		selllegionartifact = false,
 		sellfortunecards = false,
 		selllowlevelitems = false,
 		sellbelowitemlevel = 2,
@@ -511,7 +522,11 @@ function AV:ShouldSell(link)
 	end
 	
 	if self.db.profile.sellfortunecards and AV_FORTUNE_CARDS[itemId] == true then
-		return true;
+		return true
+	end
+
+	if self.db.profile.selllegionartifact and itemClassId == LE_ITEM_CLASS_GEM and itemSubClassId == LE_ITEM_GEM_ARTIFACTRELIC then
+		return true
 	end
 	
 	-- item is level 1, don't sell

@@ -1,13 +1,26 @@
-* (classic) bump toc
+* re-pushing because the hook was run on the old tag for some.. reason ... ????
 
-* add profile export and import commands: `/knp export`, `/knp import`
-* various backend changes regarding slash commands, see `/knp help` (not currently localised)
-* alter config interface layout
-* add per-page copy and reset buttons to config
-* automatically select `/knp dump` output
-* fix kui debug popup can block input if the callback fails
-* remove inactive boss mods' line code
-* register _INTERRUPTIBLE cast events
+* add option bar_spark (not exposed)
+* on first run, disable frame target size on profiles with a larger normal size
+
+* add quest icon
+* add option to resize the current target
+* add option to disable resizing of frames flagged as minus
+* add options for raid icon size and position
+* add options for frame clickbox padding
+* add options to show/hide class powers on friendly or hostile targets
+* add options to resize frame glow for target and threat
+* add classpowers_y,classpowers_y_nameonly,classpowers_y_personal (not exposed)
+* add spark to healthbar
+* move classpowers on personal to bottom by default
+* move name text slightly
+* change default frame sizes
+* normal frames with hidden names no longer use frame_height_minus
+* update locales, add esES
+* fix combo points aren't shown in cat form
+* fix use_blizzard_powers is inconsistent (maybe)
+* correctly update level/health text position on threat change
+* remove castbar_shield
+* remove cvar_max_distance (disabled on client)
 * bump toc
-* bump minor (to 5; customs with a max minor of 4 will stop loading)
 

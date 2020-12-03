@@ -3,6 +3,9 @@ if not L then return end
 
 --------------------------------------------------------------------------------------------------------------------------------------------
 
+L["STRING_OPTIONSMENU_TITLEBAR"] = "Title Bar"
+L["STRING_OPTIONSMENU_WINDOWBODY"] = "Window Body"
+
 L["ABILITY_ID"] = "ability id"
 L["STRING_"] = ""
 L["STRING_ABSORBED"] = "Absorbed"
@@ -86,6 +89,7 @@ L["STRING_CLICK_REPORT_LINE2"] = "|cFFFFCC22Shift+Click|r: |cFFFFEE00window mode
 L["STRING_CLOSEALL"] = "All windows are closed, you may type '/details show' to re-open."
 L["STRING_COLOR"] = "Color"
 L["STRING_COMMAND_LIST"] = "command list"
+L["STRING_CONTEXT"] = "Context"
 L["STRING_COOLTIP_NOOPTIONS"] = "no options"
 L["STRING_CREATEAURA"] = "Create Aura"
 L["STRING_CRITICAL_HITS"] = "Critical Hits"
@@ -263,8 +267,8 @@ L["STRING_GUILDDAMAGERANK_PLAYERBASE_PLAYER"] = "Player"
 L["STRING_GUILDDAMAGERANK_PLAYERBASE_RAID"] = "All Players"
 L["STRING_GUILDDAMAGERANK_RAID"] = "Raid"
 L["STRING_GUILDDAMAGERANK_ROLE"] = "Role"
-L["STRING_GUILDDAMAGERANK_SHOWHISTORY"] = "Show History"
-L["STRING_GUILDDAMAGERANK_SHOWRANK"] = "Show Guild Rank"
+L["STRING_GUILDDAMAGERANK_SHOWHISTORY"] = "Kill Timeline"
+L["STRING_GUILDDAMAGERANK_SHOWRANK"] = "Guild Rank"
 L["STRING_GUILDDAMAGERANK_SYNCBUTTONTEXT"] = "Sync With Guild"
 L["STRING_GUILDDAMAGERANK_TUTORIAL_DESC"] = "Details! store the damage and healing done for each boss encounter you run with your guild.\\n\\nBrowse the history by checking the box '|cFFFFFF00Show History|r', results for all fights will be displayed.\\n By selecting '|cFFFFFF00Show Guild Rank|r', the top scores for the selected boss is shown.\\n\\nIf you are using this tool for the first time or if you lost a day of raiding, click on the '|cFFFFFF00Sync With Guild|r' button."
 L["STRING_GUILDDAMAGERANK_WINDOWALERT"] = "Boss Defeated! Show Ranking"
@@ -290,6 +294,7 @@ L["STRING_INFO_TUTORIAL_COMPARISON1"] = "Click on |cFFFFDD00Compare|r tab to see
 L["STRING_INSTANCE_CHAT"] = "Instance Chat"
 L["STRING_INSTANCE_LIMIT"] = "max window amount has been reached, you can modify this limit on options panel. Also you can reopen closed windows from (#) window menu."
 L["STRING_INTERFACE_OPENOPTIONS"] = "Open Options Panel"
+L["STRING_INVERT_RULE"] = "Invert Rule"
 L["STRING_ISA_PET"] = "This Actor is a Pet"
 L["STRING_KEYBIND_BOOKMARK"] = "Bookmark"
 L["STRING_KEYBIND_BOOKMARK_NUMBER"] = "Bookmark #%s"
@@ -506,14 +511,14 @@ L["STRING_OPTIONS_BARSTART"] = "Bar Start After Icon"
 L["STRING_OPTIONS_BARSTART_DESC"] = [=[When disabled the top texture starts at the icon left side instead of the right
 
 This is useful when using an icon pack with transparent areas.]=]
-L["STRING_OPTIONS_BARUR_ANCHOR"] = "Fast Updates:"
+L["STRING_OPTIONS_BARUR_ANCHOR"] = "Fast Updates"
 L["STRING_OPTIONS_BARUR_DESC"] = "When enabled, DPS and HPS values are updated just a little bit faster than usual."
 L["STRING_OPTIONS_BG_ALL_ALLY"] = "Show All"
 L["STRING_OPTIONS_BG_ALL_ALLY_DESC"] = [=[When enabled, enemy players are also shown when the window is in Group Mode.
 
 |cFFFFFF00Important|r: changes are applied after the next time entering combat.]=]
 L["STRING_OPTIONS_BG_ANCHOR"] = "Battlegrounds:"
-L["STRING_OPTIONS_BG_UNIQUE_SEGMENT"] = "Unique Segment"
+L["STRING_OPTIONS_BG_UNIQUE_SEGMENT"] = "One Segment Battleground"
 L["STRING_OPTIONS_BG_UNIQUE_SEGMENT_DESC"] = "One segment is created on the begining of the battleground and last until it ends."
 L["STRING_OPTIONS_CAURAS"] = "Collect Auras"
 L["STRING_OPTIONS_CAURAS_DESC"] = [=[Enable capture of:
@@ -596,13 +601,14 @@ L["STRING_OPTIONS_CMISC_DESC"] = [=[Enable capture of:
 L["STRING_OPTIONS_COLORANDALPHA"] = "Color & Alpha"
 L["STRING_OPTIONS_COLORFIXED"] = "Fixed Color"
 L["STRING_OPTIONS_COMBAT_ALPHA"] = "When"
-L["STRING_OPTIONS_COMBAT_ALPHA_1"] = "None"
 L["STRING_OPTIONS_COMBAT_ALPHA_2"] = "While In Combat"
 L["STRING_OPTIONS_COMBAT_ALPHA_3"] = "While Out of Combat"
 L["STRING_OPTIONS_COMBAT_ALPHA_4"] = "While Not in a Group"
 L["STRING_OPTIONS_COMBAT_ALPHA_5"] = "While Not Inside Instance"
 L["STRING_OPTIONS_COMBAT_ALPHA_6"] = "While Inside Instance"
 L["STRING_OPTIONS_COMBAT_ALPHA_7"] = "Raid Debug"
+L["STRING_OPTIONS_COMBAT_ALPHA_8"] = "In Battleground"
+L["STRING_OPTIONS_COMBAT_ALPHA_9"] = "In Mythic+"
 L["STRING_OPTIONS_COMBAT_ALPHA_DESC"] = [=[Select how combat affects the window transparency.
 
 |cFFFFFF00No Changes|r: Doesn't modify the alpha.
@@ -659,7 +665,7 @@ L["STRING_OPTIONS_DEATHLIMIT"] = "Death Events Amount"
 L["STRING_OPTIONS_DEATHLIMIT_DESC"] = [=[Set the amount of events to show on death display.
 
 |cFFFFFF00Important|r: only applies to new deaths after change.]=]
-L["STRING_OPTIONS_DEATHLOG_MINHEALING"] = "Death Log Minimum Healing"
+L["STRING_OPTIONS_DEATHLOG_MINHEALING"] = "DeathLog Min Healing"
 L["STRING_OPTIONS_DEATHLOG_MINHEALING_DESC"] = [=[Death log won't show heals below this threshold.
 
 |cFFFFFF00Tip|r: right click to manually enter the value.]=]
@@ -743,7 +749,7 @@ L["STRING_OPTIONS_INSTANCE_DELETE_DESC"] = [=[Remove a window permanently.
 Your game screen may reload during the erase process.]=]
 L["STRING_OPTIONS_INSTANCE_SKIN"] = "Skin"
 L["STRING_OPTIONS_INSTANCE_SKIN_DESC"] = "Modify window appearance based on a skin theme."
-L["STRING_OPTIONS_INSTANCE_STATUSBAR_ANCHOR"] = "Statusbar:"
+L["STRING_OPTIONS_INSTANCE_STATUSBAR_ANCHOR"] = "Statusbar"
 L["STRING_OPTIONS_INSTANCE_STATUSBARCOLOR"] = "Color and Transparency"
 L["STRING_OPTIONS_INSTANCE_STATUSBARCOLOR_DESC"] = [=[Select the color used by the statusbar.
 
@@ -837,8 +843,7 @@ L["STRING_OPTIONS_MINIMAP_ACTION2"] = "Reset Segments"
 L["STRING_OPTIONS_MINIMAP_ACTION3"] = "Show/Hide Windows"
 L["STRING_OPTIONS_MINIMAP_ANCHOR"] = "Minimap:"
 L["STRING_OPTIONS_MINIMAP_DESC"] = "Show or Hide minimap icon."
-L["STRING_OPTIONS_MISCTITLE"] = "Miscellaneous Settings"
-L["STRING_OPTIONS_MISCTITLE2"] = "These control several options."
+
 L["STRING_OPTIONS_NICKNAME"] = "Nickname"
 L["STRING_OPTIONS_NICKNAME_DESC"] = [=[Set a nickname for you.
 
@@ -1036,7 +1041,6 @@ L["STRING_OPTIONS_RT_INTERRUPTS_NEXT"] = "Next Player"
 L["STRING_OPTIONS_RT_INTERRUPTS_NEXT_DESC"] = "When exists, an interrupt sequence, place the player name responsible for the next interrupt."
 L["STRING_OPTIONS_RT_INTERRUPTS_ONOFF_DESC"] = "When you successfully interrupt a spell cast, a message is sent."
 L["STRING_OPTIONS_RT_INTERRUPTS_WHISPER"] = "Whisper To"
-L["STRING_OPTIONS_RT_OTHER_ANCHOR"] = "General:"
 L["STRING_OPTIONS_RT_TITLE"] = "Tools for Raiders"
 L["STRING_OPTIONS_RT_TITLE_DESC"] = "In this panel you can activate several mechanisms to help you during raids."
 L["STRING_OPTIONS_SAVELOAD"] = "Save and Load"
@@ -1289,23 +1293,22 @@ L["STRING_OPTIONS_WALLPAPER_FILE"] = "File:"
 L["STRING_OPTIONS_WALLPAPER_GREEN"] = "Green:"
 L["STRING_OPTIONS_WALLPAPER_LOAD"] = "Load Image"
 L["STRING_OPTIONS_WALLPAPER_LOAD_DESC"] = "Select a image from your hard drive to use as wallpaper."
-L["STRING_OPTIONS_WALLPAPER_LOAD_EXCLAMATION"] = [=[The image needs:
+L["STRING_OPTIONS_WALLPAPER_LOAD_EXCLAMATION"] = [=[How to load an image:
 
-- To be in Truevision TGA format (.tga extension).
-- Be inside WOW/Interface/ root folder.
-- The size must be 256 x 256 pixels.
-- The game must be closed before copying the file.]=]
+- The width and height must be 128, 256 or 512 pixels (512 x 256 as an example).
+- Save the image as a .TGA inside the folder WOW/_retail_/Interface/
+- Close and reopen the game.]=]
 L["STRING_OPTIONS_WALLPAPER_LOAD_FILENAME"] = "File Name:"
 L["STRING_OPTIONS_WALLPAPER_LOAD_FILENAME_DESC"] = "Insert only the name of the file, excluding path and extension."
 L["STRING_OPTIONS_WALLPAPER_LOAD_OKEY"] = "Load"
-L["STRING_OPTIONS_WALLPAPER_LOAD_TITLE"] = "From Computer:"
+L["STRING_OPTIONS_WALLPAPER_LOAD_TITLE"] = "Your Custom Wallpaper"
 L["STRING_OPTIONS_WALLPAPER_LOAD_TROUBLESHOOT"] = "Troubleshoot"
 L["STRING_OPTIONS_WALLPAPER_LOAD_TROUBLESHOOT_TEXT"] = [=[If the wallpaper displays full green color:
 
 - Restart the wow client.
 - Make sure the image is 256 width and 256 height.
 - Check if the image is in .TGA format and make sure it's saved with 32 bits/pixel.
-- Is inside Interface folder, for example: C:/Program Files/World of Warcraft/Interface/]=]
+- Is inside Interface folder, for example: C:/Program Files/World of Warcraft/_retail_/Interface/]=]
 L["STRING_OPTIONS_WALLPAPER_RED"] = "Red:"
 L["STRING_OPTIONS_WC_ANCHOR"] = "Quick Window Control (#%s):"
 L["STRING_OPTIONS_WC_BOOKMARK"] = "Manage Bookmarks"
@@ -1367,7 +1370,7 @@ L["STRING_OPTIONS_WP_GROUP"] = "Category"
 L["STRING_OPTIONS_WP_GROUP_DESC"] = "Select the image group."
 L["STRING_OPTIONS_WP_GROUP2"] = "Wallpaper"
 L["STRING_OPTIONS_WP_GROUP2_DESC"] = "The image which will be used as wallpaper."
-L["STRING_OPTIONSMENU_AUTOMATIC"] = "Window: Automatization"
+L["STRING_OPTIONSMENU_AUTOMATIC"] = "Automation"
 L["STRING_OPTIONSMENU_AUTOMATIC_TITLE"] = "Window Automatization Settings"
 L["STRING_OPTIONSMENU_AUTOMATIC_TITLE_DESC"] = "These settings controls the automatic behaviors the window has, such as auto hide and auto switch."
 L["STRING_OPTIONSMENU_COMBAT"] = "PvE PvP"
@@ -1379,20 +1382,19 @@ L["STRING_OPTIONSMENU_DISPLAY_DESC"] = "Overall basic adjustments and quick wind
 L["STRING_OPTIONSMENU_LEFTMENU"] = "Title Bar: General"
 L["STRING_OPTIONSMENU_MISC"] = "Miscellaneous"
 L["STRING_OPTIONSMENU_PERFORMANCE"] = "Performance Tweaks"
-L["STRING_OPTIONSMENU_PLUGINS"] = "Plugins Management"
+L["STRING_OPTIONSMENU_PLUGINS"] = "Plugins"
 L["STRING_OPTIONSMENU_PROFILES"] = "Profiles"
 L["STRING_OPTIONSMENU_RAIDTOOLS"] = "Raid Tools"
 L["STRING_OPTIONSMENU_RIGHTMENU"] = "-- x -- x --"
 L["STRING_OPTIONSMENU_ROWMODELS"] = "Bars: Advanced"
 L["STRING_OPTIONSMENU_ROWSETTINGS"] = "Bars: General"
 L["STRING_OPTIONSMENU_ROWTEXTS"] = "Bars: Texts"
-L["STRING_OPTIONSMENU_SKIN"] = "Skin Selection"
-L["STRING_OPTIONSMENU_SPELLS"] = "Spell Customization"
-L["STRING_OPTIONSMENU_SPELLS_CONSOLIDATE"] = "Consolidate common spells with the same name"
+L["STRING_OPTIONSMENU_SKIN"] = "Skins"
+L["STRING_OPTIONSMENU_SPELLS"] = "Rename Spells"
+L["STRING_OPTIONSMENU_SPELLS_CONSOLIDATE"] = "Merge Spells With the Same Name"
 L["STRING_OPTIONSMENU_TITLETEXT"] = "Title Bar: Text"
 L["STRING_OPTIONSMENU_TOOLTIP"] = "Tooltips"
-L["STRING_OPTIONSMENU_WALLPAPER"] = "Window: Wallpaper"
-L["STRING_OPTIONSMENU_WINDOW"] = "Window: General"
+L["STRING_OPTIONSMENU_WALLPAPER"] = "Wallpaper"
 L["STRING_OVERALL"] = "Overall"
 L["STRING_OVERHEAL"] = "Overheal"
 L["STRING_OVERHEALED"] = "Overhealed"
@@ -1566,8 +1568,8 @@ L["STRING_TOTAL"] = "Total"
 L["STRING_TRANSLATE_LANGUAGE"] = "Help Translate Details!"
 L["STRING_TUTORIAL_FULLY_DELETE_WINDOW"] = [=[You closed a window and you may reopen it at any time.
 To fully delete a window, go to Options -> Window: General -> Delete.]=]
-L["STRING_TUTORIAL_OVERALL1"] = [=[adjust overall settings on options panel > PvE/PvP
-overall data updates when you leave combat, use 'Dynamic Overall Damage' from 'Custom' to update on real time.]=]
+L["STRING_TUTORIAL_OVERALL1"] = [=[Overall data only updates when the combat is done, if you want regular updates right click the title bar and select 'Dynamic Overall Data'.
+]=]
 L["STRING_UNKNOW"] = "Unknown"
 L["STRING_UNKNOWSPELL"] = "Unknow Spell"
 L["STRING_UNLOCK"] = [=[Ungroup windows

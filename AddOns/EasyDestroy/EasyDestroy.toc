@@ -1,0 +1,15 @@
+## Interface: 90001
+## Title: EasyDestroy
+## Notes: Makes disenchanting easy!
+## Author: Cwagrant
+## X-License: MIT License
+## X-Category: Professions
+## SavedVariables: EasyDestroyData
+
+Core.lua
+Templates.xml
+EasyDestroy.xml
+Filters.xml
+EasyDestroy.lua
+Filters.lua
+Main.lua

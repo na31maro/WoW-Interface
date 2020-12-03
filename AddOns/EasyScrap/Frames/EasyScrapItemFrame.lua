@@ -1,4 +1,4 @@
-local itemFrame = CreateFrame('Frame', 'EasyScrapItemFrame', EasyScrapMainFrame)
+local itemFrame = CreateFrame('Frame', 'EasyScrapItemFrame', EasyScrapMainFrame, BackdropTemplateMixin and "BackdropTemplate")
 itemFrame:SetPoint('TOPLEFT', 12, -50)
 --itemFrame:SetPoint('BOTTOMRIGHT', -32, 42)
 itemFrame:SetSize(273, 172)

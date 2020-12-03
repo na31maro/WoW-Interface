@@ -1,0 +1,10 @@
+lightweight tag dc15c749ab71474bd3cc780008c06a9c8d40f6df v9.0.2-09
+Author:	Dave Hendler <sollaires@gmail.com>
+Date:	Tue Dec 1 18:29:51 2020 -0800
+
+commit dc15c749ab71474bd3cc780008c06a9c8d40f6df
+Author: Dave Hendler <sollaires@gmail.com>
+Date:   Tue Dec 1 18:29:51 2020 -0800
+
+    Fix TOC, still had reference to a removed dependency
+

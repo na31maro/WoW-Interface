@@ -24,7 +24,12 @@
 --
 -------------------------------------------------------------------------------
 Prat:AddModuleToLoad(function()
+  local function dbg(...) end
 
+  --[===[@debug@
+  function dbg(...) Prat:PrintLiteral(...) end
+
+  --@end-debug@]===]
 
   local PRAT_MODULE = Prat:RequestModuleName("Timestamps")
 
@@ -60,11 +65,14 @@ Prat:AddModuleToLoad(function()
     ["HH:MM:SS AM (12-hour)"] = true,
     ["HH:MM:SS (12-hour)"] = true,
     ["HH:MM:SS (24-hour)"] = true,
+    ["HH:MM AM (12-hour)"] = true,
     ["HH:MM (12-hour)"] = true,
     ["HH:MM (24-hour)"] = true,
     ["MM:SS"] = true,
     ["Post-Timestamp"] = true,
     ["Pre-Timestamp"] = true,
+    ["Timestamp Text Format"] = true,
+    ["Other Formatting Options"] = true,
   })
   --@end-debug@]===]
 
@@ -83,12 +91,14 @@ L = {
 		["Format All Timestamps"] = true,
 		["HH:MM (12-hour)"] = true,
 		["HH:MM (24-hour)"] = true,
+		["HH:MM AM (12-hour)"] = true,
 		["HH:MM:SS (12-hour)"] = true,
 		["HH:MM:SS (24-hour)"] = true,
 		["HH:MM:SS AM (12-hour)"] = true,
 		["localtime_desc"] = "Toggle using local time on and off.",
 		["localtime_name"] = "Use Local Time",
 		["MM:SS"] = true,
+		["Other Formatting Options"] = true,
 		["Post-Timestamp"] = true,
 		["Pre-Timestamp"] = true,
 		["Set the timestamp format"] = true,
@@ -99,6 +109,7 @@ L = {
 		["show_name"] = "Show Timestamp",
 		["space_desc"] = "Toggle adding space after timestamp on and off.",
 		["space_name"] = "Show Space",
+		["Timestamp Text Format"] = true,
 		["Timestamps"] = true,
 		["Toggle showing timestamp for each window."] = true,
 		["twocolumn_desc"] = "Place the timestamps in a separate column so the text does not wrap underneath them",
@@ -119,12 +130,16 @@ L = {
 		["Format All Timestamps"] = "Formatage de l'heure",
 		["HH:MM (12-hour)"] = "HH:MM (12 heures)",
 		["HH:MM (24-hour)"] = "HH:MM (24 heures)",
+		--[[Translation missing --]]
+		["HH:MM AM (12-hour)"] = "HH:MM AM (12-hour)",
 		["HH:MM:SS (12-hour)"] = "HH:MM:SS (12 heures)",
 		["HH:MM:SS (24-hour)"] = "HH:MM:SS (24 heures)",
 		["HH:MM:SS AM (12-hour)"] = "HH:MM:SS AM (12 heures)",
 		["localtime_desc"] = "Active/Désactive l'utilisation de l'heure locale.",
 		["localtime_name"] = "Utiliser l'heure locale",
 		["MM:SS"] = true,
+		--[[Translation missing --]]
+		["Other Formatting Options"] = "Other Formatting Options",
 		["Post-Timestamp"] = "Après l'heure",
 		["Pre-Timestamp"] = "Avant l'heure",
 		["Set the timestamp format"] = "Définit le format de l'heure.",
@@ -135,6 +150,8 @@ L = {
 		["show_name"] = "Montrer l'heure des messages",
 		["space_desc"] = "Active/Désactive l'ajout d'un espace après l'heure.",
 		["space_name"] = "Montrer l'espace",
+		--[[Translation missing --]]
+		["Timestamp Text Format"] = "Timestamp Text Format",
 		["Timestamps"] = "Heure des messages",
 		["Toggle showing timestamp for each window."] = "Active/Désactive l'affiche de l'heure des messages pour chaque fenêtre.",
 		["twocolumn_desc"] = "Place l'heure dans une colonne séparée de manière à ce qu'aucun texte ne s'écrive en dessous de l'heure.",
@@ -150,27 +167,30 @@ L = {
 L = {
 	["Timestamps"] = {
 		["Chat window timestamp options."] = "Optionen für Zeitstempel in Chatfenstern.",
-		["colortimestamp_desc"] = "Einfärben des Zeitstempels ein- und ausschalten.",
-		["colortimestamp_name"] = "Zeitstempel einfärben",
-		["Format All Timestamps"] = "Formatiere alle Zeitstempel",
+		["colortimestamp_desc"] = "Färbung des Zeitstempels ein- und ausschalten.",
+		["colortimestamp_name"] = "Zeitstempel färben",
+		["Format All Timestamps"] = "Formatiert alle Zeitstempel",
 		["HH:MM (12-hour)"] = "HH:MM (12-Stunden)",
 		["HH:MM (24-hour)"] = "HH:MM (24-Stunden)",
+		["HH:MM AM (12-hour)"] = "HH:MM AM (12-Stunden)",
 		["HH:MM:SS (12-hour)"] = "HH:MM:SS (12-Stunden)",
 		["HH:MM:SS (24-hour)"] = "HH:MM:SS (24-Stunden)",
 		["HH:MM:SS AM (12-hour)"] = "HH:MM:SS AM (12-Stunden)",
-		["localtime_desc"] = "Verwendung der Ortszeitein- und ausschalten.",
+		["localtime_desc"] = "Verwendung der Ortszeit ein- und ausschalten.",
 		["localtime_name"] = "Ortszeit verwenden",
 		["MM:SS"] = true,
+		["Other Formatting Options"] = "Andere Formatierungsoptionen",
 		["Post-Timestamp"] = "Nach-Zeitstempel",
 		["Pre-Timestamp"] = "Vor-Zeitstempel",
 		["Set the timestamp format"] = "Format für Zeitstempel einstellen",
 		["Set Timestamp Color"] = "Farbe für Zeitstempel einstellen",
 		["Sets the color of the timestamp."] = "Stellt die Farbe des Zeitstempels ein.",
-		["Show Timestamp"] = "Teitstempel anzeigen",
+		["Show Timestamp"] = "Zeitstempel anzeigen",
 		["show_desc"] = "Anzeige des Zeitstempels für jedes Fenster ein- und ausschalten.",
 		["show_name"] = "Zeitstempel anzeigen",
 		["space_desc"] = "Das Einfügen eines Leerzeichens nach dem Zeitstempel ein- und ausschalten.",
 		["space_name"] = "Leerzeichen anzeigen",
+		["Timestamp Text Format"] = "Zeitstempel-Textformat",
 		["Timestamps"] = "Zeitstempel",
 		["Toggle showing timestamp for each window."] = "Anzeige des Zeitstempels für jedes Fenster umschalten.",
 		["twocolumn_desc"] = "Platziere die Zeitstempel in einer getrennten Spalte, so dass der Text nicht unterhalb der Zeitstempel dargestellt wird.",
@@ -191,12 +211,15 @@ L = {
 		["Format All Timestamps"] = "모든 시간 표시 형식",
 		["HH:MM (12-hour)"] = "HH:MM (12시간제)",
 		["HH:MM (24-hour)"] = "HH:MM (24시간제)",
+		["HH:MM AM (12-hour)"] = "시간:분 오전 (12시간제)",
 		["HH:MM:SS (12-hour)"] = "HH:MM:SS (12시간제)",
 		["HH:MM:SS (24-hour)"] = "HH:MM:SS (24시간제)",
 		["HH:MM:SS AM (12-hour)"] = "HH:MM:SS AM (12시간제)",
 		["localtime_desc"] = "컴퓨터 시간 사용합니다.",
 		["localtime_name"] = "컴퓨터 시간 사용",
 		["MM:SS"] = true,
+		--[[Translation missing --]]
+		["Other Formatting Options"] = "Other Formatting Options",
 		["Post-Timestamp"] = "뒤-시간 표시",
 		["Pre-Timestamp"] = "앞-시간 표시",
 		["Set the timestamp format"] = "시간 표시 형식 설정",
@@ -207,6 +230,8 @@ L = {
 		["show_name"] = "시간 표시",
 		["space_desc"] = "시간 표시 뒤에 공간을 넣을 지 선택합니다.",
 		["space_name"] = "공간 삽입",
+		--[[Translation missing --]]
+		["Timestamp Text Format"] = "Timestamp Text Format",
 		["Timestamps"] = "시간 표시",
 		["Toggle showing timestamp for each window."] = "각 창 별로 시간 표시 기능을 끄거나 켭니다.",
 		["twocolumn_desc"] = "시간 표시를 분리된 열에 위치시켜 글자가 그 아래쪽을 둘러싸지 않게 합니다",
@@ -234,6 +259,8 @@ L = {
 		--[[Translation missing --]]
 		["HH:MM (24-hour)"] = "HH:MM (24-hour)",
 		--[[Translation missing --]]
+		["HH:MM AM (12-hour)"] = "HH:MM AM (12-hour)",
+		--[[Translation missing --]]
 		["HH:MM:SS (12-hour)"] = "HH:MM:SS (12-hour)",
 		--[[Translation missing --]]
 		["HH:MM:SS (24-hour)"] = "HH:MM:SS (24-hour)",
@@ -245,6 +272,8 @@ L = {
 		["localtime_name"] = "Use Local Time",
 		--[[Translation missing --]]
 		["MM:SS"] = "MM:SS",
+		--[[Translation missing --]]
+		["Other Formatting Options"] = "Other Formatting Options",
 		--[[Translation missing --]]
 		["Post-Timestamp"] = "Post-Timestamp",
 		--[[Translation missing --]]
@@ -265,6 +294,8 @@ L = {
 		["space_desc"] = "Toggle adding space after timestamp on and off.",
 		--[[Translation missing --]]
 		["space_name"] = "Show Space",
+		--[[Translation missing --]]
+		["Timestamp Text Format"] = "Timestamp Text Format",
 		--[[Translation missing --]]
 		["Timestamps"] = "Timestamps",
 		--[[Translation missing --]]
@@ -289,12 +320,14 @@ L = {
 		["Format All Timestamps"] = "Формат всего времени",
 		["HH:MM (12-hour)"] = "HH:MM (12-ч)",
 		["HH:MM (24-hour)"] = "HH:MM (24-ч)",
+		["HH:MM AM (12-hour)"] = "HH:MM AM (12-ч)",
 		["HH:MM:SS (12-hour)"] = "HH:MM:SS (12-ч)",
 		["HH:MM:SS (24-hour)"] = "HH:MM:SS (24-ч)",
 		["HH:MM:SS AM (12-hour)"] = "HH:MM:SS AM (12-ч)",
 		["localtime_desc"] = "Вкл/Выкл использование местного времени.",
 		["localtime_name"] = "Местное время",
 		["MM:SS"] = true,
+		["Other Formatting Options"] = "Другие параметры форматирования",
 		["Post-Timestamp"] = "Перед-временем",
 		["Pre-Timestamp"] = "После-времени",
 		["Set the timestamp format"] = "Установите формат времени ",
@@ -305,6 +338,7 @@ L = {
 		["show_name"] = "Показывать время",
 		["space_desc"] = "Вкл/Выкл добавление пробела после времени.",
 		["space_name"] = "Пробел",
+		["Timestamp Text Format"] = "Текстовый формат метки времени",
 		["Timestamps"] = "Отображение времени",
 		["Toggle showing timestamp for each window."] = "Вкл/Выкл отображение времени во всех окнах.",
 		["twocolumn_desc"] = "Помещает время в отдельную колонку, чтобы текст не переносился на строку под ним.",
@@ -325,12 +359,15 @@ L = {
 		["Format All Timestamps"] = "所有时间戳格式",
 		["HH:MM (12-hour)"] = "时:分 (12-小时)",
 		["HH:MM (24-hour)"] = "时:分 (24-小时)",
+		--[[Translation missing --]]
+		["HH:MM AM (12-hour)"] = "HH:MM AM (12-hour)",
 		["HH:MM:SS (12-hour)"] = "时:分:秒 (12-小时)",
 		["HH:MM:SS (24-hour)"] = "时:分:秒 (24-小时)",
 		["HH:MM:SS AM (12-hour)"] = "时:分:秒 上午(12-小时)",
 		["localtime_desc"] = "本地时间使用开关",
 		["localtime_name"] = "使用本地时间",
 		["MM:SS"] = "分:秒",
+		["Other Formatting Options"] = "其他设置",
 		["Post-Timestamp"] = "后缀-时间戳",
 		["Pre-Timestamp"] = "前缀-时间戳",
 		["Set the timestamp format"] = "设置时间戳格式",
@@ -341,6 +378,7 @@ L = {
 		["show_name"] = "显示时间戳",
 		["space_desc"] = "在时间戳后添加空格",
 		["space_name"] = "显示空格",
+		["Timestamp Text Format"] = "时间戳格式",
 		["Timestamps"] = "时间戳",
 		["Toggle showing timestamp for each window."] = "为各个窗口切换显示时间戳",
 		["twocolumn_desc"] = "放置时间戳在一个单独的栏，文本不包括其中",
@@ -361,12 +399,16 @@ L = {
 		["Format All Timestamps"] = "Formatear Todas las Mascaras de Tiempo",
 		["HH:MM (12-hour)"] = "HH:MM (12-horas)",
 		["HH:MM (24-hour)"] = "HH:MM (24-horas)",
+		--[[Translation missing --]]
+		["HH:MM AM (12-hour)"] = "HH:MM AM (12-hour)",
 		["HH:MM:SS (12-hour)"] = "HH:MM:SS (12-horas)",
 		["HH:MM:SS (24-hour)"] = "HH:MM:SS (24-horas)",
 		["HH:MM:SS AM (12-hour)"] = "HH:MM:SS AM (12-horas)",
 		["localtime_desc"] = "Activa o desactiva el uso de la hora local.",
 		["localtime_name"] = "Utilizar Hora Local",
 		["MM:SS"] = true,
+		--[[Translation missing --]]
+		["Other Formatting Options"] = "Other Formatting Options",
 		["Post-Timestamp"] = "Post-MáscaraTiempo",
 		["Pre-Timestamp"] = "Pre-MáscaraTiempo",
 		["Set the timestamp format"] = "Establecer el formato de la Máscara de Tiempo",
@@ -377,6 +419,8 @@ L = {
 		["show_name"] = "Mostrar Máscara de Tiempo",
 		["space_desc"] = "Alterna activación de añadir un espacio tras la máscara de tiempo.",
 		["space_name"] = "Mostrar Espacio",
+		--[[Translation missing --]]
+		["Timestamp Text Format"] = "Timestamp Text Format",
 		["Timestamps"] = "Máscara de Tiempo",
 		["Toggle showing timestamp for each window."] = "Alterna mostrar máscara de tiempo para cada ventana.",
 		["twocolumn_desc"] = "Colocar las máscaras de hora en una columna separada por lo que el texto no se ajustará debajo de ellas",
@@ -397,12 +441,15 @@ L = {
 		["Format All Timestamps"] = "所有時間戳格式",
 		["HH:MM (12-hour)"] = "HH:MM (12時制)",
 		["HH:MM (24-hour)"] = "HH:MM (24時制)",
+		--[[Translation missing --]]
+		["HH:MM AM (12-hour)"] = "HH:MM AM (12-hour)",
 		["HH:MM:SS (12-hour)"] = "HH:MM:SS (12時制)",
 		["HH:MM:SS (24-hour)"] = "HH:MM:SS (24時制)",
 		["HH:MM:SS AM (12-hour)"] = "HH:MM:SS AM (12時制)",
 		["localtime_desc"] = "切換是否使用本地時間",
 		["localtime_name"] = "使用本地時間",
 		["MM:SS"] = true,
+		["Other Formatting Options"] = "其他设置",
 		["Post-Timestamp"] = "貼出時間戳",
 		["Pre-Timestamp"] = "時間標籤",
 		["Set the timestamp format"] = "設定時間戳格式",
@@ -414,6 +461,7 @@ L = {
 		--[[Translation missing --]]
 		["space_desc"] = "Toggle adding space after timestamp on and off.",
 		["space_name"] = "顯示空白",
+		["Timestamp Text Format"] = "时间戳格式",
 		["Timestamps"] = "時間戳",
 		["Toggle showing timestamp for each window."] = "切換是否在個別視窗顯示時間戳。",
 		--[[Translation missing --]]
@@ -436,6 +484,7 @@ L = {
     ["%I:%M:%S %p"] = PL["HH:MM:SS AM (12-hour)"],
     ["%I:%M:%S"] = PL["HH:MM:SS (12-hour)"],
     ["%X"] = PL["HH:MM:SS (24-hour)"],
+    ["%I:%M %p"] = PL["HH:MM AM (12-hour)"],
     ["%I:%M"] = PL["HH:MM (12-hour)"],
     ["%H:%M"] = PL["HH:MM (24-hour)"],
     ["%M:%S"] = PL["MM:SS"],
@@ -477,7 +526,7 @@ L = {
         set = "SetSubValue"
       },
       helpheader = {
-        name = "Timestamp Text Format",
+        name = PL["Timestamp Text Format"],
         type = "header",
         order = 129,
       },
@@ -522,7 +571,7 @@ L = {
         order = 171,
       },
       otherheader = {
-        name = "Other Formatting Options",
+        name = PL["Other Formatting Options"],
         type = "header",
         order = 170,
       },
@@ -538,66 +587,68 @@ L = {
     },
   })
 
-  function module:OnModuleEnable()
-    -- For this module to work, it must hook before Prat
-    for _, v in pairs(Prat.HookedFrames) do
-      self:RawHook(v, "AddMessage", true)
+  Prat:SetModuleInit(module, function(self)
+    -- Disable blizz timestamps if possible
+    if issecurevariable("ChatFrame_MessageEventHandler") then
+      local proxy = { CHAT_TIMESTAMP_FORMAT = false } -- nil would defer to __index
+      local CF_MEH_env = setmetatable(proxy, { __index = _G, __newindex = _G })
+      setfenv(ChatFrame_MessageEventHandler, CF_MEH_env)
+    else
+      -- An addon has modified ChatFrame_MessageEventHandler and likely
+      -- replaced / hooked it, so we can't setfenv the original function.
+      -- TODO Print a warning
+      self:Output("Could not install hook")
     end
 
-    -- Disable blizz timestamps
-    self:RawHook("ChatFrame_MessageEventHandler", true)
+    for name, v in pairs(Prat.HookedFrames) do
+      self:SecureHook(v, "AddMessage")
+    end
+  end)
 
-    self:RawHook("ChatChannelDropDown_PopOutChat", true)
-
-    self.secondsDifference = 0
-    self.lastMinute = select(2, GetGameTime())
-
+  function module:OnModuleEnable()
+    for name, v in pairs(Prat.HookedFrames) do
+      if not self:IsHooked(v, "AddMessage") then
+        self:SecureHook(v, "AddMessage")
+      end
+    end
     Prat.RegisterChatEvent(self, Prat.Events.FRAMES_UPDATED)
     Prat.RegisterChatEvent(self, Prat.Events.FRAMES_REMOVED)
+  end
+
+  function module:OnModuleDisable()
+    for name, v in pairs(Prat.HookedFrames) do
+      if self:IsHooked(v, "AddMessage") then
+        self:Unhook(v, "AddMessage")
+      end
+    end
   end
 
   function module:GetDescription()
     return PL["Chat window timestamp options."]
   end
 
-  local hookedFrames = {}
-
-  function module:ChatFrame_MessageEventHandler(...)
-    local ctsf = CHAT_TIMESTAMP_FORMAT
-    CHAT_TIMESTAMP_FORMAT = nil
-    local ret = self.hooks["ChatFrame_MessageEventHandler"](...)
-    CHAT_TIMESTAMP_FORMAT = ctsf
-    return ret
-  end
-
   function module:Prat_FramesUpdated(info, name, chatFrame, ...)
-    if not hookedFrames[chatFrame:GetName()] then
-      hookedFrames[chatFrame:GetName()] = true
-      self:RawHook(chatFrame, "AddMessage", true)
+    if not self:IsHooked(chatFrame, "AddMessage") then
+      self:SecureHook(chatFrame, "AddMessage")
     end
   end
 
   function module:Prat_FramesRemoved(info, name, chatFrame)
-    if hookedFrames[chatFrame:GetName()] then
-      hookedFrames[chatFrame:GetName()] = nil
+    if self:IsHooked(chatFrame, "AddMessage") then
       self:Unhook(chatFrame, "AddMessage")
     end
-  end
-
-  function module:ChatChannelDropDown_PopOutChat(...)
-    Prat.loading = true
-    self.hooks["ChatChannelDropDown_PopOutChat"](...)
-    Prat.loading = nil
   end
 
   --[[------------------------------------------------
       Core Functions
   ------------------------------------------------]] --
   function module:AddMessage(frame, text, ...)
-    if self.db.profile.show and self.db.profile.show[frame:GetName()] and not Prat.loading then
-      text = text and self:InsertTimeStamp(text, frame)
+    if self.db.profile.on and self.db.profile.show and self.db.profile.show[frame:GetName()] and not Prat.loading then
+      local entry = frame.historyBuffer:GetEntryAtIndex(1)
+      if text == entry.message then
+        entry.message = self:InsertTimeStamp(entry.message, frame)
+      end
     end
-    self.hooks[frame].AddMessage(frame, text, ...)
   end
 
   function module:IsTimestampPlain()
@@ -636,15 +687,7 @@ L = {
     if self.db.profile.localtime then
       return date(format)
     else
-      local tempDate = date("*t")
-      tempDate["hour"], tempDate["min"] = GetGameTime()
-      -- taken from FuBar_ClockFu
-      if self.lastMinute ~= tempDate["min"] then
-        self.lastMinute = select(2, GetGameTime())
-        self.secondsDifference = mod(time(), 60)
-      end
-      tempDate["sec"] = mod(time() - self.secondsDifference, 60)
-      return date(format, time(tempDate))
+      return date(format, GetServerTime())
     end
   end
 

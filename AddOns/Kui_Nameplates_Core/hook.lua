@@ -8,7 +8,6 @@
 -- handle messages, events, initialise
 --------------------------------------------------------------------------------
 local addon = KuiNameplates
-local kui = LibStub('Kui-1.0')
 
 KuiNameplatesCore = addon:Layout()
 local core = KuiNameplatesCore
@@ -38,10 +37,11 @@ function core:Create(f)
     self:CreateStateIcon(f)
     self:CreateRaidIcon(f)
     self:CreateNameOnlyGlow(f)
+    self:CreateQuestIcon(f)
 end
 function core:Show(f)
     -- state helpers
-    f.state.friend = UnitIsFriend('player',f.unit)
+    f.state.friend = f.state.reaction > 4 or UnitIsFriend('player',f.unit)
     f.state.class = select(2,UnitClass(f.unit))
     f.state.player = UnitIsPlayer(f.unit)
 
@@ -66,12 +66,14 @@ function core:Show(f)
     f:UpdateHealthText()
     -- set state icon
     f:UpdateStateIcon()
-    -- position raid icon
-    f:UpdateRaidIcon()
     -- enable/disable castbar
     f:UpdateCastBar()
     -- set guild text
     f:UpdateGuildText()
+
+    f:UpdateQuestIcon()
+
+    f:UpdateNameTextPosition()
 
     if f.TargetArrows then
         -- show/hide target arrows
@@ -88,9 +90,8 @@ function core:HealthUpdate(f)
     self:NameOnlyHealthUpdate(f)
 end
 function core:HealthColourChange(f)
-    f.state.friend = UnitIsFriend('player',f.unit)
-
-    -- update nameonly upon faction changes
+    -- faction/reaction change
+    f.state.friend = f.state.reaction > 4 or UnitIsFriend('player',f.unit)
     self:NameOnlyCombatUpdate(f)
 end
 function core:PowerTypeUpdate(f)
@@ -104,6 +105,9 @@ function core:GlowColourChange(f)
     self:ShowNameUpdate(f)
     f:UpdateFrameSize()
     f:UpdateNameText()
+    -- health and level move when name is hidden
+    f:UpdateHealthText()
+    f:UpdateLevelText()
 end
 function core:CastBarShow(f)
     f:ShowCastBar()
@@ -111,29 +115,20 @@ end
 function core:CastBarHide(f,...)
     f:HideCastBar(...)
 end
-function core:GainedTarget(f)
-    f.state.target = true
-
-    -- disable nameonly on target
+function core:TargetUpdate(f)
     self:NameOnlyUpdate(f)
-    -- show name on target
     self:ShowNameUpdate(f)
-
     f:UpdateFrameSize()
     f:UpdateLevelText()
     self:NameOnlyUpdateFunctions(f)
 end
+function core:GainedTarget(f)
+    f.state.target = true
+    self:TargetUpdate(f)
+end
 function core:LostTarget(f)
     f.state.target = nil
-
-    -- toggle nameonly depending on state
-    self:NameOnlyUpdate(f)
-    -- hide name depending on state
-    self:ShowNameUpdate(f)
-
-    f:UpdateFrameSize()
-    f:UpdateLevelText()
-    self:NameOnlyUpdateFunctions(f)
+    self:TargetUpdate(f)
 end
 function core:ClassificationChanged(f)
     f:UpdateStateIcon()
@@ -156,18 +151,10 @@ function core:Combat(f)
     -- enable/disable nameonly if enabled on enemies
     self:NameOnlyCombatUpdate(f)
 end
--- events ######################################################################
-function core:QUEST_POI_UPDATE()
-    -- update to show name of new quest NPCs
-    for _,frame in addon:Frames() do
-        if frame:IsShown() then
-            self:ShowNameUpdate(frame)
-            frame:UpdateFrameSize()
-            frame:UpdateNameText()
-            frame:UpdateLevelText()
-        end
-    end
+function core:QuestUpdate(f)
+    f:UpdateQuestIcon()
 end
+-- events ######################################################################
 function core:UNIT_NAME_UPDATE(_,f)
     -- update name text colour
     f:UpdateNameText()
@@ -179,7 +166,7 @@ do
     local function LoadConfig()
         if IsAddOnLoaded('Kui_Nameplates_Core_Config') then return end
         if InCombatLockdown() then
-            print('|cff9966ffKui Nameplates|r: Delaying configuration load until after combat ends.')
+            addon:ui_print('Delaying configuration load until after combat ends.')
             opt:RegisterEvent('PLAYER_REGEN_ENABLED')
             return
         end
@@ -374,12 +361,9 @@ function core:Initialise()
     self:RegisterMessage('OnEnter')
     self:RegisterMessage('OnLeave')
     self:RegisterMessage('Combat')
+    self:RegisterMessage('QuestUpdate')
 
     -- register events
-    if not kui.CLASSIC then
-        self:RegisterEvent('QUEST_POI_UPDATE')
-    end
-
     self:RegisterUnitEvent('UNIT_NAME_UPDATE')
 
     -- register callbacks

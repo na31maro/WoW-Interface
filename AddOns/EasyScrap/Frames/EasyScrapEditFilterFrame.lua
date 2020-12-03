@@ -10,7 +10,7 @@ editFilterFrame.header:SetFontObject('GameFontNormalLarge')
 editFilterFrame.header:SetText('Edit Filter')
 editFilterFrame.header:SetPoint('TOP', 0, -24)
 
-local filterEntriesFrame = CreateFrame('Frame', nil, editFilterFrame)
+local filterEntriesFrame = CreateFrame('Frame', nil, editFilterFrame, BackdropTemplateMixin and "BackdropTemplate")
 filterEntriesFrame:SetPoint('TOPLEFT', 12, -50)
 filterEntriesFrame:SetSize(273, 204)
 filterEntriesFrame:SetBackdrop({

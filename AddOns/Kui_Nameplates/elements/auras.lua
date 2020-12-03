@@ -323,6 +323,7 @@ local function CreateAuraButton(parent)
         cd:SetPoint('TOPLEFT',-2,2)
 
         button.icon   = icon
+        button.bg     = bg
         button.count  = count
         button.cd     = cd
     end
@@ -601,7 +602,7 @@ local function AuraFrame_SetIconSize(self,size)
 
     self.size = size
     self.icon_height = floor(size * self.squareness)
-    self.icon_ratio = (1 - (self.icon_height / size)) / 2
+    self.icon_ratio = (1 - (self.icon_height / size)) / 2.5
 
     -- update existing buttons
     for _,button in ipairs(self.buttons) do
@@ -710,6 +711,9 @@ local function CreateAuraFrame(parent)
     auraframe.spellids = {}
 
     if addon.draw_frames then
+        if not auraframe.SetBackdrop then
+            Mixin(auraframe,BackdropTemplateMixin)
+        end
         auraframe:SetBackdrop({
             bgFile='interface/buttons/white8x8'
         })

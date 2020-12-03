@@ -1,0 +1,28 @@
+lightweight tag 18268949da5c5b5b717a1fb5582bca8cfa3c35d1 3.3.2
+Author:	Britt Yazel <bwyazel@gmail.com>
+Date:	Sun Nov 22 22:13:20 2020 -0800
+
+commit 18268949da5c5b5b717a1fb5582bca8cfa3c35d1
+Author: Britt Yazel <bwyazel@gmail.com>
+Date:   Sun Nov 22 22:13:20 2020 -0800
+
+    update .toc for 9.0.2
+
+commit 48ee17f2823108e8a42139a840f02898cfc7c7db
+Author: Britt Yazel <bwyazel@gmail.com>
+Date:   Tue Nov 10 22:38:04 2020 -0800
+
+    update libdualspec
+
+commit 243796265c616447e41083776be206a763c1b6d6
+Author: Britt Yazel <bwyazel@gmail.com>
+Date:   Tue Nov 10 18:28:57 2020 -0800
+
+    fix some code comments
+
+commit a34b3d72d749b891bd28c3a6ed42b98430672575
+Author: Britt Yazel <bwyazel@gmail.com>
+Date:   Fri Oct 23 21:01:13 2020 -0700
+
+    fix wrong header description showing for the icon menu
+

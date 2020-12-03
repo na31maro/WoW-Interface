@@ -23,8 +23,10 @@ GTFO = {
 		TrivialDamagePercent = 2; -- Minimum % of HP lost required for an alert to be trivial
 		SoundOverrides = { }; -- Override table for GTFO sounds
 	};
-	Version = "4.51"; -- Version number (text format)
-	VersionNumber = 45100; -- Numeric version number for checking out-of-date clients
+	Version = "4.56.3"; -- Version number (text format)
+	VersionNumber = 0; -- Numeric version number for checking out-of-date clients (placeholder until client is detected)
+	RetailVersionNumber = 45603; -- Numeric version number for checking out-of-date clients (retail)
+	ClassicVersionNumber = 45500; -- Numeric version number for checking out-of-date clients (classic)
 	DataLogging = nil; -- Indicate whether or not the addon needs to run the datalogging function (for hooking)
 	DataCode = "4"; -- Saved Variable versioning, change this value to force a reset to default
 	CanTank = nil; -- The active character is capable of tanking
@@ -77,11 +79,14 @@ GTFO = {
 
 GTFOData = {};
 
-if (select(4, GetBuildInfo()) >= 90000) then
+if (select(4, GetBuildInfo()) >= 90100) then
 	GTFO.BetaMode = true;
 end
 if (select(4, GetBuildInfo()) <= 20000) then
 	GTFO.ClassicMode = true;
+	GTFO.VersionNumber = GTFO.ClassicVersionNumber;
+else
+	GTFO.VersionNumber = GTFO.RetailVersionNumber;
 end
 
 StaticPopupDialogs["GTFO_POPUP_MESSAGE"] = {
@@ -151,11 +156,26 @@ function GTFO_OnEvent(self, event, ...)
 			IgnoreOptions = { };
 			SoundOverrides = { };
 		};
+		
+		-- Load spell ignore options (player set)
 		if (GTFOData.IgnoreOptions) then
 			for key, option in pairs(GTFOData.IgnoreOptions) do
 				GTFO.Settings.IgnoreOptions[key] = GTFOData.IgnoreOptions[key];
 			end
 		end
+		
+		-- Load default spell ignore options
+		if (GTFO.IgnoreSpellCategory) then
+			for key, option in pairs(GTFO.IgnoreSpellCategory) do
+				if (GTFO.IgnoreSpellCategory[key].isDefault) then
+					GTFO.DefaultSettings.IgnoreOptions[key] = true;
+					if (GTFO.Settings.IgnoreOptions[key] == nil) then
+						GTFO.Settings.IgnoreOptions[key] = true;
+					end
+				end
+			end
+		end
+		
 		if (GTFOData.SoundOverrides) then
 			for key, option in pairs(GTFOData.SoundOverrides) do
 				GTFO.Settings.SoundOverrides[key] = GTFOData.SoundOverrides[key];
@@ -512,9 +532,14 @@ function GTFO_OnEvent(self, event, ...)
 						return;
 					end
 				end
-				if (GTFO.SpellID[SpellID].ignoreApplication and SpellType == "SPELL_AURA_APPLIED") then
+				if (GTFO.SpellID[SpellID].ignoreApplication and (SpellType == "SPELL_AURA_APPLIED" or SpellType == "SPELL_AURA_APPLIED_DOSE" or SpellType == "SPELL_AURA_REFRESH")) then
 					--GTFO_DebugPrint("Won't alert "..SpellName.." ("..SpellID..") - Ignore application event");
 					-- Debuff application and "Ignore Application" is set
+					return;					
+				end
+				if (GTFO.SpellID[SpellID].trivialLevelApplication and GTFO.SpellID[SpellID].trivialLevelApplication <= UnitLevel("player") and (SpellType == "SPELL_AURA_APPLIED" or SpellType == "SPELL_AURA_APPLIED_DOSE" or SpellType == "SPELL_AURA_REFRESH")) then
+					--GTFO_DebugPrint("Won't alert "..SpellName.." ("..SpellID..") - Ignore trivial level application event");
+					-- Debuff application and "Ignore Application when above trivial level" is set
 					return;					
 				end
 				if (GTFO.SpellID[SpellID].ignoreSelfInflicted and SpellSourceGUID == UnitGUID("player")) then
@@ -1059,7 +1084,7 @@ function GTFO_RenderOptions()
 			GTFO.Settings.TrivialMode = TrivialButton:GetChecked();
 			for key, option in pairs(GTFO.IgnoreSpellCategory) do
 				if (getglobal("GTFO_IgnoreAlertButton_"..key):GetChecked()) then
-					GTFO.Settings.IgnoreOptions[key] = nil;
+					GTFO.Settings.IgnoreOptions[key] = false;
 				else
 					-- Option unchecked, add to ignore list
 					GTFO.Settings.IgnoreOptions[key] = true;

@@ -1,0 +1,8 @@
+## Interface: 90001
+## Title: Masque_CleanUI
+## Author: Seharad
+## Version: 9.0.2
+## Notes: Masque Skin for the CleanUI look and feel
+## Dependencies: Masque
+
+Masque_CleanUI.lua

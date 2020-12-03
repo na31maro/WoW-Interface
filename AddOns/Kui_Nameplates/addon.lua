@@ -10,7 +10,7 @@ local addon = KuiNameplates
 local kui = LibStub('Kui-1.0')
 addon.MAJOR,addon.MINOR = 2,5
 
---[===[@debug@
+--[==[@debug@
 addon.debug = true
 --addon.debug_config = true
 --addon.debug_units = true
@@ -18,7 +18,7 @@ addon.debug = true
 --addon.debug_events = true
 --addon.debug_callbacks = true
 --addon.draw_frames = true
---@end-debug@]===]
+--@end-debug@]==]
 addon.DEBUG_IGNORE = {
     ['m:Create'] = true,
     ['m:Show'] = true,
@@ -27,6 +27,7 @@ addon.DEBUG_IGNORE = {
     ['m:HealthColourChange'] = true,
     ['e:UNIT_POWER_UPDATE'] = true,
     ['e:UNIT_POWER_FREQUENT'] = true,
+    ['e:UNIT_HEALTH'] = true,
     ['e:UNIT_HEALTH_FREQUENT'] = true,
     ['e:UNIT_AURA'] = true,
     ['e:UNIT_ABSORB_AMOUNT_CHANGED'] = true,
@@ -39,6 +40,7 @@ addon.DEBUG_IGNORE = {
 addon.IGNORE_UISCALE = nil
 -- should be set in layout initialise, if desired:
 addon.USE_BLIZZARD_PERSONAL = nil
+addon.USE_BLIZZARD_POWERS = nil
 
 local framelist = {}
 
@@ -91,16 +93,26 @@ end
 function addon:NAME_PLATE_UNIT_ADDED(unit)
     local f = C_NamePlate.GetNamePlateForUnit(unit)
     if not f or not f.kui then return end
-    f = f.kui
 
     if addon.debug_units then
         self:print('unit |cff88ff88added|r: '..unit..' ('..UnitName(unit)..')')
     end
 
-    if not self.USE_BLIZZARD_PERSONAL or not UnitIsUnit(unit,'player') then
+    if self.USE_BLIZZARD_PERSONAL and UnitIsUnit(unit,'player') then
         -- don't process anything for the personal nameplate if disabled
-        f.handler:OnUnitAdded(unit)
+        return
     end
+
+    if f.UnitFrame then
+        f.UnitFrame:Hide()
+
+        if f.UnitFrame.WidgetContainer then
+            -- reparent widget container (xp bars, that thing in bastion...)
+            f.UnitFrame.WidgetContainer:SetParent(f)
+        end
+    end
+
+    f.kui.handler:OnUnitAdded(unit)
 end
 function addon:NAME_PLATE_UNIT_REMOVED(unit)
     local f = self:GetActiveNameplateForUnit(unit)
@@ -188,26 +200,33 @@ local function OnEvent(self,event,...)
 
     -- disable the default class resource bars
     --luacheck:globals NamePlateDriverFrame
-    if NamePlateDriverFrame and not self.USE_BLIZZARD_PERSONAL and not kui.CLASSIC then
-        --luacheck:globals DeathKnightResourceOverlayFrame
-        DeathKnightResourceOverlayFrame:UnregisterAllEvents()
-        --luacheck:globals ClassNameplateBarMageFrame
-        ClassNameplateBarMageFrame:UnregisterAllEvents()
-        --luacheck:globals ClassNameplateBarWindwalkerMonkFrame
-        ClassNameplateBarWindwalkerMonkFrame:UnregisterAllEvents()
-        --luacheck:globals ClassNameplateBarPaladinFrame
-        ClassNameplateBarPaladinFrame:UnregisterAllEvents()
-        --luacheck:globals ClassNameplateBarRogueDruidFrame
-        ClassNameplateBarRogueDruidFrame:UnregisterAllEvents()
-        --luacheck:globals ClassNameplateBarWarlockFrame
-        ClassNameplateBarWarlockFrame:UnregisterAllEvents()
-        --luacheck:globals ClassNameplateManaBarFrame
-        ClassNameplateManaBarFrame:UnregisterAllEvents()
-        --luacheck:globals ClassNameplateBrewmasterBarFrame
-        ClassNameplateBrewmasterBarFrame:UnregisterAllEvents()
-
-        NamePlateDriverFrame:SetClassNameplateManaBar(nil)
-        NamePlateDriverFrame:SetClassNameplateBar(nil)
+    if NamePlateDriverFrame and not kui.CLASSIC then
+        if not self.USE_BLIZZARD_PERSONAL then
+            NamePlateDriverFrame:SetClassNameplateManaBar(nil)
+            --luacheck:globals ClassNameplateManaBarFrame
+            ClassNameplateManaBarFrame:UnregisterAllEvents()
+        end
+        if not self.USE_BLIZZARD_PERSONAL and not self.USE_BLIZZARD_POWERS then
+            NamePlateDriverFrame:SetClassNameplateBar(nil)
+            --luacheck:globals DeathKnightResourceOverlayFrame
+            DeathKnightResourceOverlayFrame:UnregisterAllEvents()
+            --luacheck:globals ClassNameplateBarMageFrame
+            ClassNameplateBarMageFrame:UnregisterAllEvents()
+            --luacheck:globals ClassNameplateBarWindwalkerMonkFrame
+            ClassNameplateBarWindwalkerMonkFrame:UnregisterAllEvents()
+            --luacheck:globals ClassNameplateBarPaladinFrame
+            ClassNameplateBarPaladinFrame:UnregisterAllEvents()
+            --luacheck:globals ClassNameplateBarRogueDruidFrame
+            ClassNameplateBarRogueDruidFrame:UnregisterAllEvents()
+            --luacheck:globals ClassNameplateBarWarlockFrame
+            ClassNameplateBarWarlockFrame:UnregisterAllEvents()
+            --luacheck:globals ClassNameplateBrewmasterBarFrame
+            ClassNameplateBrewmasterBarFrame:UnregisterAllEvents()
+        end
+    end
+    -- hide default unit frames
+    if NamePlateDriverFrame and NamePlateDriverFrame.AcquireUnitFrame then
+        hooksecurefunc(NamePlateDriverFrame,'AcquireUnitFrame',self.NamePlateDriverFrame_AcquireUnitFrame)
     end
 end
 ------------------------------------------- initialise addon scripts & events --

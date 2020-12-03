@@ -1,4 +1,4 @@
-local opt = KuiNameplatesCoreConfig
+local opt = KuiNameplatesCoreConfig --luacheck:globals KuiNameplatesCoreConfig
 local LSM = LibStub('LibSharedMedia-3.0')
 local L = opt:GetLocale()
 
@@ -19,6 +19,15 @@ local cvars       = opt:CreateConfigPage('cvars')
 
 opt:ShowPage(1)
 
+-- helpers #####################################################################
+local function MovablePopupButton_OnClick(button)
+    opt.Popup:ShowPage('movable',
+        button.movable_prefix,
+        button.movable_title or button.env,
+        button.movable_keys,
+        button.movable_minmax)
+end
+
 -- create elements #############################################################
 -- general #####################################################################
 function general:Initialise()
@@ -26,6 +35,7 @@ function general:Initialise()
     local combat_friendly = self:CreateDropDown('combat_friendly')
     local ignore_uiscale = self:CreateCheckBox('ignore_uiscale')
     local use_blizzard_personal = self:CreateCheckBox('use_blizzard_personal')
+    local use_blizzard_powers = self:CreateCheckBox('use_blizzard_powers',true)
     local glow_as_shadow = self:CreateCheckBox('glow_as_shadow')
     local state_icons = self:CreateCheckBox('state_icons')
     local target_glow = self:CreateCheckBox('target_glow')
@@ -36,9 +46,31 @@ function general:Initialise()
     local target_arrows = self:CreateCheckBox('target_arrows')
     local target_arrows_size = self:CreateSlider('target_arrows_size',20,60)
 
+    local show_quest_icon = self:CreateCheckBox('show_quest_icon')
+    local quest_icon_position = self:CreateButton('quest_icon_position','position')
+    quest_icon_position:SetWidth(120)
+    quest_icon_position.movable_title = 'show_quest_icon'
+    quest_icon_position.movable_prefix = 'quest_icon'
+    quest_icon_position.movable_minmax = { size = { 8,48 } }
+    quest_icon_position:SetScript('OnClick',MovablePopupButton_OnClick)
+    quest_icon_position.enabled = function(p) return p.show_quest_icon end
+
+    local show_raid_icon = self:CreateCheckBox('show_raid_icon')
+    local raid_icon_position = self:CreateButton('raid_icon_position','position')
+    raid_icon_position:SetWidth(120)
+    raid_icon_position.movable_title = 'show_raid_icon'
+    raid_icon_position.movable_prefix = 'raid_icon'
+    raid_icon_position.movable_minmax = { size = { 8,48 } }
+    raid_icon_position:SetScript('OnClick',MovablePopupButton_OnClick)
+    raid_icon_position.enabled = function(p) return p.show_raid_icon end
+
+    use_blizzard_personal.require_reload = true
+    use_blizzard_powers.require_reload = true
+
     target_glow_colour.enabled = function(p) return p.target_glow or p.target_arrows end
     mouseover_glow_colour.enabled = function(p) return p.mouseover_glow end
     target_arrows_size.enabled = function(p) return p.target_arrows end
+    use_blizzard_powers.enabled = function(p) return not p.use_blizzard_personal end
 
     combat_hostile.SelectTable = {
         L.titles.dd_combat_toggle_nothing,
@@ -52,6 +84,7 @@ function general:Initialise()
 
     ignore_uiscale:SetPoint('TOPLEFT',10,-55)
     use_blizzard_personal:SetPoint('LEFT',ignore_uiscale,'RIGHT',190,0)
+    use_blizzard_powers:SetPoint('TOPLEFT',use_blizzard_personal,'BOTTOMLEFT',10,0)
 
     state_icons:SetPoint('TOPLEFT',ignore_uiscale,'BOTTOMLEFT',0,-10)
     target_glow:SetPoint('TOPLEFT',state_icons,'BOTTOMLEFT')
@@ -60,7 +93,13 @@ function general:Initialise()
     mouseover_glow_colour:SetPoint('LEFT',mouseover_glow,'RIGHT',194,0)
     mouseover_highlight:SetPoint('TOPLEFT',mouseover_glow,'BOTTOMLEFT')
     glow_as_shadow:SetPoint('TOPLEFT',mouseover_highlight,'BOTTOMLEFT')
-    target_arrows:SetPoint('TOPLEFT',glow_as_shadow,'BOTTOMLEFT',0,-20)
+
+    show_quest_icon:SetPoint('TOPLEFT',glow_as_shadow,'BOTTOMLEFT',0,-20)
+    quest_icon_position:SetPoint('LEFT',show_quest_icon,'RIGHT',120,0)
+    show_raid_icon:SetPoint('TOPLEFT',show_quest_icon,'BOTTOMLEFT')
+    raid_icon_position:SetPoint('LEFT',show_raid_icon,'RIGHT',120,0)
+
+    target_arrows:SetPoint('TOPLEFT',show_raid_icon,'BOTTOMLEFT',0,-20)
     target_arrows_size:SetPoint('LEFT',target_arrows,'RIGHT',184,0)
 
     local clickthrough_sep = self:CreateSeparator('clickthrough_sep')
@@ -68,10 +107,10 @@ function general:Initialise()
     local clickthrough_friend = self:CreateCheckBox('clickthrough_friend')
     local clickthrough_enemy = self:CreateCheckBox('clickthrough_enemy')
 
-    clickthrough_sep:SetPoint('TOP',0,-305)
-    clickthrough_self:SetPoint('TOPLEFT',10,-320)
-    clickthrough_friend:SetPoint('TOPLEFT',(10+155),-320)
-    clickthrough_enemy:SetPoint('TOPLEFT',(10+155*2),-320)
+    clickthrough_sep:SetPoint('TOP',0,-380)
+    clickthrough_self:SetPoint('TOPLEFT',clickthrough_sep,'BOTTOMLEFT',0,-10)
+    clickthrough_friend:SetPoint('LEFT',clickthrough_self,'RIGHT',130,0)
+    clickthrough_enemy:SetPoint('LEFT',clickthrough_friend,'RIGHT',130,0)
 end
 -- fade rules popup ############################################################
 function fade_rules:Initialise()
@@ -126,8 +165,8 @@ function fade_rules:Initialise()
     avoid_c:SetPoint('LEFT',avoid_t,'RIGHT',190,0)
 
     avoid_cf:SetPoint('TOPLEFT',avoid_t,'BOTTOMLEFT',0,-10)
-    avoid_ch:SetPoint('LEFT',avoid_cf,'RIGHT',190,0)
-    avoid_ci:SetPoint('TOPLEFT',avoid_cf,'BOTTOMLEFT',10,0)
+    avoid_ch:SetPoint('TOPLEFT',avoid_cf,'BOTTOMLEFT')
+    avoid_ci:SetPoint('TOPLEFT',avoid_ch,'BOTTOMLEFT',10,0)
     avoid_cu:SetPoint('TOPLEFT',avoid_ci,'BOTTOMLEFT')
 end
 -- healthbars ##################################################################
@@ -279,6 +318,7 @@ function text:Initialise()
     local health_text_friend_dmg = text:CreateDropDown('health_text_friend_dmg')
     local health_text_hostile_max = text:CreateDropDown('health_text_hostile_max')
     local health_text_hostile_dmg = text:CreateDropDown('health_text_hostile_dmg')
+    local health_text_percent_symbol = text:CreateCheckBox('health_text_percent_symbol',true)
 
     health_text_friend_max.SelectTable = health_text_SelectTable
     health_text_friend_dmg.SelectTable = health_text_SelectTable
@@ -289,13 +329,15 @@ function text:Initialise()
     health_text_friend_max:SetPoint('TOP',health_text_sep,'BOTTOM',0,-10)
     health_text_friend_max:SetPoint('LEFT',10,0)
     health_text_friend_dmg:SetPoint('LEFT',health_text_friend_max,'RIGHT',10,0)
-    health_text_hostile_max:SetPoint('TOPLEFT',health_text_friend_max,'BOTTOMLEFT',0,0)
+    health_text_hostile_max:SetPoint('TOPLEFT',health_text_friend_max,'BOTTOMLEFT')
     health_text_hostile_dmg:SetPoint('LEFT',health_text_hostile_max,'RIGHT',10,0)
+    health_text_percent_symbol:SetPoint('TOPLEFT',health_text_hostile_max,'BOTTOMLEFT',0,-5)
 
     health_text_friend_max.enabled = function(p) return p.health_text end
     health_text_friend_dmg.enabled = health_text_friend_max.enabled
     health_text_hostile_max.enabled = health_text_friend_max.enabled
     health_text_hostile_dmg.enabled = health_text_friend_max.enabled
+    health_text_percent_symbol.enabled = health_text_friend_max.enabled
 
     local nc_sep = self:CreateSeparator('name_colour_sep')
     local nc_wb = self:CreateCheckBox('name_colour_white_in_bar_mode')
@@ -322,7 +364,7 @@ function text:Initialise()
         return p.name_text and not p.class_colour_enemy_names
     end
 
-    nc_sep:SetPoint('TOP',0,-350)
+    nc_sep:SetPoint('TOP',0,-375)
     nc_wb:SetPoint('TOP',nc_sep,'BOTTOM',0,-10)
     nc_wb:SetPoint('LEFT',10,0)
     nc_nh:SetPoint('TOPLEFT',nc_wb,'BOTTOMLEFT',4,0)
@@ -371,6 +413,7 @@ function nameonly:Initialise()
     local guild_text_npcs = self:CreateCheckBox('guild_text_npcs')
     local guild_text_players = self:CreateCheckBox('guild_text_players')
     local title_text_players = self:CreateCheckBox('title_text_players')
+    local level_nameonly = self:CreateCheckBox('level_nameonly')
     local vis_sep = self:CreateSeparator('nameonly_visibility_sep')
     local text_sep = self:CreateSeparator('nameonly_text_sep','text')
 
@@ -420,6 +463,7 @@ function nameonly:Initialise()
     nameonly_combat_hostile_player.enabled = function(p)
         return p.nameonly and p.nameonly_combat_hostile and (p.nameonly_neutral or p.nameonly_enemies)
     end
+    level_nameonly.enabled = nameonly_neutral.enabled
 
     -- "text"
     text_sep:SetPoint('TOP',0,-285)
@@ -428,39 +472,76 @@ function nameonly:Initialise()
     guild_text_players:SetPoint('TOPLEFT',nameonly_health_colour,'BOTTOMLEFT')
     title_text_players:SetPoint('LEFT',guild_text_players,'RIGHT',190,0)
     guild_text_npcs:SetPoint('TOPLEFT',guild_text_players,'BOTTOMLEFT')
+    level_nameonly:SetPoint('LEFT',guild_text_npcs,'RIGHT',190,0)
 end
 -- frame sizes #################################################################
 function framesizes:Initialise()
-    local frame_width = self:CreateSlider('frame_width',20,200)
-    local frame_height = self:CreateSlider('frame_height',3,40)
-    local frame_width_minus = self:CreateSlider('frame_width_minus',20,200)
-    local frame_height_minus = self:CreateSlider('frame_height_minus',3,40)
+    local frame_width = self:CreateSlider('frame_width',20,200,nil,'width')
+    local frame_height = self:CreateSlider('frame_height',3,40,nil,'height')
+    local frame_target_size = self:CreateCheckBox('frame_target_size')
+    local frame_minus_size = self:CreateCheckBox('frame_minus_size')
+    local frame_width_target = self:CreateSlider('frame_width_target',20,200,nil,'width')
+    local frame_height_target = self:CreateSlider('frame_height_target',3,40,nil,'height')
+    local frame_width_minus = self:CreateSlider('frame_width_minus',20,200,nil,'width')
+    local frame_height_minus = self:CreateSlider('frame_height_minus',3,40,nil,'height')
     local frame_width_personal = self:CreateSlider('frame_width_personal',20,200)
     local frame_height_personal = self:CreateSlider('frame_height_personal',3,40)
+    local frame_padding_x = self:CreateSlider('frame_padding_x',0,50)
+    local frame_padding_y = self:CreateSlider('frame_padding_y',0,50)
 
-    local element_sep = self:CreateSeparator('framesizes_element_sep')
+    local element_sep = self:CreateSeparator()
     local powerbar_height = self:CreateSlider('powerbar_height',1,20)
-    local frame_glow_size = self:CreateSlider('frame_glow_size',4,16)
+    local glow_size_shadow = self:CreateSlider('frame_glow_size_shadow',1,30)
+    local glow_size_target = self:CreateSlider('frame_glow_size_target',1,30)
+    local glow_size_threat = self:CreateSlider('frame_glow_size_threat',1,30)
 
-    local scale_sep = self:CreateSeparator('framesizes_scale_sep')
+    local scale_sep = self:CreateSeparator()
     local global_scale = self:CreateSlider('global_scale',.5,2)
     global_scale:SetValueStep(.05)
 
     frame_height_personal.enabled = function(p) return not p.use_blizzard_personal end
 
+    frame_width_target.enabled = function(p) return p.frame_target_size end
+    frame_height_target.enabled = frame_width_target.enabled
+    frame_width_minus.enabled = function(p) return p.frame_minus_size end
+    frame_height_minus.enabled = frame_width_minus.enabled
+    glow_size_shadow.enabled = function(p) return p.glow_as_shadow end
+    glow_size_target.enabled = function(p) return p.target_glow or p.mouseover_glow end
+    glow_size_target.enabled = function(p) return p.target_glow or p.mouseover_glow end
+
+    frame_width_target:SetWidth(120)
+    frame_height_target:SetWidth(120)
+    frame_width_minus:SetWidth(120)
+    frame_height_minus:SetWidth(120)
+    glow_size_shadow:SetWidth(120)
+    glow_size_target:SetWidth(120)
+    glow_size_threat:SetWidth(120)
+
     frame_width:SetPoint('TOPLEFT',10,-25)
     frame_height:SetPoint('LEFT',frame_width,'RIGHT',20,0)
+
     frame_width_personal:SetPoint('TOPLEFT',frame_width,'BOTTOMLEFT',0,-35)
     frame_height_personal:SetPoint('LEFT',frame_width_personal,'RIGHT',20,0)
-    frame_width_minus:SetPoint('TOPLEFT',frame_width_personal,'BOTTOMLEFT',0,-35)
+
+    frame_target_size:SetPoint('TOPLEFT',frame_width,'BOTTOMLEFT',0,-90)
+    frame_width_target:SetPoint('LEFT',frame_target_size,140,0)
+    frame_height_target:SetPoint('LEFT',frame_width_target,'RIGHT',20,0)
+
+    frame_minus_size:SetPoint('TOPLEFT',frame_target_size,'BOTTOMLEFT',0,-25)
+    frame_width_minus:SetPoint('LEFT',frame_minus_size,140,0)
     frame_height_minus:SetPoint('LEFT',frame_width_minus,'RIGHT',20,0)
 
-    element_sep:SetPoint('TOP',0,-195)
-    powerbar_height:SetPoint('TOPLEFT',10,-225)
-    frame_glow_size:SetPoint('LEFT',powerbar_height,'RIGHT',20,0)
+    frame_padding_x:SetPoint('TOPLEFT',frame_minus_size,'BOTTOMLEFT',0,-50)
+    frame_padding_y:SetPoint('LEFT',frame_padding_x,'RIGHT',20,0)
 
-    scale_sep:SetPoint('TOP',0,-295)
-    global_scale:SetPoint('TOP',0,-325)
+    element_sep:SetPoint('TOP',0,-310)
+    glow_size_shadow:SetPoint('TOPLEFT',element_sep,'BOTTOMLEFT',0,-30)
+    glow_size_target:SetPoint('LEFT',glow_size_shadow,'RIGHT',20,0)
+    glow_size_threat:SetPoint('LEFT',glow_size_target,'RIGHT',20,0)
+    powerbar_height:SetPoint('TOPLEFT',glow_size_shadow,'BOTTOMLEFT',0,-35)
+
+    scale_sep:SetPoint('TOP',0,-440)
+    global_scale:SetPoint('TOP',scale_sep,'BOTTOM',0,-30)
 end
 -- auras #######################################################################
 function auras:Initialise()
@@ -479,7 +560,6 @@ function auras:Initialise()
         L.titles.dd_auras_sort_time,
     }
 
-
     local auras_kslc_hint = self:CreateFontString(nil,'ARTWORK','GameFontHighlight')
     auras_kslc_hint:SetTextColor(.7,.7,.7)
     auras_kslc_hint:SetWidth(350)
@@ -492,7 +572,7 @@ function auras:Initialise()
     local purge_size = self:CreateSlider('auras_purge_size',10,50)
     local side = self:CreateDropDown('auras_side')
     local purge_opposite = self:CreateCheckBox('auras_purge_opposite',true)
-    local offset = self:CreateSlider('auras_offset',-1,30)
+    local offset = self:CreateSlider('auras_offset',-1,60)
     side.SelectTable = {'Top','Bottom'} -- TODO l10n
 
     purge_size.enabled = function(p) return p.auras_show_purge end
@@ -521,59 +601,31 @@ function auras:Initialise()
     purge_size:SetPoint('LEFT',auras_icon_squareness,'RIGHT',20,0)
 
     local auras_text_sep = self:CreateSeparator('auras_text_sep','text')
-    local auras_cd_size = self:CreateSlider('auras_cd_size',0,20,nil,'font_size')
-    local auras_count_size = self:CreateSlider('auras_count_size',0,20,nil,'font_size')
     local colour_short = self:CreateColourPicker('auras_colour_short')
     local colour_medium = self:CreateColourPicker('auras_colour_medium')
     local colour_long = self:CreateColourPicker('auras_colour_long')
-    local auras_cd_text_sep = self:CreateSeparator('auras_cd_text_sep')
-    local auras_count_text_sep = self:CreateSeparator('auras_count_text_sep')
 
-    local auras_cd_point_x = self:CreateDropDown('auras_cd_point_x','point_x')
-    local auras_cd_point_y = self:CreateDropDown('auras_cd_point_y','point_y')
-    local auras_cd_offset_x = self:CreateSlider('auras_cd_offset_x',-20,20,nil,'offset_x')
-    local auras_cd_offset_y = self:CreateSlider('auras_cd_offset_y',-20,20,nil,'offset_y')
-    local auras_count_point_x = self:CreateDropDown('auras_count_point_x','point_x')
-    local auras_count_point_y = self:CreateDropDown('auras_count_point_y','point_y')
-    local auras_count_offset_x = self:CreateSlider('auras_count_offset_x',-20,20,nil,'offset_x')
-    local auras_count_offset_y = self:CreateSlider('auras_count_offset_y',-20,20,nil,'offset_y')
+    local auras_cd_button = self:CreateButton('auras_cd_movable')
+    auras_cd_button:SetWidth(120)
+    auras_cd_button.movable_prefix = 'auras_cd'
+    auras_cd_button.movable_minmax = { size = { 0,20 } } -- uses 0 to inherit..
+    auras_cd_button:SetScript('OnClick',MovablePopupButton_OnClick)
 
-    local point_x_SelectTable = { 'LEFT', 'CENTER', 'RIGHT' } -- TODO l10n?
-    local point_y_SelectTable = { 'TOP', 'CENTER', 'BOTTOM' }
-
-    auras_cd_point_x.SelectTable = point_x_SelectTable
-    auras_cd_point_y.SelectTable = point_y_SelectTable
-    auras_count_point_x.SelectTable = point_x_SelectTable
-    auras_count_point_y.SelectTable = point_y_SelectTable
+    local auras_count_button = self:CreateButton('auras_count_movable')
+    auras_count_button:SetWidth(120)
+    auras_count_button.movable_prefix = 'auras_count'
+    auras_count_button.movable_minmax = { size = { 0,20 } }
+    auras_count_button:SetScript('OnClick',MovablePopupButton_OnClick)
 
     colour_short:SetWidth(135)
-    auras_cd_point_x:SetWidth(95)
-    auras_cd_point_y:SetWidth(95)
-    auras_count_point_x:SetWidth(95)
-    auras_count_point_y:SetWidth(95)
 
-    auras_text_sep:SetPoint('TOP',0,-460)
+    auras_text_sep:SetPoint('TOP',0,-450)
     colour_short:SetPoint('TOPLEFT',auras_text_sep,'BOTTOMLEFT',4,-15)
     colour_medium:SetPoint('LEFT',colour_short,'RIGHT')
     colour_long:SetPoint('LEFT',colour_medium,'RIGHT')
 
-    auras_cd_text_sep:SetWidth(190)
-    auras_count_text_sep:SetWidth(190)
-    auras_cd_text_sep:SetPoint('TOPLEFT',10,-540)
-    auras_count_text_sep:SetPoint('LEFT',auras_cd_text_sep,210,0)
-
-    auras_cd_size:SetPoint('TOPLEFT',colour_short,'BOTTOMLEFT',-4,-60)
-    auras_count_size:SetPoint('LEFT',auras_cd_size,'RIGHT',20,0)
-
-    auras_cd_point_x:SetPoint('TOPLEFT',auras_cd_size,'BOTTOMLEFT',0,-20)
-    auras_cd_point_y:SetPoint('LEFT',auras_cd_point_x,'RIGHT')
-    auras_cd_offset_x:SetPoint('TOPLEFT',auras_cd_point_x,'BOTTOMLEFT',0,-15)
-    auras_cd_offset_y:SetPoint('TOPLEFT',auras_cd_offset_x,'BOTTOMLEFT',0,-30)
-
-    auras_count_point_x:SetPoint('TOPLEFT',auras_count_size,'BOTTOMLEFT',0,-20)
-    auras_count_point_y:SetPoint('LEFT',auras_count_point_x,'RIGHT')
-    auras_count_offset_x:SetPoint('TOPLEFT',auras_count_point_x,'BOTTOMLEFT',0,-15)
-    auras_count_offset_y:SetPoint('TOPLEFT',auras_count_offset_x,'BOTTOMLEFT',0,-30)
+    auras_cd_button:SetPoint('TOPLEFT',auras_text_sep,'BOTTOMLEFT',0,-50)
+    auras_count_button:SetPoint('TOP',auras_text_sep,'BOTTOM',0,-50)
 end
 -- cast bars ###################################################################
 function castbars:Initialise()
@@ -583,7 +635,6 @@ function castbars:Initialise()
     local castbar_personal = self:CreateCheckBox('castbar_showpersonal')
     local castbar_icon = self:CreateCheckBox('castbar_icon')
     local castbar_name = self:CreateCheckBox('castbar_name')
-    local castbar_shield = self:CreateCheckBox('castbar_shield')
     local castbar_all = self:CreateCheckBox('castbar_showall')
     local castbar_friend = self:CreateCheckBox('castbar_showfriend',true)
     local castbar_enemy = self:CreateCheckBox('castbar_showenemy',true)
@@ -598,14 +649,13 @@ function castbars:Initialise()
     local castbar_detach_height = self:CreateSlider('castbar_detach_height',3,50,nil,'height')
     local castbar_detach_offset = self:CreateSlider('castbar_detach_offset',1,20,nil,'offset')
     local castbar_detach_combine = self:CreateCheckBox('castbar_detach_combine',true)
+    local castbar_detach_nameonly = self:CreateCheckBox('castbar_detach_nameonly',true)
     local castbar_icon_side = self:CreateDropDown('castbar_icon_side')
     castbar_icon_side.SelectTable = { 'Left','Right' } -- TODO l10n
 
     castbar_enable:SetPoint('TOPLEFT',10,-10)
     castbar_name:SetPoint('TOPLEFT',castbar_enable,'BOTTOMLEFT')
-    castbar_shield:SetPoint('TOPLEFT',castbar_name,'BOTTOMLEFT')
-
-    castbar_icon:SetPoint('TOPLEFT',castbar_shield,'BOTTOMLEFT',0,0)
+    castbar_icon:SetPoint('TOPLEFT',castbar_name,'BOTTOMLEFT')
 
     castbar_personal:SetPoint('TOPLEFT',castbar_icon,'BOTTOMLEFT',0,-10)
     castbar_all:SetPoint('TOPLEFT',castbar_personal,'BOTTOMLEFT')
@@ -622,11 +672,13 @@ function castbars:Initialise()
     castbar_detach_height:SetWidth(120)
     castbar_detach_offset:SetWidth(120)
 
-    castbar_layout_sep:SetPoint('TOP',0,-260)
-    castbar_detach:SetPoint('TOPLEFT',10,-260-15)
+    castbar_layout_sep:SetPoint('TOP',0,-230)
+    castbar_detach:SetPoint('LEFT',10,0)
+    castbar_detach:SetPoint('TOP',castbar_layout_sep,'BOTTOM',0,-10)
     castbar_detach_combine:SetPoint('TOPLEFT',castbar_detach,'BOTTOMLEFT',10,0)
+    castbar_detach_nameonly:SetPoint('TOPLEFT',castbar_detach_combine,'BOTTOMLEFT')
     castbar_icon_side:SetPoint('LEFT',castbar_detach,'RIGHT',170,-8)
-    castbar_detach_width:SetPoint('TOPLEFT',castbar_detach,'BOTTOMLEFT',0,-50)
+    castbar_detach_width:SetPoint('TOPLEFT',castbar_detach,'BOTTOMLEFT',0,-70)
     castbar_detach_height:SetPoint('LEFT',castbar_detach_width,'RIGHT',22,0)
     castbar_detach_offset:SetPoint('LEFT',castbar_detach_height,'RIGHT',22,0)
 
@@ -641,7 +693,6 @@ function castbars:Initialise()
         return p.castbar_icon and (not p.castbar_detach or not p.castbar_detach_combine)
     end
     castbar_name.enabled = castbar_colour.enabled
-    castbar_shield.enabled = castbar_colour.enabled
     castbar_all.enabled = castbar_colour.enabled
     castbar_height.enabled = function(p) return p.castbar_enable and not p.castbar_detach end
     castbar_friend.enabled = function(p) return p.castbar_enable and p.castbar_showall end
@@ -657,6 +708,7 @@ function castbars:Initialise()
     castbar_detach_combine.enabled = function(p)
         return p.castbar_enable and p.castbar_detach and p.castbar_icon
     end
+    castbar_detach_nameonly.enabled = castbar_detach_width.enabled
 end
 -- threat ######################################################################
 function threat:Initialise()
@@ -714,13 +766,19 @@ function classpowers:Initialise()
     local classpowers_colour = self:CreateColourPicker('classpowers_colour')
     local classpowers_colour_overflow = self:CreateColourPicker('classpowers_colour_overflow')
     local classpowers_colour_inactive = self:CreateColourPicker('classpowers_colour_inactive')
+    local on_friends = self:CreateCheckBox('classpowers_on_friends',true)
+    local on_enemies = self:CreateCheckBox('classpowers_on_enemies',true)
 
     classpowers_enable:SetPoint('TOPLEFT',10,-10)
     classpowers_on_target:SetPoint('TOPLEFT',classpowers_enable,'BOTTOMLEFT',10,0)
-    classpowers_colour:SetPoint('TOPLEFT',classpowers_on_target,'BOTTOMLEFT',-6,-10)
-    classpowers_colour_overflow:SetPoint('LEFT',classpowers_colour,'RIGHT')
-    classpowers_colour_inactive:SetPoint('LEFT',classpowers_colour_overflow,'RIGHT')
-    classpowers_size:SetPoint('TOPLEFT',classpowers_colour,'BOTTOMLEFT',-4,-20)
+    on_friends:SetPoint('TOPLEFT',classpowers_on_target,'BOTTOMLEFT',10,0)
+    on_enemies:SetPoint('TOPLEFT',on_friends,'BOTTOMLEFT')
+
+    classpowers_colour:SetPoint('LEFT',classpowers_enable,220,-22)
+    classpowers_colour_overflow:SetPoint('TOP',classpowers_colour,'BOTTOM')
+    classpowers_colour_inactive:SetPoint('TOP',classpowers_colour_overflow,'BOTTOM')
+
+    classpowers_size:SetPoint('TOP',0,-140)
 
     function classpowers_colour:Get()
         -- get colour from current class
@@ -752,6 +810,10 @@ function classpowers:Initialise()
     local function classpowers_enabled(p) return p.classpowers_enable end
     classpowers_on_target.enabled = classpowers_enabled
     classpowers_size.enabled = classpowers_enabled
+    on_friends.enabled = function(p)
+        return classpowers_enabled(p) and p.classpowers_on_target
+    end
+    on_enemies.enabled = on_friends.enabled
 
     local function classpowers_colour_enabled(p)
         if classpowers_enabled(p) then
@@ -771,7 +833,8 @@ function classpowers:Initialise()
         classpowers_bar_width:SetValueStep(2)
         classpowers_bar_height:SetValueStep(2)
 
-        classpowers_bar_width:SetPoint('TOPLEFT',classpowers_size,'BOTTOMLEFT',0,-30)
+        classpowers_bar_width:SetPoint('LEFT',10,0)
+        classpowers_bar_width:SetPoint('TOP',classpowers_size,'BOTTOM',0,-40)
         classpowers_bar_height:SetPoint('LEFT',classpowers_bar_width,'RIGHT',20,0)
 
         classpowers_bar_width.enabled = classpowers_enabled
@@ -798,8 +861,8 @@ function bossmod:Initialise()
     bossmod_control_visibility:SetPoint('TOPLEFT',bossmod_enable,'BOTTOMLEFT',0,-10)
     bossmod_clickthrough:SetPoint('TOPLEFT',bossmod_control_visibility,'BOTTOMLEFT',10,0)
 
-    bossmod_icon_size:SetPoint('TOP',0,-170)
-    bossmod_x_offset:SetPoint('TOPLEFT',10,-(170+50))
+    bossmod_icon_size:SetPoint('TOP',0,-120)
+    bossmod_x_offset:SetPoint('TOPLEFT',10,-(120+50))
     bossmod_y_offset:SetPoint('LEFT',bossmod_x_offset,'RIGHT',20,0)
 end
 -- cvars #######################################################################
@@ -811,10 +874,11 @@ function cvars:Initialise()
     sfn.enabled = function(p) return p.cvar_enable end
     -- nameplateShowOnlyNames
     local no = self:CreateCheckBox('cvar_name_only')
-    no.enabled  = sfn.enabled
+    no.enabled = sfn.enabled
+    no.require_reload = true
     -- nameplate{Min,Max}Scale
     local ds = self:CreateCheckBox('cvar_disable_scale')
-    ds.enabled  = sfn.enabled
+    ds.enabled = sfn.enabled
     -- nameplatePersonalShowAlways
     local psa = self:CreateCheckBox('cvar_personal_show_always')
     psa.enabled = sfn.enabled
@@ -824,18 +888,14 @@ function cvars:Initialise()
     -- nameplatePersonalShowWithTarget
     local pst = self:CreateCheckBox('cvar_personal_show_target')
     pst.enabled = sfn.enabled
-    -- nameplateMaxDistance
-    local md = self:CreateSlider('cvar_max_distance',5,100)
-    md:SetValueStep(5)
-    md.enabled  = sfn.enabled
     -- nameplate{Other,Large}TopInset
     local ct = self:CreateSlider('cvar_clamp_top',-.1,.5)
     ct:SetValueStep(.01)
-    ct.enabled  = sfn.enabled
+    ct.enabled = sfn.enabled
     -- nameplate{Other,Large}BottomInset
     local cb = self:CreateSlider('cvar_clamp_bottom',-.1,.5)
     cb:SetValueStep(.01)
-    cb.enabled  = sfn.enabled
+    cb.enabled = sfn.enabled
     -- nameplateSelfTopInset
     local self_clamp_top = self:CreateSlider('cvar_self_clamp_top',-.1,.5)
     self_clamp_top:SetValueStep(.01)
@@ -847,7 +907,7 @@ function cvars:Initialise()
     -- nameplateOverlapV
     local ov = self:CreateSlider('cvar_overlap_v',0,5)
     ov:SetValueStep(.1)
-    ov.enabled  = sfn.enabled
+    ov.enabled = sfn.enabled
     -- nameplate{Min,Max,Selected}Alpha
     local disable_alpha = self:CreateCheckBox('cvar_disable_alpha')
     disable_alpha.enabled = sfn.enabled
@@ -876,10 +936,9 @@ function cvars:Initialise()
     psc:SetPoint('TOPLEFT',psa,'BOTTOMLEFT',0,0)
     pst:SetPoint('TOPLEFT',psc,'BOTTOMLEFT',0,0)
 
-    md:SetPoint('TOPLEFT',10,-330)
-    ov:SetPoint('LEFT',md,'RIGHT',20,0)
-    ct:SetPoint('TOPLEFT',md,'BOTTOMLEFT',0,-35)
-    cb:SetPoint('TOPLEFT',ov,'BOTTOMLEFT',0,-35)
+    ov:SetPoint('TOP',0,-330)
+    ct:SetPoint('TOPLEFT',10,-380)
+    cb:SetPoint('LEFT',ct,'RIGHT',20,0)
     self_clamp_top:SetPoint('TOPLEFT',ct,'BOTTOMLEFT',0,-35)
     self_clamp_bottom:SetPoint('TOPLEFT',cb,'BOTTOMLEFT',0,-35)
 end

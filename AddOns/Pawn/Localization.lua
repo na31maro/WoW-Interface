@@ -1,6 +1,6 @@
 ﻿-- Pawn by Vger-Azjol-Nerub
 -- www.vgermods.com
--- © 2006-2019 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
+-- © 2006-2020 Green Eclipse.  This mod is released under the Creative Commons Attribution-NonCommercial-NoDerivs 3.0 license.
 -- See Readme.htm for more information.
 
 -- 
@@ -91,6 +91,7 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		["BlockValueInfo"] = "Shield block value.  Increases the damage that a shield absorbs when it successfully blocks.",
 		["Cloth"] = "Cloth",
 		["ClothInfo"] = "Points to be assigned if the item is cloth.",
+		["CorruptionInfo"] = "Corruption of N'Zoth.  A negative value for Corruption will remove points from an item's score based on the level of corruption.",
 		["Crit"] = "Crit",
 		["CritInfo"] = "Critical strike.  Increases the chance that your attacks and healing spells will hit with increased potency.  (In WoW Classic, this only affects physical attacks.)",
 		["DefenseInfo"] = "Defense skill.  Decreases the chance that you'll be hit by boss attacks.",
@@ -260,6 +261,7 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		["Charges"] = "^.+ Charges?$",
 		["Cloth"] = "^Cloth$",
 		["CooldownRemaining"] = "^Cooldown remaining:",
+		["Corruption"] = "^%+?# Corruption$",
 		["Crit"] = "^%+?# Critical [Ss]trike%.?$",
 		["Crit2"] = "^UNUSED$",
 		["CritPercent"] = "^Equip: Improves your chance to get a critical strike by #%%%.$",
@@ -270,6 +272,7 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		["DisenchantingRequires"] = "^Disenchanting requires",
 		["Dodge"] = "^%+?#%%? Dodge$",
 		["Dodge2"] = "^UNUSED$",
+		["Dodge3"] = "^UNUSED$",
 		["DodgePercent"] = "^Equip: Increases your chance to dodge an attack by #%%%.$",
 		["Dps"] = "^%(# damage per second%)$",
 		["DpsAdd"] = "^Adds # damage per second$",
@@ -334,6 +337,7 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		["NormalizationEnchant"] = "^Enchanted: (.*)$",
 		["Parry"] = "^%+?# Parry$",
 		["Parry2"] = "^UNUSED$",
+		["ParryPercent"] = "^Equip: Increases your chance to parry an attack by #%%%.$",
 		["Plate"] = "^Plate$",
 		["Polearm"] = "^Polearm$",
 		["PvPPower"] = "^%+?# PvP Power$",
@@ -348,14 +352,17 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		["ShadowResist"] = "^%+?# Shadow Resistance$",
 		["ShadowSpellDamage"] = "^%+# Shadow Spell Damage$",
 		["ShadowSpellDamage2"] = "^Equip: Increases damage done by Shadow spells and effects by up to #%.$",
+		["ShadowSpellDamage3"] = "^UNUSED$",
 		["Shield"] = "^Shield$",
 		["SocketBonusPrefix"] = "Socket Bonus: ",
 		["Speed"] = "^Speed #$",
 		["Speed2"] = "^UNUSED$",
 		["SpellCrit"] = "^Equip: Improves your chance to get a critical strike with spells by #%%%.$",
 		["SpellHit"] = "^Equip: Improves your chance to hit with spells by #%%%.$",
-		["SpellDamage"] = "^%+# Spell Damage$",
+		["SpellDamage"] = "^%+# Damage and Healing Spells$",
 		["SpellDamage2"] = "^Equip: Increases damage and healing done by magical spells and effects by up to #%.$",
+		["SpellDamage3"] = "^UNUSED$",
+		["SpellDamage4"] = "^UNUSED$",
 		["SpellPower"] = "^%+?# Spell Power$",
 		["Spirit"] = "^%+?# Spirit$",
 		["Staff"] = "^Staff$",
@@ -364,6 +371,7 @@ For more information on customizing Pawn, please see the help file (Readme.htm) 
 		["Sword"] = "^Sword$",
 		["TemporaryBuffMinutes"] = "^.+%(%d+ min%)$",
 		["TemporaryBuffSeconds"] = "^.+%(%d+ sec%)$",
+		["Thrown"] = "^Thrown$",
 		["Thunderforged"] = "^Thunderforged$",
 		["Timeless"] = "^Timeless$",
 		["Titanforged"] = "^Titanforged$",
@@ -571,7 +579,7 @@ If you'd rather manage things on your own, just click Manual below.]=],
 		["ScaleCopy"] = "Copy",
 		["ScaleCopyTooltip"] = "Create a new scale by making a copy of this one.",
 		["ScaleDefaults"] = "Template",
-		["ScaleDefaultsTooltip"] = "Create a new scale from a template for your spec.",
+		["ScaleDefaultsTooltip"] = "Create a new scale from a template for your class or spec.",
 		["ScaleDeleteTooltip"] = [=[Delete this scale.
 
 This command cannot be undone!]=],
@@ -603,11 +611,12 @@ Shortcut: Shift+click a scale]=],
 		["ValuesDoNotShowUpgradesFor1H"] = "Don't show upgrades for 1H items",
 		["ValuesDoNotShowUpgradesFor2H"] = "Don't show upgrades for 2H items",
 		["ValuesDoNotShowUpgradesTooltip"] = "Enable this option to hide upgrades of this type of item.  For example, even though paladin tanks can use two-handed weapons, a two-handed weapon is never an \"upgrade\" for a paladin tanking set, so Pawn should not show upgrade notifications for them.  Similarly, retribution paladins can use one-handed weapons, but they are never upgrades.",
-		["ValuesFollowSpecialization"] = "Only show upgrades for my best armor type after level 50",
-		["ValuesFollowSpecializationTooltip"] = "Enable this option to hide upgrades for armor that your class does not specialize in after level 50.  For example, at level 50 holy paladins learn Plate Specialization, which increases their intellect by 5% when wearing only plate armor.  When this option is chosen Pawn will never consider cloth, leather, or mail to be upgrades for level 50+ holy paladins.",
+		["ValuesFollowSpecialization"] = "Only show upgrades for my best armor type after level %d",
+		["ValuesFollowSpecializationTooltip"] = "Enable this option to hide upgrades for armor that your class does not specialize in after level %d.  For example, at level %d holy paladins learn Plate Specialization, which increases their intellect by 5%% when wearing only plate armor.  When this option is chosen Pawn will never consider cloth, leather, or mail to be upgrades for level %d+ holy paladins.",
 		["ValuesHeader"] = "Stat weights for %s",
+		["ValuesIgnoreItemType"] = "These items are unusable",
 		["ValuesIgnoreStat"] = "Items with this are unusable",
-		["ValuesIgnoreStatTooltip"] = "Enable this option to cause any item with this stat to not get a value for this scale.  For example, shamans can't wear plate, so a scale designed for a shaman can mark plate as unusable so that plate armor doesn't get a value for that scale.",
+		["ValuesIgnoreStatTooltip"] = "Enable this option to cause any item of this type or with this stat to be ignored entirely for this scale.  For example, shamans can't wear plate, so a scale designed for a shaman can mark plate as unusable so that plate armor is never considered an upgrade.",
 		["ValuesNormalize"] = "Normalize values (like Wowhead)",
 		["ValuesNormalizeTooltip"] = [=[Enable this option to divide the final calculated value for an item by the sum of all stat values in your scale, like Wowhead and Lootzor do.  This helps to even out situations like where one scale has stat values around 1 and another has values around 5.  It also helps to keep numbers manageably small.
 
@@ -620,6 +629,71 @@ For more information on this setting, see the readme file.]=],
 		["ValuesWelcomeReadOnly"] = "This built-in scale can't be changed.  If you'd like to customize these weights, go to the Scale tab, enable Manual mode, and make a copy of this scale."
 	}
 }
+
+PawnLocal.Specs =
+{
+    [1] = {
+        { Name="Arms", Icon=132355, Role="DAMAGER" },
+        { Name="Fury", Icon=132347, Role="DAMAGER" },
+        { Name="Protection", Icon=132341, Role="TANK" },
+    },
+    [2] = {
+        { Name="Holy", Icon=135920, Role="HEALER" },
+        { Name="Protection", Icon=236264, Role="TANK" },
+        { Name="Retribution", Icon=135873, Role="DAMAGER" },
+    },
+    [3] = {
+        { Name="Beast Mastery", Icon=461112, Role="DAMAGER" },
+        { Name="Marksmanship", Icon=236179, Role="DAMAGER" },
+        { Name="Survival", Icon=461113, Role="DAMAGER" },
+    },
+    [4] = {
+        { Name="Assassination", Icon=236270, Role="DAMAGER" },
+        { Name="Outlaw", Icon=236286, Role="DAMAGER" },
+        { Name="Subtlety", Icon=132320, Role="DAMAGER" },
+    },
+    [5] = {
+        { Name="Discipline", Icon=135940, Role="HEALER" },
+        { Name="Holy", Icon=237542, Role="HEALER" },
+        { Name="Shadow", Icon=136207, Role="DAMAGER" },
+    },
+    [6] = {
+        { Name="Blood", Icon=135770, Role="TANK" },
+        { Name="Frost", Icon=135773, Role="DAMAGER" },
+        { Name="Unholy", Icon=135775, Role="DAMAGER" },
+    },
+    [7] = {
+        { Name="Elemental", Icon=136048, Role="DAMAGER" },
+        { Name="Enhancement", Icon=237581, Role="DAMAGER" },
+        { Name="Restoration", Icon=136052, Role="HEALER" },
+    },
+    [8] = {
+        { Name="Arcane", Icon=135932, Role="DAMAGER" },
+        { Name="Fire", Icon=135810, Role="DAMAGER" },
+        { Name="Frost", Icon=135846, Role="DAMAGER" },
+    },
+    [9] = {
+        { Name="Affliction", Icon=136145, Role="DAMAGER" },
+        { Name="Demonology", Icon=136172, Role="DAMAGER" },
+        { Name="Destruction", Icon=136186, Role="DAMAGER" },
+    },
+    [10] = {
+        { Name="Brewmaster", Icon=608951, Role="TANK" },
+        { Name="Mistweaver", Icon=608952, Role="HEALER" },
+        { Name="Windwalker", Icon=608953, Role="DAMAGER" },
+    },
+    [11] = {
+        { Name="Balance", Icon=136096, Role="DAMAGER" },
+        { Name="Feral", Icon=132115, Role="DAMAGER" },
+        { Name="Guardian", Icon=132276, Role="TANK" },
+        { Name="Restoration", Icon=136041, Role="HEALER" },
+    },
+    [12] = {
+        { Name="Havoc", Icon=1247264, Role="DAMAGER" },
+        { Name="Vengeance", Icon=1247265, Role="TANK" },
+    },
+}
+
 end
 
 local Locale = GetLocale()

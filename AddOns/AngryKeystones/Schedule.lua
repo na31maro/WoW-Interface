@@ -7,18 +7,18 @@ local requestPartyKeystones
 
 -- 1: Overflowing, 2: Skittish, 3: Volcanic, 4: Necrotic, 5: Teeming, 6: Raging, 7: Bolstering, 8: Sanguine, 9: Tyrannical, 10: Fortified, 11: Bursting, 12: Grievous, 13: Explosive, 14: Quaking
 local affixScheduleText = {
-	{"Fortified", "Bolstering", "Grievous"},
-	{"Tyrannical", "Raging", "Explosive"},
-	{"Fortified", "Sanguine", "Grievous"},
-	{"Tyrannical", "Teeming", "Volcanic"},
-	{"Fortified", "Bolstering", "Skittish"},
-	{"Tyrannical", "Bursting", "Necrotic"},
-	{"Fortified", "Sanguine", "Quaking"},
-	{"Tyrannical", "Bolstering", "Explosive"},
-	{"Fortified", "Bursting", "Volcanic"},
-	{"Tyrannical", "Raging", "Volcanic"},
-	{"Fortified", "Teeming", "Quaking"},
-	{"Tyrannical", "Raging", "Necrotic"},
+	{"Fortified",	"Bolstering",	"Grievous"},
+	{"Tyrannical",	"Raging",	"Explosive"},
+	{"Fortified",	"Sanguine",	"Grievous"},
+	{"Tyrannical",	"Teeming",	"Volcanic"},
+	{"Fortified",	"Bolstering",	"Skittish"},
+	{"Tyrannical",	"Bursting",	"Necrotic"},
+	{"Fortified",	"Sanguine",	"Quaking"},
+	{"Tyrannical",	"Bolstering",	"Explosive"},
+	{"Fortified",	"Bursting",	"Volcanic"},
+	{"Tyrannical",	"Raging",	"Necrotic"},
+	{"Fortified",	"Teeming",	"Quaking"},
+	{"Tyrannical",	"Bursting",	"Skittish"}
 }
 local affixScheduleKeys = {["Overflowing"]=1, ["Skittish"]=2, ["Volcanic"]=3, ["Necrotic"]=4, ["Teeming"]=5, ["Raging"]=6, ["Bolstering"]=7, ["Sanguine"]=8, ["Tyrannical"]=9, ["Fortified"]=10, ["Bursting"]=11, ["Grievous"]=12, ["Explosive"]=13, ["Quaking"]=14 }
 local affixSchedule = {}
@@ -76,6 +76,10 @@ local function UpdatePartyKeystones()
 					entry.Text:SetText(name)
 					entry.Text:SetTextColor(color:GetRGBA())
 
+					local _, suffix = strsplit("-", keystoneName)
+					if suffix then
+						keystoneName = suffix
+					end
 					entry.Text2:SetText(keystoneName)
 
 					e = e + 1
@@ -85,11 +89,11 @@ local function UpdatePartyKeystones()
 	end
 	if e == 1 then
 		Mod.AffixFrame:ClearAllPoints()
-		Mod.AffixFrame:SetPoint("LEFT", ChallengesFrame.WeeklyInfo.Child.WeeklyChest, "RIGHT", 30, 0)
+		Mod.AffixFrame:SetPoint("LEFT", ChallengesFrame.WeeklyInfo.Child.WeeklyChest, "RIGHT", 130, 0)
 		Mod.PartyFrame:Hide()
 	else
 		Mod.AffixFrame:ClearAllPoints()
-		Mod.AffixFrame:SetPoint("TOPLEFT", ChallengesFrame.WeeklyInfo.Child.WeeklyChest, "TOPRIGHT", 30, 30)
+		Mod.AffixFrame:SetPoint("TOPLEFT", ChallengesFrame.WeeklyInfo.Child.WeeklyChest, "TOPRIGHT", 130, 55)
 		Mod.PartyFrame:Show()
 	end
 	while e <= 4 do
@@ -104,15 +108,18 @@ local function UpdateFrame()
 	Mod.PartyFrame:Show()
 	Mod.KeystoneText:Show()
 
-	ChallengesFrame.WeeklyInfo.Child.WeeklyChest:ClearAllPoints()
-	ChallengesFrame.WeeklyInfo.Child.WeeklyChest:SetPoint("LEFT", 50, -30)
-	if false and ChallengesFrame.WeeklyInfo.Child.WeeklyChest:IsShown() then
-		ChallengesFrame.WeeklyInfo.Child.RunStatus:SetWidth(240)
-	else
-		ChallengesFrame.WeeklyInfo.Child.RunStatus:SetWidth(240)
-		ChallengesFrame.WeeklyInfo.Child.RunStatus:ClearAllPoints()
-		ChallengesFrame.WeeklyInfo.Child.RunStatus:SetPoint("TOP", ChallengesFrame.WeeklyInfo.Child.WeeklyChest, "TOP", -10, 35)
-	end
+	local weeklyChest = ChallengesFrame.WeeklyInfo.Child.WeeklyChest
+	weeklyChest:ClearAllPoints()
+	weeklyChest:SetPoint("LEFT", 100, -30)
+
+	local description = ChallengesFrame.WeeklyInfo.Child.Description
+	description:SetWidth(240)
+	description:ClearAllPoints()
+	description:SetPoint("TOP", weeklyChest, "TOP", 0, 75)
+
+	local legacyWeeklyChest = ChallengesFrame.WeeklyInfo.Child.LegacyWeeklyChest
+	legacyWeeklyChest:ClearAllPoints()
+	legacyWeeklyChest:SetPoint("TOP", weeklyChest, "TOP", 0, 50)
 
 	local currentKeystoneName = GetNameForKeystone(C_MythicPlus.GetOwnedKeystoneChallengeMapID(), C_MythicPlus.GetOwnedKeystoneLevel())
 	if currentKeystoneName then
@@ -168,7 +175,7 @@ end
 function Mod:Blizzard_ChallengesUI()
 	local frame = CreateFrame("Frame", nil, ChallengesFrame)
 	frame:SetSize(246, 92)
-	frame:SetPoint("TOPLEFT", ChallengesFrame.WeeklyInfo.Child.WeeklyChest, "TOPRIGHT", 30, 30)
+	frame:SetPoint("TOPLEFT", ChallengesFrame.WeeklyInfo.Child.WeeklyChest, "TOPRIGHT", -20, 30)
 	Mod.AffixFrame = frame
 
 	local bg = frame:CreateTexture(nil, "BACKGROUND")
@@ -287,7 +294,7 @@ function Mod:Blizzard_ChallengesUI()
 	frame2.Entries = entries2
 
 	local keystoneText = ChallengesFrame.WeeklyInfo.Child:CreateFontString(nil, "ARTWORK", "GameFontNormalMed2")
-	keystoneText:SetPoint("BOTTOM", ChallengesFrame.WeeklyInfo.Child.WeeklyChest, "BOTTOM", 0, -25)
+	keystoneText:SetPoint("TOP", ChallengesFrame.WeeklyInfo.Child.WeeklyChest, "BOTTOM", 0, -15)
 	keystoneText:SetWidth(220)
 	Mod.KeystoneText = keystoneText
 

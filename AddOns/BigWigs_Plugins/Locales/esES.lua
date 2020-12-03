@@ -1,4 +1,4 @@
-local L = BigWigsAPI:NewLocale("BigWigs: Plugins", "esES") or BigWigsAPI:NewLocale("BigWigs: Plugins", "esMX")
+local L = BigWigsAPI:NewLocale("BigWigs: Plugins", "esES")
 if not L then return end
 
 L.comma = ", "
@@ -17,6 +17,11 @@ L.altPowerTitle = "PoderAlternativo"
 L.background = "Fondo"
 L.backgroundDesc = "Muestra/oculta el fondo"
 L.bars = "Barras"
+L.nameplateBars = "Barras en placas de nombre"
+L.nameplateAutoWidth = "Igualar anchura de la placa de nombre"
+L.nameplateAutoWidthDesc = "Pone la anchura de la barra en la placa de nombre con la anchura de la placa de nombre padre."
+-- L.nameplateOffsetY = "Y Offset"
+-- L.nameplateOffsetYDesc = "Offset from the top of the nameplate for upwards bars and the bottom of the nameplate for downwards bars."
 L.bestTimeBar = "Mejor tiempo"
 L.bigWigsBarStyleName_Default = "Por defecto"
 L.blockEmotes = "Bloquear emotes del centro de la pantalla"
@@ -49,7 +54,7 @@ L.chatMessages = "Mensajes de chat"
 L.classColors = "Colores de clase"
 L.classColorsDesc = "Colorea el nombre de los jugadores según su clase"
 L.clickableBars = "Barras clicables"
-L.clickableBarsDesc = [=[Las barras de BigWigs bars son clicables por defecto. De esta forma puedes targetear objetos o lanzar hechizos AoE detrás de ellos, cambia el ángulo de la cámara, y así sucesivamente, mientras tu cursos está encima de las barras. |cffff4411Si habilitas las barras clicables, esto dejará de funcionar.|r Las barras interceptarán cualquier clic de ratón que hagas en ellas.
+L.clickableBarsDesc = [=[Por defecto, se puede hacer clic a través de las barras de BigWigs. De esta manera puedes seleccionar objetos, lanzar hechizos AoE, cambiar el ángulo de la cámara, etc., mientras tu cursor está encima de las mismas. |cffff4411Si activas esta opción ya no se comportarán de esta forma.|r Las barras interceptarán los clics que hagas en ellas.
 ]=]
 L.close = "Cerrar"
 L.closeButton = "Boton cerrar"
@@ -283,8 +288,8 @@ L.disableSfxDesc = "La opción de 'Efectos de Sonido' en las opciones de sonido 
 --L.blockTooltipQuestsDesc = "When you need to kill a boss for a quest, it will usually show as '0/1 complete' in the tooltip when you place your mouse over the boss. This will be hidden whilst in combat with that boss to prevent the tooltip growing very large."
 --L.blockFollowerMission = "Bloquear ventanas emergentes de ciudadela" -- Rename to follower mission
 --L.blockFollowerMissionDesc = "Las ventanas emergentes de ciudadela muestran varias cosas, pero principalmente cuando un seguidor a completado una misión.\n\nEstas ventanas pueden cubrir partes críticas de tu interfaz durante un encuentro, así que recomendamos bloquearlas."
---L.blockObjectiveTracker = "Hide quest tracker"
---L.blockObjectiveTrackerDesc = "The quest objective tracker will be hidden during a boss encounter to clear up screen space.\n\nThis will NOT happen if you are in a mythic+ or are tracking an achievement."
+L.blockObjectiveTracker = "Ocultar seguimiento de misión"
+L.blockObjectiveTrackerDesc = "El seguimiento de misión se ocultará durante encuentros de jefes para limpiar el espacio en pantalla.\n\nEsto NO pasará si estás en una mitica+ o si sigues un logro."
 
 L.subzone_grand_bazaar = "Gran Bazar" -- Battle of Dazar'alor raid (Battle for Azeroth)
 L.subzone_port_of_zandalar = "Puerto de Zandalar" -- Battle of Dazar'alor raid (Battle for Azeroth)

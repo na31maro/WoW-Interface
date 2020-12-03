@@ -7,7 +7,7 @@ local kui = LibStub('Kui-1.0')
 local kc = LibStub('KuiConfig-1.0')
 local LSM = LibStub('LibSharedMedia-3.0')
 local addon = KuiNameplates
-local core = KuiNameplatesCore
+local core = KuiNameplatesCore --luacheck:globals KuiNameplatesCore
 -- local event frame
 local cc = CreateFrame('Frame')
 -- add media to LSM ############################################################
@@ -29,6 +29,7 @@ local DEFAULT_BAR = 'Kui status bar'
 local default_config = {
     bar_texture = DEFAULT_BAR,
     bar_animation = 3,
+    bar_spark = true, -- NEX XXX requires reload
     combat_hostile = 1,
     combat_friendly = 1,
     ignore_uiscale = false,
@@ -40,12 +41,16 @@ local default_config = {
     mouseover_glow_colour = { .3, .7, 1, .5 },
     mouseover_highlight = true,
     mouseover_highlight_opacity = .4, -- NEX
-    frame_glow_size = 8,
+    frame_glow_size_shadow = 3,
+    frame_glow_size_target = 8,
+    frame_glow_size_threat = 8,
     target_arrows = false,
     target_arrows_size = 28,
     target_arrows_inset = 0, -- NEX
+    target_arrows_texture = 'interface/addons/kui_nameplates_core/media/target-arrow', -- NEX
     use_blizzard_personal = false,
-    frame_vertical_offset = 0,
+    use_blizzard_powers = false,
+    frame_vertical_offset = 0, -- NEX
     show_arena_id = true, -- NEX
 
     clickthrough_self = false,
@@ -98,9 +103,12 @@ local default_config = {
     font_size_small = 10,
     name_text = true,
     level_text = false,
+    level_nameonly = false,
     health_text = false,
-    name_vertical_offset = -2,
+    name_vertical_offset = -3,
     bot_vertical_offset = -3,
+    name_constrain_offset = -20, -- NEX
+    name_constrain_justify = 2, -- NEX
 
     name_colour_white_in_bar_mode = true,
     class_colour_friendly_names = true,
@@ -116,6 +124,7 @@ local default_config = {
     health_text_friend_dmg = 5,
     health_text_hostile_max = 1,
     health_text_hostile_dmg = 4,
+    health_text_percent_symbol = false,
 
     colour_hated = {.7,.2,.1},
     colour_neutral = {1,.8,0},
@@ -139,12 +148,18 @@ local default_config = {
     execute_percent = 20,
     execute_colour = {1,1,1},
 
-    frame_width = 132,
-    frame_height = 13,
+    frame_width = 100,
+    frame_height = 14,
     frame_width_minus = 72,
-    frame_height_minus = 8,
-    frame_width_personal = 132,
-    frame_height_personal = 13,
+    frame_height_minus = 14,
+    frame_width_personal = 128,
+    frame_height_personal = 16,
+    frame_width_target = 128,
+    frame_height_target = 16,
+    frame_target_size = true,
+    frame_minus_size = true,
+    frame_padding_x = 10,
+    frame_padding_y = 20,
     powerbar_height = 3,
     global_scale = 1,
 
@@ -182,7 +197,6 @@ local default_config = {
     castbar_showpersonal = false,
     castbar_icon = true,
     castbar_name = true,
-    castbar_shield = true,
     castbar_showall = true,
     castbar_showfriend = true,
     castbar_showenemy = true,
@@ -196,7 +210,8 @@ local default_config = {
     castbar_detach_width = 36,
     castbar_detach_offset = 5,
     castbar_detach_combine = true,
-    castbar_detach_nameonly = false, -- nex
+    castbar_detach_nameonly = false,
+    castbar_detach_match_frame_width = false, -- NEX
     castbar_icon_side = 1,
 
     tank_mode = true,
@@ -213,9 +228,14 @@ local default_config = {
 
     classpowers_enable = true,
     classpowers_on_target = true,
+    classpowers_on_friends = true,
+    classpowers_on_enemies = true,
     classpowers_size = 12,
-    classpowers_bar_width = 50,
-    classpowers_bar_height = 3,
+    classpowers_bar_width = 80,
+    classpowers_bar_height = 5,
+    classpowers_y = 1,
+    classpowers_y_nameonly = -4,
+    classpowers_y_personal = -8,
 
     classpowers_colour_deathknight = {1,.2,.3},
     classpowers_colour_druid       = {1,1,.1},
@@ -240,7 +260,6 @@ local default_config = {
     cvar_personal_show_always = GetCVarDefault('nameplatePersonalShowAlways')=="1",
     cvar_personal_show_combat = GetCVarDefault('nameplatePersonalShowInCombat')=="1",
     cvar_personal_show_target = GetCVarDefault('nameplatePersonalShowWithTarget')=="1",
-    cvar_max_distance = tonumber(GetCVarDefault('nameplateMaxDistance')),
     cvar_clamp_top = tonumber(GetCVarDefault('nameplateOtherTopInset')),
     cvar_clamp_bottom = tonumber(GetCVarDefault('nameplateOtherBottomInset')),
     cvar_self_clamp_top = tonumber(GetCVarDefault('nameplateSelfTopInset')),
@@ -251,7 +270,8 @@ local default_config = {
     cvar_self_alpha = 1,
     cvar_occluded_mult = tonumber(GetCVarDefault('nameplateOccludedAlphaMult')),
 
-    -- point+offset variables
+    -- XXX legacy aura variables; kept for transition
+    -- transition logic: p=px*py;x=ox;y=oy.
     auras_cd_point_x = 1,
     auras_cd_point_y = 1,
     auras_cd_offset_x = -4,
@@ -260,20 +280,43 @@ local default_config = {
     auras_count_point_y = 3,
     auras_count_offset_x = 5,
     auras_count_offset_y = -2,
+    -- simple movables; XXX to be moved once KuiConfig supports subtables
+    -- auras text overrides
+    auras_cd_point = 1, -- TOPLEFT
+    auras_cd_x = -4,
+    auras_cd_y = 3,
+    auras_count_point = 9, -- BOTTOMRIGHT
+    auras_count_x = 5,
+    auras_count_y = -2,
+    show_quest_icon = true,
+    quest_icon_size = 18,
+    quest_icon_point = 2,
+    quest_icon_x = -18,
+    quest_icon_y = 0,
+    show_raid_icon = true,
+    raid_icon_size = 26,
+    raid_icon_point = 8,
+    raid_icon_x = 31,
+    raid_icon_y = 0,
 }
--- local functions #############################################################
+-- global scale helper #########################################################
+-- for frame/texture sizes; apply global scale to given value
 local GLOBAL_SCALE
-local function Scale(v)
+function core:Scale(v)
     if not tonumber(GLOBAL_SCALE) or GLOBAL_SCALE == 1 then
         return v
     else
         return floor((v*GLOBAL_SCALE)+.5)
     end
 end
+-- local functions #############################################################
 local function UpdateClickboxSize()
     if kui.CLASSIC then return end -- XXX functions exist, but break display
-    local o_width = (Scale(core.profile.frame_width) * addon.uiscale) + 10
-    local o_height = (Scale(core.profile.frame_height) * addon.uiscale) + 20
+    local x_pad = core:Scale(core.profile.frame_padding_x)
+    local y_pad = core:Scale(core.profile.frame_padding_y)
+
+    local o_width = (core:Scale(core.profile.frame_width) * addon.uiscale) + x_pad
+    local o_height = (core:Scale(core.profile.frame_height) * addon.uiscale) + y_pad
 
     if C_NamePlate.SetNamePlateOtherSize then
         C_NamePlate.SetNamePlateOtherSize(o_width,o_height)
@@ -283,13 +326,14 @@ local function UpdateClickboxSize()
     end
 
     if addon.USE_BLIZZARD_PERSONAL then
+        -- obey width, use static height
         C_NamePlate.SetNamePlateSelfSize(
-            core.profile.frame_width_personal - 10,
+            core.profile.frame_width_personal - x_pad,
             45
         )
     else
-        local p_width = (Scale(core.profile.frame_width_personal) * addon.uiscale) + 10
-        local p_height = (Scale(core.profile.frame_height_personal) * addon.uiscale) + 20
+        local p_width = (core:Scale(core.profile.frame_width_personal) * addon.uiscale) + x_pad
+        local p_height = (core:Scale(core.profile.frame_height_personal) * addon.uiscale) + y_pad
         C_NamePlate.SetNamePlateSelfSize(p_width,p_height)
     end
 end
@@ -300,6 +344,7 @@ end
 local configChanged = {}
 function configChanged.target_arrows(v)
     if v then
+        -- create arrows if needed
         core:configChangedTargetArrows()
     end
 end
@@ -317,14 +362,6 @@ end
 function configChanged.tankmode_force_offtank(v)
     local ele = addon:GetPlugin('TankMode')
     ele:SetForceOffTank(v)
-end
-
-function configChanged.level_text(v)
-    if v then
-        addon:GetPlugin('LevelText'):Enable()
-    else
-        addon:GetPlugin('LevelText'):Disable()
-    end
 end
 
 function configChanged.bar_texture()
@@ -474,6 +511,10 @@ configChanged.frame_width = configChangedFrameSize
 configChanged.frame_height = configChangedFrameSize
 configChanged.frame_width_minus = configChangedFrameSize
 configChanged.frame_height_minus = configChangedFrameSize
+configChanged.frame_width_target = configChangedFrameSize
+configChanged.frame_height_target = configChangedFrameSize
+configChanged.frame_padding_x = configChangedFrameSize
+configChanged.frame_padding_y = configChangedFrameSize
 
 local function configChangedFontOption()
     core:configChangedFontOption()
@@ -483,18 +524,22 @@ configChanged.font_size_normal = configChangedFontOption
 configChanged.font_size_small = configChangedFontOption
 configChanged.font_style = configChangedFontOption
 
-local function configChangedNameColour()
-    core:configChangedNameColour()
+local function configChangedName()
+    core:configChangedName()
+    core:configChangedTextOffset()
 end
-configChanged.name_colour_white_in_bar_mode = configChangedNameColour
-configChanged.class_colour_friendly_names = configChangedNameColour
-configChanged.class_colour_enemy_names = configChangedNameColour
-configChanged.name_colour_brighten_class = configChangedNameColour
-configChanged.name_colour_player_friendly = configChangedNameColour
-configChanged.name_colour_player_hostile = configChangedNameColour
-configChanged.name_colour_npc_friendly = configChangedNameColour
-configChanged.name_colour_npc_neutral = configChangedNameColour
-configChanged.name_colour_npc_hostile = configChangedNameColour
+configChanged.name_constrain = configChangedName
+configChanged.name_constrain_offset = configChangedName
+configChanged.name_constrain_justify = configChangedName
+configChanged.name_colour_white_in_bar_mode = configChangedName
+configChanged.class_colour_friendly_names = configChangedName
+configChanged.class_colour_enemy_names = configChangedName
+configChanged.name_colour_brighten_class = configChangedName
+configChanged.name_colour_player_friendly = configChangedName
+configChanged.name_colour_player_hostile = configChangedName
+configChanged.name_colour_npc_friendly = configChangedName
+configChanged.name_colour_npc_neutral = configChangedName
+configChanged.name_colour_npc_hostile = configChangedName
 
 function configChanged.nameonly()
     core:configChangedNameOnly()
@@ -547,14 +592,12 @@ configChanged.auras_highlight_other = configChangedAuras
 configChanged.auras_per_row = configChangedAuras
 configChanged.auras_cd_size = configChangedAuras
 configChanged.auras_count_size = configChangedAuras
-configChanged.auras_cd_point_x = configChangedAuras
-configChanged.auras_cd_point_y = configChangedAuras
-configChanged.auras_cd_offset_x = configChangedAuras
-configChanged.auras_cd_offset_y = configChangedAuras
-configChanged.auras_count_point_x = configChangedAuras
-configChanged.auras_count_point_y = configChangedAuras
-configChanged.auras_count_offset_x = configChangedAuras
-configChanged.auras_count_offset_y = configChangedAuras
+configChanged.auras_cd_point = configChangedAuras
+configChanged.auras_cd_x = configChangedAuras
+configChanged.auras_cd_y = configChangedAuras
+configChanged.auras_count_point = configChangedAuras
+configChanged.auras_count_x = configChangedAuras
+configChanged.auras_count_y = configChangedAuras
 
 local function configChangedCastBar()
     core:SetCastBarConfig()
@@ -571,7 +614,6 @@ configChanged.castbar_colour = configChangedCastBar
 configChanged.castbar_unin_colour = configChangedCastBar
 configChanged.castbar_icon = configChangedCastBar
 configChanged.castbar_name = configChangedCastBar
-configChanged.castbar_shield = configChangedCastBar
 configChanged.castbar_animate = configChangedCastBar
 configChanged.castbar_animate_change_colour = configChangedCastBar
 configChanged.castbar_name_vertical_offset = configChangedCastBar
@@ -594,9 +636,9 @@ end
 local function configChangedClassPowers()
     if not core.ClassPowers then return end
     core.ClassPowers.on_target = core.profile.classpowers_on_target
-    core.ClassPowers.icon_size = core.profile.classpowers_size
-    core.ClassPowers.bar_width = core.profile.classpowers_bar_width
-    core.ClassPowers.bar_height = core.profile.classpowers_bar_height
+    core.ClassPowers.icon_size = core:Scale(core.profile.classpowers_size)
+    core.ClassPowers.bar_width = core:Scale(core.profile.classpowers_bar_width)
+    core.ClassPowers.bar_height = core:Scale(core.profile.classpowers_bar_height)
     addon:GetPlugin('ClassPowers'):UpdateConfig()
 end
 configChanged.classpowers_size = configChangedClassPowers
@@ -650,24 +692,10 @@ function configChanged.execute_percent()
 end
 configChanged.execute_auto = configChanged.execute_percent
 
-function configChanged.frame_glow_size()
-    for _,f in addon:Frames() do
-        f:UpdateFrameGlowSize()
-
-        if type(f.UpdateNameOnlyGlowSize) == 'function' then
-            f:UpdateNameOnlyGlowSize()
-        end
-    end
-end
-
 function configChanged.ignore_uiscale(v)
     addon.IGNORE_UISCALE = v
     addon:UI_SCALE_CHANGED()
     QueueClickboxUpdate()
-end
-
-function configChanged.use_blizzard_personal(v)
-    addon.USE_BLIZZARD_PERSONAL = v
 end
 
 local function ClickthroughUpdate()
@@ -690,9 +718,9 @@ configChanged.bossmod_enable = function(v)
     end
 end
 local function configChangedBossMod()
-    core.BossModIcon.icon_size = core.profile.bossmod_icon_size
-    core.BossModIcon.icon_x_offset = core.profile.bossmod_x_offset
-    core.BossModIcon.icon_y_offset = core.profile.bossmod_y_offset
+    core.BossModIcon.icon_size = core:Scale(core.profile.bossmod_icon_size)
+    core.BossModIcon.icon_x_offset = core:Scale(core.profile.bossmod_x_offset)
+    core.BossModIcon.icon_y_offset = core:Scale(core.profile.bossmod_y_offset)
     core.BossModIcon.control_visibility = core.profile.bossmod_control_visibility
     core.BossModIcon.clickthrough = core.profile.bossmod_clickthrough
 
@@ -712,7 +740,6 @@ local function UpdateCVars()
     SetCVar('nameplatePersonalShowAlways',core.profile.cvar_personal_show_always)
     SetCVar('nameplatePersonalShowInCombat',core.profile.cvar_personal_show_combat)
     SetCVar('nameplatePersonalShowWithTarget',core.profile.cvar_personal_show_target)
-    SetCVar('nameplateMaxDistance',core.profile.cvar_max_distance)
     SetCVar('nameplateOtherTopInset',core.profile.cvar_clamp_top)
     SetCVar('nameplateLargeTopInset',core.profile.cvar_clamp_top)
     SetCVar('nameplateOtherBottomInset',core.profile.cvar_clamp_bottom)
@@ -777,7 +804,6 @@ configChanged.cvar_show_friendly_npcs = configChangedCVar
 configChanged.cvar_personal_show_always = configChangedCVar
 configChanged.cvar_personal_show_combat = configChangedCVar
 configChanged.cvar_personal_show_target = configChangedCVar
-configChanged.cvar_max_distance = configChangedCVar
 configChanged.cvar_clamp_top = configChangedCVar
 configChanged.cvar_clamp_bottom = configChangedCVar
 configChanged.cvar_self_clamp_top = configChangedCVar
@@ -789,8 +815,6 @@ configChanged.cvar_self_alpha = configChangedCVar
 configChanged.cvar_occluded_mult = configChangedCVar
 
 function configChanged.global_scale()
-    GLOBAL_SCALE = core.profile.global_scale
-    configChanged.frame_glow_size(core.profile.frame_glow_size)
     configChanged.state_icons()
     configChangedCastBar()
     configChangedAuras()
@@ -798,6 +822,30 @@ function configChanged.global_scale()
     configChangedClassPowers()
     configChangedTextOffset()
     configChangedFrameSize()
+    configChanged.show_quest_icon()
+    configChanged.show_raid_icon()
+end
+
+-- simple-movables #############################################################
+do
+    local function this()
+        core:configChangedQuestIcon()
+    end
+    configChanged.show_quest_icon = this
+    configChanged.quest_icon_size = this
+    configChanged.quest_icon_point = this
+    configChanged.quest_icon_x = this
+    configChanged.quest_icon_y = this
+end
+do
+    local function this()
+        core:configChangedRaidIcon()
+    end
+    configChanged.show_raid_icon = this
+    configChanged.raid_icon_size = this
+    configChanged.raid_icon_point = this
+    configChanged.raid_icon_x = this
+    configChanged.raid_icon_y = this
 end
 
 -- config loaded functions #####################################################
@@ -806,7 +854,7 @@ configLoaded.fade_non_target_alpha = configChanged.fade_non_target_alpha
 configLoaded.fade_conditional_alpha = configChanged.fade_conditional_alpha
 configLoaded.fade_speed = configChanged.fade_speed
 
-configLoaded.class_colour_friendly_names = configChangedNameColour
+configLoaded.class_colour_friendly_names = configChangedName
 
 configLoaded.nameonly = configChanged.nameonly
 
@@ -822,7 +870,6 @@ configLoaded.tankmode_tank_colour = configChangedTankColour
 configLoaded.auras_enabled = configChangedAuras
 
 configLoaded.castbar_enable = configChanged.castbar_enable
-configLoaded.level_text = configChanged.level_text
 
 configLoaded.clickthrough_self = QueueClickthroughUpdate
 
@@ -854,14 +901,28 @@ function configLoaded.ignore_uiscale(v)
     addon:UI_SCALE_CHANGED()
 end
 
-configLoaded.use_blizzard_personal = configChanged.use_blizzard_personal
+function configLoaded.use_blizzard_personal(v)
+    addon.USE_BLIZZARD_PERSONAL = v
+end
+function configLoaded.use_blizzard_powers(v)
+    addon.USE_BLIZZARD_POWERS = v
+end
 
 configLoaded.bossmod_enable = configChanged.bossmod_enable
 
+configLoaded.show_quest_icon = configChanged.show_quest_icon
+configLoaded.show_raid_icon = configChanged.show_raid_icon
+
 -- init config #################################################################
-function core:ConfigChanged(config,k,v)
-    self.profile = config:GetConfig()
-    self:SetLocals()
+local function UpdateProfile()
+    core.profile = core.config:GetConfig()
+    GLOBAL_SCALE = core.profile.global_scale
+
+    -- initialise config locals in create.lua
+    core:SetLocals()
+end
+function core:ConfigChanged(_,k,v)
+    UpdateProfile()
 
     if k then
         -- call affected key's configChanged function
@@ -881,7 +942,7 @@ function core:ConfigChanged(config,k,v)
     end
 
     if addon.debug and addon.debug_config then
-        kui.print(self:GetActiveProfile())
+        kui.print(self.config.profile)
     end
 
     for _,f in addon:Frames() do
@@ -894,60 +955,53 @@ function core:ConfigChanged(config,k,v)
     end
 end
 function core:InitialiseConfig()
-    if KuiNameplatesCoreSaved then
-        -- XXX 2.15>2.16 health display transition
-        if not KuiNameplatesCoreSaved['216_HEALTH_TRANSITION'] then
-            KuiNameplatesCoreSaved['216_HEALTH_TRANSITION'] = true
-            -- re-jigger health display patterns on all profiles (where set)
-            local upd = function(n,k)
-                local v = KuiNameplatesCoreSaved.profiles[n][k]
-                if not v then return end
-                KuiNameplatesCoreSaved.profiles[n][k] = v == 5 and 1 or v + 1
-            end
-            for n,_ in pairs(KuiNameplatesCoreSaved.profiles) do
-                for _,k in next,{
-                    'health_text_friend_max',
-                    'health_text_friend_dmg',
-                    'health_text_hostile_max',
-                    'health_text_hostile_dmg'
-                } do
-                    upd(n,k)
-                end
-            end
-        end
-        -- XXX 2.16.1>2.16.2
-        if not KuiNameplatesCoreSaved['2162_PERSONAL_FRAME_SIZE_TRANSITION'] then
-            KuiNameplatesCoreSaved['2162_PERSONAL_FRAME_SIZE_TRANSITION'] = true
-            -- frame_width_personal was previously pixel-corrected even if
-            -- use_blizzard_personal was enabled, so counteract that
-            local upd = function(n,k)
-                local v = KuiNameplatesCoreSaved.profiles[n][k]
-                if not addon.uiscale or not v or v == 132 then return end
-                KuiNameplatesCoreSaved.profiles[n][k] = floor(v * addon.uiscale) + 10
-            end
-            for n,p in pairs(KuiNameplatesCoreSaved.profiles) do
-                if p.use_blizzard_personal then
-                    upd(n,'frame_width_personal')
-                end
-            end
-        end
-    end
-    --[===[@alpha@
+    --luacheck:globals KuiNameplatesCoreSaved KuiNameplatesCoreConfig
+    --[=[@alpha@
     if not KuiNameplatesCoreSaved or not KuiNameplatesCoreSaved.SHUT_UP then
         addon:ui_print('You are using an alpha release;')
         print('    Please report issues to www.github.com/kesava-wow/kuinameplates2')
         print('    And include the output of: /knp dump')
         print('    Thanks!')
     end
-    --@end-alpha@]===]
+    --@end-alpha@]=]
+
+    if KuiNameplatesCoreSaved then
+        -- XXX TEMP 2.27
+        if not KuiNameplatesCoreSaved['226_AURAS_TRANSITION'] then
+            -- rewrite old auras_cd/auras_count vars on all profiles where set
+            local function upd(prefix,profile)
+                local px = tonumber(profile[prefix..'_point_x'] or default_config[prefix..'_point_x'])
+                local py = tonumber(profile[prefix..'_point_y'] or default_config[prefix..'_point_y'])
+                profile[prefix..'_point'] = px * py
+                profile[prefix..'_x'] = tonumber(profile[prefix..'_offset_x'])
+                profile[prefix..'_y'] = tonumber(profile[prefix..'_offset_y'])
+            end
+            for _,profile in pairs(KuiNameplatesCoreSaved.profiles) do
+                upd('auras_cd',profile)
+                upd('auras_count',profile)
+            end
+        end
+        if not KuiNameplatesCoreSaved['226_TARGET_SIZE'] then
+            -- disable frame_target_size on extant profiles if
+            -- frame_{width/height} is greater than the target size
+            for _,profile in pairs(KuiNameplatesCoreSaved.profiles) do
+                if (profile.frame_target_size or profile.frame_target_size == nil) and
+                   ((profile.frame_width and profile.frame_width > (profile.frame_width_target or default_config.frame_width_target)) or
+                   (profile.frame_height and profile.frame_height > (profile.frame_height_target or default_config.frame_height_target)))
+                then
+                    profile.frame_target_size = false
+                end
+            end
+        end
+    end
 
     self.config = kc:Initialise('KuiNameplatesCore',default_config)
-    self.profile = self.config:GetConfig()
-
     self.config:RegisterConfigChanged(self,'ConfigChanged')
+    UpdateProfile()
 
-    -- initialise config locals in create.lua
-    self:SetLocals()
+    -- XXX TEMP 2.27
+    KuiNameplatesCoreSaved['226_AURAS_TRANSITION'] = true
+    KuiNameplatesCoreSaved['226_TARGET_SIZE'] = true
 
     -- run config loaded functions
     for k,f in pairs(configLoaded) do

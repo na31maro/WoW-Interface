@@ -125,7 +125,7 @@ local function Constructor()
 	dropdown.frame:Show()
 	dropdown:SetLabel("")
 
-	local border = CreateFrame("Frame", nil, frame)
+	local border = CreateFrame("Frame", nil, frame, BackdropTemplateMixin and "BackdropTemplate")
 	border:SetPoint("TOPLEFT", 0, -26)
 	border:SetPoint("BOTTOMRIGHT", 0, 3)
 	border:SetBackdrop(PaneBackdrop)
@@ -150,7 +150,7 @@ local function Constructor()
 		widget[method] = func
 	end
 	dropdown.parentgroup = widget
-	
+
 	return AceGUI:RegisterAsContainer(widget)
 end
 

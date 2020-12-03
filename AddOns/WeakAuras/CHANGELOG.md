@@ -1,23 +1,26 @@
-# [2.15.5](https://github.com/WeakAuras/WeakAuras2/tree/2.15.5) (2019-10-22)
+# [3.1.2](https://github.com/WeakAuras/WeakAuras2/tree/3.1.2) (2020-11-22)
 
-[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/2.15.4...2.15.5)
+[Full Changelog](https://github.com/WeakAuras/WeakAuras2/compare/3.1.1...3.1.2)
 
 ## Highlights
 
- - A few more bug fixes 
+ bug fixes 
 
 ## Commits
 
-Stanzilla (1):
+InfusOnWoW (9):
 
-- drop branch name from PR artifacts
+- Remove debug code
+- Models: Use more force in PreShowModels
+- Add a Class/Spec trigger
+- Duplicate Aura: Optimize this for big dynamic groups
+- Tweak Off-Screen Arrow
+- Options Thumbnails: Use fallback icon if set
+- Templates: Add Rupture Debuff to Sub Debuffs
+- Format Options: Keep the expand/collapse state separate
+- Information: Fix nil error with multi-selection
 
-Vardex (1):
+cont1nuity (1):
 
-- Fix weapon enchant shortened name
-
-mrbuds (2):
-
-- swing timer: fix nil error if no offhand equiped
-- update "Cooldown Progress (Equipment Slot)" for handling amno fixes #1762 refresh on UNIT_INVENTORY_CHANGED add a stacksFunc
+- Adding support for Plater personal resource bar anchoring (#2614)
 

@@ -4,7 +4,8 @@
 	local Loc = LibStub ("AceLocale-3.0"):GetLocale ( "Details" )
 	local _tempo = time()
 	local _
-	
+	local DetailsFramework = DetailsFramework
+
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --> local pointers
 
@@ -22,6 +23,7 @@
 	local _GetTime = GetTime
 	local _select = select
 	local _UnitBuff = UnitBuff
+	local _tonumber = tonumber
 	
 	local _CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
 
@@ -97,6 +99,8 @@
 		local bitfield_swap_cache = {}
 	--> damage and heal last events
 		local last_events_cache = {} --> initialize table (placeholder)
+	--> npcId cache
+		local npcid_cache = {}
 	--> pets
 		local container_pets = {} --> initialize table (placeholder)
 	--> ignore deaths
@@ -105,6 +109,44 @@
 		local ignore_actors = {}
 	--> spell containers for special cases
 		local monk_guard_talent = {} --guard talent for bm monks
+	--> spell reflection
+		local reflection_damage = {} --self-inflicted damage
+		local reflection_debuffs = {} --self-inflicted debuffs
+		local reflection_events = {} --spell_missed reflected events
+		local reflection_auras = {} --active reflecting auras
+		local reflection_dispels = {} --active reflecting dispels
+		local reflection_spellid = {
+			--> we can track which spell caused the reflection
+			--> this is used to credit this aura as the one doing the damage
+			[23920] = true, --warrior spell reflection
+			[216890] = true, --warrior spell reflection (pvp talent)
+			[213915] = true, --warrior mass spell reflection
+			[212295] = true, --warlock nether ward
+			--check pally legendary
+		}
+		local reflection_dispelid = {
+			--> some dispels also reflect, and we can track them
+			[122783] = true, --monk diffuse magic
+			
+			--[205604] = true, --demon hunter reverse magic
+			--> this last one is an odd one, like most dh spells is kindy buggy combatlog wise
+			--> for now it doesn't fire SPELL_DISPEL events even when dispelling stuff (thanks blizzard)
+			--> maybe someone can figure out something to track it... but for now it doesnt work
+		}
+		local reflection_ignore = {
+			--> common self-harm spells that we know weren't reflected
+			--> this list can be expanded
+			[111400] = true, --warlock burning rush
+			[124255] = true, --monk stagger
+			[196917] = true, --paladin light of the martyr
+			[217979] = true, --warlock health funnel
+			
+			--> bugged spells
+			[315197] = true, --thing from beyond grand delusions
+			--> this corruption when reflected causes insane amounts of damage to the thing from beyond
+			--> anywhere from a few hundred thousand damage to over 50 millons
+			--> filtering it the best course of action as nobody should care about this damage
+		}
 		
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --> constants
@@ -178,6 +220,10 @@
 		[233499] = 233490, --warlock Unstable Affliction
 		
 		[261947] = 261977, --monk fist of the white tiger talent
+
+		[32175] = 17364, -- shaman Stormstrike (from Turkar on github)
+		[32176] = 17364, -- shaman Stormstrike
+		[45284] = 188196, --shaman lightining bolt overloaded
 		
 	}
 	
@@ -194,6 +240,9 @@
 	
 	--expose the override spells table to external scripts
 	_detalhes.OverridedSpellIds = override_spellId
+
+	--> list of ignored npcs by the user
+	local ignored_npcids = {}
 	
 	--> ignore soul link (damage from the warlock on his pet - current to demonology only)
 	local SPELLID_WARLOCK_SOULLINK = 108446
@@ -222,6 +271,8 @@
 		[SPELLID_SHAMAN_SLT] = true, --> Spirit Link Toten
 		[SPELLID_PALADIN_LIGHTMARTYR] = true, --> Light of the Martyr
 		[SPELLID_MONK_STAGGER] = true, --> Stagger
+		[315161] = true, --> Eye of Corruption --REMOVE ON 9.0
+		[315197] = true, --> Thing From Beyond --REMOVE ON 9.0
 	}
 	
 	--> damage spells to ignore
@@ -247,6 +298,7 @@
 		local _in_combat = false
 		local _current_encounter_id
 		local _is_storing_cleu = false
+		local _in_resting_zone = false
 		
 	--> deathlog
 		local _death_event_amt = 16
@@ -416,7 +468,7 @@
 --]=]	
 	
 	
-	function parser:spell_dmg (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, spellid, spellname, spelltype, amount, overkill, school, resisted, blocked, absorbed, critical, glacing, crushing, isoffhand)
+	function parser:spell_dmg (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, spellid, spellname, spelltype, amount, overkill, school, resisted, blocked, absorbed, critical, glacing, crushing, isoffhand, isreflected)
 	
 	------------------------------------------------------------------------------------------------
 	--> early checks and fixes
@@ -449,82 +501,91 @@
 		--if (ignore_actors [alvo_serial]) then
 		--	return
 		--end
-		
-		--rules of specific encounters
-		
-		if (_current_encounter_id == 2273) then --Uu'nat  --REMOVE ON 9.0 LAUNCH
-			if (spellname == SPELLANAME_STORM_OF_ANNIHILATION or spellid == 284601) then
-				--return --this is parsed as friendly fire
-			end
-		
-		elseif (_current_encounter_id == 2263 or _current_encounter_id == 2284) then --grong --REMOVE ON 9.0 LAUNCH
-			if (spellid == 285660 or spellname == SPELLNAME_GRONG_CORE or spellid == 286435 or spellname == SPELLNAME_GRONG_CORE_ALLIANCE) then
-				return
-			end
-		
-		elseif (_current_encounter_id == 2272) then --king rastakhan --REMOVE ON 9.0 LAUNCH
-			if (alvo_serial) then
-				local npcid = _select (6, _strsplit ("-", alvo_serial))
-				if (npcid == "145644") then --Bwonsamdi
-					--Bwonsamdi has two buffs: unliving and aura of death, checking the two first buff indexes
-					local hasUnlivingBuff1 = _UnitBuff ("boss2", 1)
-					local hasUnlivingBuff2 = _UnitBuff ("boss2", 2)
-					if (hasUnlivingBuff1 == SPELLNAME_UNLIVING or hasUnlivingBuff2 == SPELLNAME_UNLIVING) then
-						--> ignore the damage while Bwonsamdi is immune
-						return
-					end
+
+		------------------------------------------------------------------------------------------------
+		--> spell reflection
+		if (who_serial == alvo_serial and not reflection_ignore[spellid]) then --~reflect
+
+			--> this spell could've been reflected, check it
+			if (reflection_events[who_serial] and reflection_events[who_serial][spellid] and time-reflection_events[who_serial][spellid].time > 3.5 and (not reflection_debuffs[who_serial] or (reflection_debuffs[who_serial] and not reflection_debuffs[who_serial][spellid]))) then
+				--> here we check if we have to filter old reflection data
+				--> we check for two conditions
+				--> the first is to see if this is an old reflection
+				--> if more than 3.5 seconds have past then we can say that it is old... but!
+				--> the second condition is to see if there is an active debuff with the same spellid
+				--> if there is one then we ignore the timer and skip this
+				--> this should be cleared afterwards somehow... don't know how...
+				reflection_events[who_serial][spellid] = nil
+				if (next(reflection_events[who_serial]) == nil) then
+					--> there should be some better way of handling this kind of filtering, any suggestion?
+					reflection_events[who_serial] = nil
 				end
 			end
-		
-		elseif (_current_encounter_id == 2087) then --Yazma - Atal'Dazar --REMOVE ON 9.0 LAUNCH
-			--rename the add created by the soulrend ability
-			if (alvo_serial) then
-				local npcid = _select (6, _strsplit ("-", alvo_serial))
-				if (npcid == "125828") then --soulrend add
-					alvo_name = "Soulrend Add"
-				end
-			end
+
+			local reflection = reflection_events[who_serial] and reflection_events[who_serial][spellid]
+			if (reflection) then
+				--> if we still have the reflection data then we conclude it was reflected
+
+				--extend the duration of the timer to catch the rare channelling spells
+				reflection_events[who_serial][spellid].time = time
+				
+				--crediting the source of the reflection aura
+				who_serial = reflection.who_serial
+				who_name = reflection.who_name
+				who_flags = reflection.who_flags
+				
+				--data of the aura that caused the reflection
+				--print("2", spellid, GetSpellInfo(spellid))
+				isreflected = spellid --which spell was reflected
+				spellid = reflection.spellid --which spell made the reflection
+				spellname = reflection.spellname
+				spelltype = reflection.spelltype
 			
-			if (who_serial) then
-				local npcid = _select (6, _strsplit ("-", who_serial))
-				if (npcid == "125828") then --soulrend add
-					who_name = "Soulrend Add"
-				end
-			end
-		
-		
-		elseif (_current_encounter_id == 2122 or _current_encounter_id == 2135) then --g'huun and mythrax --REMOVE ON 9.0 LAUNCH
-			--if (alvo_serial:match ("^Creature%-0%-%d+%-%d+%-%d+%-103679%-%w+$")) then --soul effigy (warlock) --50% more slow than the method below
-		
-			--check if the target is the amorphous cyst
-			--for some reason, mythrax fights has some sort of damage on amorphous cyst as well, dunno why
-			if (alvo_serial) then
-				local npcid = _select (6, _strsplit ("-", alvo_serial)) -- cost 3 / 1000000
-				if (npcid) then
-					if (ignored_npc_ids [npcid]) then
-						--print ("IGNORED:", alvo_name, npcid)
-						return
-					end
-					
-					if (_track_ghuun_bloodshield and npcid == "132998") then
-						local hasBloodShield = _UnitBuff ("boss1", 1)
-						if (not hasBloodShield or hasBloodShield ~= SPELLNAME_BLOODSHIELD) then
-							--print ("Details Shuting down damage filter on ghuun", hasBloodShield)
-							_track_ghuun_bloodshield = nil
-						else
-							--print ("Details Ghuun Has Blood Shield Damage Ignored", hasBloodShield)
-							return
-						end
-					end
-				end
+				return parser:spell_dmg(token,time,who_serial,who_name,who_flags,alvo_serial,alvo_name,alvo_flags,alvo_flags2,spellid,spellname,0x400,amount,-1,nil,nil,nil,nil,false,false,false,false, isreflected)
+			else
+				--> saving information about this damage because it may occurred before a reflect event
+				reflection_damage[who_serial] = reflection_damage[who_serial] or {}
+				reflection_damage[who_serial][spellid] = {
+					amount = amount,
+					time = time,
+				}
 			end
 		end
+		
+		--rules of specific encounters
 
+
+		
 		--> if the parser are allowed to replace spellIDs
 		if (is_using_spellId_override) then
 			spellid = override_spellId [spellid] or spellid
 		end
+
+		--Thing From Beyond 8.3 REMOVE ON 9.0
+		if(alvo_serial:match("161895%-%w+$")) then
+			alvo_flags = 0xa48
+		end
 		
+		--> npcId check for ignored npcs
+			--target
+			local npcId = npcid_cache[alvo_serial]
+			if (not npcId) then
+				npcId = _tonumber(_select (6, _strsplit ("-", alvo_serial)) or 0)
+				npcid_cache[alvo_serial] = npcId
+			end
+			if (ignored_npcids[npcId]) then
+				return
+			end
+			--source
+			npcId = npcid_cache[who_serial]
+			if (not npcId) then
+				npcId = _tonumber(_select (6, _strsplit ("-", who_serial)) or 0)
+				npcid_cache[who_serial] = npcId
+			end
+			if (ignored_npcids[npcId]) then
+				return
+			end
+
 		--> avoid doing spellID checks on each iteration
 		if (special_damage_spells [spellid]) then
 			--> stagger
@@ -539,6 +600,14 @@
 			elseif (spellid == SPELLID_PALADIN_LIGHTMARTYR) then -- or spellid == 183998 < healing part
 				return parser:LOTM_damage (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, spellid, spellname, spelltype, amount, overkill, school, resisted, blocked, absorbed, critical, glacing, crushing, isoffhand)
 				
+			--Eye of Corruption 8.3 REMOVE ON 9.0
+			elseif (spellid == 315161) then
+				local enemyName = GetSpellInfo(315161)
+				who_serial, who_name, who_flags = "", enemyName, 0xa48
+				
+			--Thing From Beyond 8.3 REMOVE ON 9.0
+			elseif (spellid == 315197) then
+				who_flags = 0xa48
 			end
 		end
 		
@@ -629,6 +698,12 @@
 		elseif (meu_dono) then
 			--> � um pet
 			who_name = who_name .. " <" .. meu_dono.nome .. ">"
+		end
+
+		if (not este_jogador) then
+			print ("no ente_jogador")
+			print (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, spellid, spellname, spelltype, amount)
+			return
 		end
 		
 		--> his target
@@ -952,6 +1027,10 @@
 			if (_current_combat.is_boss and who_flags and _bit_band (who_flags, OBJECT_TYPE_ENEMY) ~= 0) then
 				_detalhes.spell_school_cache [spellname] = spelltype or school
 			end
+
+			if (isreflected) then
+				spell.isReflection = true
+			end
 		end
 		
 		if (_is_storing_cleu) then
@@ -959,7 +1038,7 @@
 			_current_combat_cleu_events.n = _current_combat_cleu_events.n + 1
 		end
 		
-		return spell_damage_func (spell, alvo_serial, alvo_name, alvo_flags, amount, who_name, resisted, blocked, absorbed, critical, glacing, token, isoffhand)
+		return spell_damage_func (spell, alvo_serial, alvo_name, alvo_flags, amount, who_name, resisted, blocked, absorbed, critical, glacing, token, isoffhand, isreflected)
 	end
 
 	
@@ -1287,7 +1366,7 @@
 	end
 
 	-- ~miss
-	function parser:missed (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, spellid, spellname, spelltype, missType, isOffHand, amountMissed, arg1)
+	function parser:missed (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, spellid, spellname, spelltype, missType, isOffHand, amountMissed, arg1, arg2, arg3)
 
 	------------------------------------------------------------------------------------------------
 	--> early checks and fixes
@@ -1315,6 +1394,7 @@
 		local este_jogador = damage_cache [who_serial]
 		if (not este_jogador) then
 			--este_jogador, meu_dono, who_name = _current_damage_container:PegarCombatente (nil, who_name)
+			local meu_dono
 			este_jogador, meu_dono, who_name = _current_damage_container:PegarCombatente (who_serial, who_name, who_flags, true)
 			if (not este_jogador) then
 				return --> just return if actor doen't exist yet
@@ -1387,6 +1467,55 @@
 				
 			end
 		
+	------------------------------------------------------------------------------------------------
+	--> spell reflection
+		elseif (missType == "REFLECT" and reflection_auras[alvo_serial]) then --~reflect
+			--> a reflect event and we have the reflecting aura data
+			if (reflection_damage[who_serial] and reflection_damage[who_serial][spellid] and time-reflection_damage[who_serial][spellid].time > 3.5 and (not reflection_debuffs[who_serial] or (reflection_debuffs[who_serial] and not reflection_debuffs[who_serial][spellid]))) then
+				--> here we check if we have to filter old damage data
+				--> we check for two conditions
+				--> the first is to see if this is an old damage
+				--> if more than 3.5 seconds have past then we can say that it is old... but!
+				--> the second condition is to see if there is an active debuff with the same spellid
+				--> if there is one then we ignore the timer and skip this
+				--> this should be cleared afterwards somehow... don't know how...
+				reflection_damage[who_serial][spellid] = nil
+				if (next(reflection_damage[who_serial]) == nil) then
+					--> there should be some better way of handling this kind of filtering, any suggestion?
+					reflection_damage[who_serial] = nil
+				end
+			end
+			local damage = reflection_damage[who_serial] and reflection_damage[who_serial][spellid]
+			local reflection = reflection_auras[alvo_serial]
+			if (damage) then
+				--> damage ocurred first, so we have its data
+				local amount = reflection_damage[who_serial][spellid].amount
+				
+				--print("1", spellid, GetSpellInfo(spellid))
+				local isreflected = spellid --which spell was reflected
+				alvo_serial = reflection.who_serial
+				alvo_name = reflection.who_name
+				alvo_flags = reflection.who_flags
+				spellid = reflection.spellid
+				spellname = reflection.spellname
+				spelltype = reflection.spelltype
+				--> crediting the source of the aura that caused the reflection
+				--> also saying that the damage came from the aura that reflected the spell
+				
+				reflection_damage[who_serial][spellid] = nil
+				if next(reflection_damage[who_serial]) == nil then
+					--> this is so bad at clearing, there should be a better way of handling this
+					reflection_damage[who_serial] = nil
+				end
+
+				return parser:spell_dmg(token,time,alvo_serial,alvo_name,alvo_flags,who_serial,who_name,who_flags,nil,spellid,spellname,spelltype,amount,-1,nil,nil,nil,nil,false,false,false,false, isreflected)
+			else
+				--> saving information about this reflect because it occurred before the damage event
+				reflection_events[who_serial] = reflection_events[who_serial] or {}
+				reflection_events[who_serial][spellid] = reflection
+				reflection_events[who_serial][spellid].time = time
+			end
+
 		else
 			--colocando aqui apenas pois ele confere o override dentro do damage
 			if (is_using_spellId_override) then
@@ -1452,10 +1581,13 @@
 		end
 		
 		--print ()
-
+		--petTable:Add
 		_detalhes.tabela_pets:Adicionar (alvo_serial, alvo_name, alvo_flags, who_serial, who_name, who_flags)
 		
 		--print ("SUMMON", alvo_name, _detalhes.tabela_pets.pets, _detalhes.tabela_pets.pets [alvo_serial], alvo_serial)
+
+		--debug summons:
+		--print("summon:", who_name, alvo_serial, alvo_name, alvo_flags, spellid, spellName)
 		
 		return
 	end
@@ -1575,7 +1707,7 @@
 		
 		--[[statistics]]-- _detalhes.statistics.absorbs_calls = _detalhes.statistics.absorbs_calls + 1
 		
-		if (not shieldname) then
+		if (_type(shieldname) == "boolean") then
 			owner_serial, owner_name, owner_flags, owner_flags2, shieldid, shieldname, shieldtype, amount = spellid, spellname, spellschool, owner_serial, owner_name, owner_flags, owner_flags2, shieldid
 		end
 	
@@ -1620,7 +1752,9 @@
 	
 		--> only capture heal if is in combat
 		if (not _in_combat) then
-			return
+			if (not _in_resting_zone) then
+				return
+			end
 		end
 	
 		--> check invalid serial against pets
@@ -1792,11 +1926,11 @@
 			--> pet
 			if (meu_dono) then
 				meu_dono.total = meu_dono.total + cura_efetiva --> heal do pet
-				meu_dono.targets [alvo_name] = (meu_dono.targets [alvo_name] or 0) + amount
+				meu_dono.targets [alvo_name] = (meu_dono.targets [alvo_name] or 0) + cura_efetiva
 			end
 			
 			--> target amount
-			este_jogador.targets [alvo_name] = (este_jogador.targets [alvo_name] or 0) + amount
+			este_jogador.targets [alvo_name] = (este_jogador.targets [alvo_name] or 0) + cura_efetiva
 		end
 		
 		if (meu_dono) then
@@ -1911,6 +2045,22 @@
 			who_flags = 0xa48
 			who_serial = ""
 		end 
+		
+	------------------------------------------------------------------------------------------------
+	--> spell reflection
+		if (reflection_spellid[spellid]) then --~reflect
+			--> this is a spell reflect aura
+			--> we save the info on who received this aura and from whom
+			--> this will be used to credit this spell as the one doing the damage
+			reflection_auras[alvo_serial] = {
+				who_serial = who_serial,
+				who_name = who_name,
+				who_flags = who_flags,
+				spellid = spellid,
+				spellname = spellname,
+				spelltype = spellschool,
+			}
+		end
 
 	------------------------------------------------------------------------------------------------
 	--> handle shields
@@ -1960,6 +2110,21 @@
 	--> recording debuffs applied by player
 
 		elseif (tipo == "DEBUFF") then
+
+			--Eye of Corruption 8.3 REMOVE ON 9.0
+			if (spellid == 315161) then
+				local enemyName = GetSpellInfo(315161)
+				who_serial, who_name, who_flags = "", enemyName, 0xa48
+			end
+			
+		------------------------------------------------------------------------------------------------
+		--> spell reflection
+			if (who_serial == alvo_serial and not reflection_ignore[spellid]) then
+				--> self-inflicted debuff that could've been reflected
+				--> just saving it as a boolean to check for reflections
+				reflection_debuffs[who_serial] = reflection_debuffs[who_serial] or {}
+				reflection_debuffs[who_serial][spellid] = true
+			end
 			
 			if (_in_combat) then
 			
@@ -2207,6 +2372,13 @@
 
 		elseif (tipo == "DEBUFF") then
 		--print ("debuff - ", token, spellname)
+
+			--Eye of Corruption 8.3 REMOVE ON 9.0
+			if (spellid == 315161) then
+				local enemyName = GetSpellInfo(315161)
+				who_serial, who_name, who_flags = "", enemyName, 0xa48
+			end
+
 			if (_in_combat) then
 			------------------------------------------------------------------------------------------------
 			--> buff uptime
@@ -2337,6 +2509,46 @@
 	------------------------------------------------------------------------------------------------
 	--> recording debuffs applied by player
 		elseif (tipo == "DEBUFF") then
+		
+			--Eye of Corruption 8.3 REMOVE ON 9.0
+			if (spellid == 315161) then
+				local enemyName = GetSpellInfo(315161)
+				who_serial, who_name, who_flags = "", enemyName, 0xa48
+			end
+			
+		------------------------------------------------------------------------------------------------
+		--> spell reflection
+			if (reflection_dispels[alvo_serial] and reflection_dispels[alvo_serial][spellid]) then
+				--> debuff was dispelled by a reflecting dispel and could've been reflected
+				--> save the data about whom dispelled who and the spell that was dispelled
+				local reflection = reflection_dispels[alvo_serial][spellid]
+				reflection_events[who_serial] = reflection_events[who_serial] or {}
+				reflection_events[who_serial][spellid] = {
+					who_serial = reflection.who_serial,
+					who_name = reflection.who_name,
+					who_flags = reflection.who_flags,
+					spellid = reflection.spellid,
+					spellname = reflection.spellname,
+					spelltype = reflection.spelltype,
+					time = time,
+				}
+				reflection_dispels[alvo_serial][spellid] = nil
+				if (next(reflection_dispels[alvo_serial]) == nil) then
+					--suggestion on how to make this better?
+					reflection_dispels[alvo_serial] = nil
+				end
+			end
+			
+		------------------------------------------------------------------------------------------------
+		--> spell reflection
+			if (reflection_debuffs[who_serial] and reflection_debuffs[who_serial][spellid]) then
+				--> self-inflicted debuff was removed, so we just clear this data
+				reflection_debuffs[who_serial][spellid] = nil
+				if (next(reflection_debuffs[who_serial]) == nil) then
+					--> better way of doing this? accepting suggestions
+					reflection_debuffs[who_serial] = nil
+				end
+			end
 		
 			if (_in_combat) then
 			------------------------------------------------------------------------------------------------
@@ -3210,12 +3422,38 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 				if (not este_jogador) then
 					este_jogador = _current_damage_container:PegarCombatente (who_serial, who_name, who_flags, true)
 				end
-				--> actor spells table
-				local spell = este_jogador.spells._ActorTable [spellid]
-				if (not spell) then
-					spell = este_jogador.spells:PegaHabilidade (spellid, true, token)
+
+--[[
+Message: Interface\AddOns\Details\core\parser.lua:3418: attempt to index local 'este_jogador' (a nil value)
+Time: Sun Aug 30 15:43:58 2020
+Count: 39
+Stack: Interface\AddOns\Details\core\parser.lua:3418: attempt to index local 'este_jogador' (a nil value)
+[string "@Interface\AddOns\Details\core\parser.lua"]:3418: in function <Interface\AddOns\Details\core\parser.lua:3335>
+[string "=(tail call)"]: ?
+
+Locals: self = nil
+token = "SPELL_CAST_SUCCESS"
+time = 1598813037.261000
+who_serial = "Vehicle-0-2085-2296-4034-168406-000B4BF36E"
+who_name = "Waltzing Venthyr"
+who_flags = 2632
+alvo_serial = ""
+alvo_name = nil
+alvo_flags = -2147483648
+alvo_flags2 = -2147483648
+spellid = 335773
+spellname = "Waltzing Venthyr"
+spelltype = 1
+--]]
+
+				if (este_jogador) then 
+					--> actor spells table
+					local spell = este_jogador.spells._ActorTable [spellid] --line where the actor was nil
+					if (not spell) then
+						spell = este_jogador.spells:PegaHabilidade (spellid, true, token)
+					end
+					spell.successful_casted = spell.successful_casted + 1
 				end
-				spell.successful_casted = spell.successful_casted + 1
 			end
 			return
 		end
@@ -3257,6 +3495,22 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 			este_jogador.dispell_targets = {}
 			este_jogador.dispell_spells = container_habilidades:NovoContainer (container_misc)
 			este_jogador.dispell_oque = {}
+		end
+		
+	------------------------------------------------------------------------------------------------
+	--> spell reflection
+		if (reflection_dispelid[spellid]) then
+			--> this aura could've been reflected to the caster after the dispel
+			--> save data about whom was dispelled by who and what spell it was
+			reflection_dispels[alvo_serial] = reflection_dispels[alvo_serial] or {}
+			reflection_dispels[alvo_serial][extraSpellID] = {
+				who_serial = who_serial,
+				who_name = who_name,
+				who_flags = who_flags,
+				spellid = spellid,
+				spellname = spellname,
+				spelltype = spelltype,
+			}
 		end
 
 	------------------------------------------------------------------------------------------------
@@ -3502,11 +3756,59 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 
 	------------------------------------------------------------------------------------------------
 	--> build dead
-		
+		--print("dead", alvo_flags, _bit_band (alvo_flags, 0x00000008) ~= 0, _current_encounter_id)
 		
 		if (_in_combat and alvo_flags and _bit_band (alvo_flags, 0x00000008) ~= 0) then -- and _in_combat --byte 1 = 8 (AFFILIATION_OUTSIDER)
 			--> outsider death while in combat
 			
+				--rules for specific encounters
+				if (_current_encounter_id == 2412) then --> The Council of Blood
+
+					if (not Details.exp90temp.delete_damage_TCOB) then
+						return
+					end
+
+					--what boss died
+					local bossDeadNpcId = Details:GetNpcIdFromGuid(alvo_serial)
+
+					print("Details: boss died:", bossDeadNpcId, alvo_name, alvo_serial)
+
+					if (bossDeadNpcId ~= 166969 and bossDeadNpcId ~= 166970 and bossDeadNpcId ~= 166971) then
+						return
+					end
+
+				--[[
+					local unitId_BaronessFrieda = alvo_serial:match("166969%-%w+$")
+					local unitId_LordStavros = alvo_serial:match("166970%-%w+$")
+					local unitId_CastellanNiklaus = alvo_serial:match("166971%-%w+$")
+				--]]
+
+					if (bossDeadNpcId) then
+						--iterate among boss targets
+						for i = 1, 5 do
+							local unitId = "boss" .. i
+
+							if (_G.UnitExists(unitId)) then
+								local bossHealth = _G.UnitHealth(unitId)
+								local bossName = _G.UnitName(unitId)
+								local bossSerial = _G.UnitGUID(unitId)
+
+								if (bossHealth and bossHealth > 100000) then 
+									if (bossSerial) then
+										local bossNpcId = Details:GetNpcIdFromGuid(bossSerial)
+										if (bossNpcId and bossNpcId ~= bossDeadNpcId) then
+											print("Details: deleting boss:", bossName)
+											--remove the damage done
+											local currentCombat = Details:GetCurrentCombat()
+											currentCombat:DeleteActor(DETAILS_ATTRIBUTE_DAMAGE, bossName, false)
+										end
+									end
+								end
+							end
+						end
+					end
+				end
+
 			--> frags
 			
 				if (_detalhes.only_pvp_frags and (_bit_band (alvo_flags, 0x00000400) == 0 or (_bit_band (alvo_flags, 0x00000040) == 0 and _bit_band (alvo_flags, 0x00000020) == 0))) then --byte 2 = 4 (HOSTILE) byte 3 = 4 (OBJECT_TYPE_PLAYER)
@@ -4080,6 +4382,8 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		_detalhes.zone_type = zoneType
 		_detalhes.zone_id = zoneMapID
 		_detalhes.zone_name = zoneName
+
+		_in_resting_zone = IsResting()
 		
 		parser:WipeSourceCache()
 		
@@ -4094,8 +4398,8 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 			_detalhes.last_zone_type = zoneType
 			
 			for index, instancia in ipairs (_detalhes.tabela_instancias) do 
-				if (instancia.ativa and instancia.hide_in_combat_type ~= 1) then --> 1 = none, we doesn't need to call
-					instancia:SetCombatAlpha (nil, nil, true)
+				if (instancia.ativa) then
+					instancia:AdjustAlphaByContext(true)
 				end
 			end
 		end
@@ -4109,8 +4413,6 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		end
 		
 		_detalhes.time_type = _detalhes.time_type_original
-		
-		_detalhes:CheckChatOnZoneChange (zoneType)
 		
 		if (_detalhes.debug) then
 			_detalhes:Msg ("(debug) zone change:", _detalhes.zone_name, "is a", _detalhes.zone_type, "zone.")
@@ -4352,7 +4654,7 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 			if ((_detalhes.tabela_vigente:GetEndTime() or 0) + 2 >= _detalhes.encounter_table ["end"]) then
 				_detalhes.tabela_vigente:SetStartTime (_detalhes.encounter_table ["start"])
 				_detalhes.tabela_vigente:SetEndTime (_detalhes.encounter_table ["end"])
-				_detalhes:AtualizaGumpPrincipal (-1, true)
+				_detalhes:RefreshMainWindow (-1, true)
 			end
 		end
 
@@ -4387,8 +4689,8 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		end
 		
 		for index, instancia in ipairs (_detalhes.tabela_instancias) do 
-			if (instancia.ativa and instancia.hide_in_combat_type ~= 1) then --> 1 = none, we doesn't need to call
-				instancia:SetCombatAlpha (nil, nil, true)
+			if (instancia.ativa) then --> 1 = none, we doesn't need to call
+				instancia:AdjustAlphaByContext(true)
 			end
 		end
 		
@@ -4453,13 +4755,22 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		--store a boss encounter when out of combat since it might need to load the storage
 		if (_detalhes.schedule_store_boss_encounter) then
 			if (not _detalhes.logoff_saving_data) then
-				--_detalhes.StoreEncounter()
-				local successful, errortext = pcall (_detalhes.StoreEncounter)
+				local successful, errortext = pcall (Details.Database.StoreEncounter)
 				if (not successful) then
-					_detalhes:Msg ("error occurred on StoreEncounter():", errortext)
+					_detalhes:Msg ("error occurred on Details.Database.StoreEncounter():", errortext)
 				end
 			end
 			_detalhes.schedule_store_boss_encounter = nil
+		end
+
+		if (Details.schedule_store_boss_encounter_wipe) then
+			if (not _detalhes.logoff_saving_data) then
+				local successful, errortext = pcall (Details.Database.StoreWipe)
+				if (not successful) then
+					_detalhes:Msg ("error occurred on Details.Database.StoreWipe():", errortext)
+				end
+			end
+			Details.schedule_store_boss_encounter_wipe = nil
 		end
 		
 		--when a large amount of data has been removed and the player is in combat, schedule to run the hard garbage collector (the blizzard one, not the details! internal)
@@ -4472,8 +4783,8 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		end
 		
 		for index, instancia in ipairs (_detalhes.tabela_instancias) do 
-			if (instancia.ativa and instancia.hide_in_combat_type ~= 1) then --> 1 = none, we doesn't need to call
-				instancia:SetCombatAlpha (nil, nil, true)
+			if (instancia.ativa) then --> 1 = none, we doesn't need to call
+				instancia:AdjustAlphaByContext(true)
 			end
 		end
 		
@@ -4748,7 +5059,8 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 				_detalhes:IniciarColetaDeLixo (true)
 				_detalhes:WipePets()
 				_detalhes:SchedulePetUpdate (1)
-				_detalhes:InstanceCall (_detalhes.SetCombatAlpha, nil, nil, true)
+				_detalhes:InstanceCall (_detalhes.AdjustAlphaByContext)
+				
 				_detalhes:CheckSwitchOnLogon()
 				_detalhes:CheckVersion()
 				_detalhes:SendEvent ("GROUP_ONENTER")
@@ -4768,7 +5080,7 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 				_detalhes:WipePets()
 				_detalhes:SchedulePetUpdate (1)
 				_table_wipe (_detalhes.details_users)
-				_detalhes:InstanceCall (_detalhes.SetCombatAlpha, nil, nil, true)
+				_detalhes:InstanceCall (_detalhes.AdjustAlphaByContext)
 				_detalhes:CheckSwitchOnLogon()
 				_detalhes:SendEvent ("GROUP_ONLEAVE")
 				
@@ -4876,7 +5188,9 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		_detalhes:LoadConfig()
 		
 		_detalhes:UpdateParserGears()
-		--_detalhes:Start()
+
+		--load auto run code
+		Details:StartAutoRun()
 	end
 	
 	function _detalhes.parser_functions:ADDON_LOADED (...)
@@ -4887,9 +5201,9 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 	end
 	
 	local playerLogin = CreateFrame ("frame")
-	playerLogin:RegisterEvent ("PLAYER_LOGIN")
-	playerLogin:SetScript ("OnEvent", function()
-		Details:Start()
+	playerLogin:RegisterEvent("PLAYER_LOGIN")
+	playerLogin:SetScript("OnEvent", function()
+		Details:StartMeUp()
 	end)
 	
 	function _detalhes.parser_functions:PET_BATTLE_OPENING_START (...)
@@ -4897,9 +5211,9 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		for index, instance in _ipairs (_detalhes.tabela_instancias) do
 			if (instance.ativa) then
 				if (_detalhes.debug) then
-					_detalhes:Msg ("(debug 1) hidding windows for Pet Battle.")
+					_detalhes:Msg ("(debug) hidding windows for Pet Battle.")
 				end
-				instance:SetWindowAlphaForCombat (true, true)
+				instance:SetWindowAlphaForCombat (true, true, 0)
 			end
 		end
 	end
@@ -4908,17 +5222,10 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		_detalhes.pet_battle = false
 		for index, instance in _ipairs (_detalhes.tabela_instancias) do
 			if (instance.ativa) then
-				if (instance.hide_in_combat_type == 1) then
-					if (_detalhes.debug) then
-						_detalhes:Msg ("(debug 1) restoring windows after Pet Battle.")
-					end
-					instance:SetWindowAlphaForCombat()
-				else
-					if (_detalhes.debug) then
-						_detalhes:Msg ("(debug 2) restoring windows after Pet Battle.")
-					end
-					instance:SetCombatAlpha (nil, nil, true)
+				if (_detalhes.debug) then
+					_detalhes:Msg ("(debug) Pet Battle finished, calling AdjustAlphaByContext().")
 				end
+				instance:AdjustAlphaByContext(true)
 			end
 		end
 	end
@@ -5012,7 +5319,7 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 	
 	--> end
 	
-	-- ~parserstart ~startparser
+	-- ~parserstart ~startparser ~cleu
 
 	function _detalhes.OnParserEvent()
 		-- 8.0 changed
@@ -5093,8 +5400,15 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		_table_wipe (misc_cache)
 		_table_wipe (misc_cache_pets)
 		_table_wipe (misc_cache_petsOwners)
+		_table_wipe (npcid_cache)
 		
 		_table_wipe (ignore_death)
+		
+		_table_wipe (reflection_damage)
+		_table_wipe (reflection_debuffs)
+		_table_wipe (reflection_events)
+		_table_wipe (reflection_auras)
+		_table_wipe (reflection_dispels)
 	
 		damage_cache = setmetatable ({}, _detalhes.weaktable)
 		damage_cache_pets = setmetatable ({}, _detalhes.weaktable)
@@ -5258,7 +5572,10 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		--_recording_took_damage = _detalhes.RecordRealTimeTookDamage
 		_recording_ability_with_buffs = _detalhes.RecordPlayerAbilityWithBuffs
 		_in_combat = _detalhes.in_combat
-		
+
+		--> grab the ignored npcid directly from the user profile
+		ignored_npcids = _detalhes.npcid_ignored
+
 		if (_in_combat) then
 			if (not _auto_regen_thread or _auto_regen_thread._cancelled) then
 				_auto_regen_thread = C_Timer.NewTicker (AUTO_REGEN_PRECISION / 10, regen_power_overflow_check)

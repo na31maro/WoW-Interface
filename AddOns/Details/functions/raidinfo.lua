@@ -2,8 +2,221 @@
 
 --> install data for raiding tiers
 
+local C_Timer = _G.C_Timer
+local DetailsFramework = _G.DetailsFramework
+local tinsert = _G.tinsert
+
 do
-	--> data for The Eternal Palace (BFA tier 2)
+	--> data for Castle Nathria (Shadowlands tier 1)
+	--F:\World of Warcraft\_retail_\BlizzardInterfaceArt\Interface\GLUES\LOADINGSCREENS\Expansion07\Main\LOADINGSCREEN_NzothRAID
+	local INSTANCE_EJID = 1190
+	local INSTANCE_MAPID = 2296
+	local HDIMAGESPATH = [[Details\images\raid]]
+	local HDFILEPREFIX = "CastleNathriaRaid"
+	local LOADINGSCREEN_FILE, LOADINGSCREEN_COORDS  = [[Expansion08\Main\LoadScreen_CastleNathriaRaid]], {0, 1, 285/1024, 875/1024}
+	local EJ_LOREBG = "UI-EJ-LOREBG-CastleNathria"
+	local RAID_TIER = 26
+
+	local PORTRAIT_LIST = {
+		3752190, --Shriekwing - Shriekwing
+		3753151, --Huntsman Altimor - Huntsman Altimor
+		3753157, --Kael'thas Sunstrider - Sun King's Salvation
+		3752156, --Artificer Xy'Mox - Artificer Xy'mox
+		3752174, --Hungering Destroyer - Hungering Destroyer
+		3752178, --Lady Inerva Darkvein - Lady Inerva Darkvein
+		3753159, --Castellan Niklaus - The Council of Blood
+		3752191, --Sludgefist - Sludgefist
+		3753156, --General Kaal - Stone Legion Generals
+		3752159, --Sire Denathrius - Sire Denathrius
+	}
+
+	local ENCOUNTER_ID_CL = {
+		2398, 0, 2402, 2405, 0, 0, 2412, 2399, 2417, 0,
+		[2398] = 1,	--Shriekwing
+		[0] = 2, 	--Huntsman Altimor
+		[2402] = 3,	--Kael'thas
+		[2405] = 4,	--Artificer Xy'mox
+		[0] = 5, 	--Hungering Destroyer
+		[0] = 6,	--Lady Inerva Darkvein
+		[2412] = 7,	--The Council of Blood
+		[2399] = 8,	--Sludgefist
+		[2417] = 9,	--Stone Legion Generals
+		[0] = 10,	--Sire Denathrius
+	}
+
+	local ENCOUNTER_ID_EJ = {
+		2393, 2429, 2422, 2418, 2428, 2420, 2426, 2394, 2425, 2424,
+		[2393] = 1, --Shriekwing
+		[2429] = 2, --Huntsman Altimor
+		[2422] = 3, --Sun King's Salvation
+		[2418] = 4, --Artificer Xy'mox
+		[2428] = 5, --Hungering Destroyer
+		[2420] = 6, --Lady Inerva Darkvein
+		[2426] = 7, --The Council of Blood
+		[2394] = 8, --Sludgefist
+		[2425] = 9, --Stone Legion Generals
+		[2424] = 10, --Sire Denathrius
+	}
+	
+	--> install the raid
+	C_Timer.After (10, function()
+
+		--load encounter journal
+		DetailsFramework.EncounterJournal.EJ_SelectInstance (INSTANCE_EJID)
+
+		local InstanceName = DetailsFramework.EncounterJournal.EJ_GetInstanceInfo (INSTANCE_EJID)
+
+		--build the boss name list
+		local BOSSNAMES = {}
+		local ENCOUNTERS = {}
+		
+		for i = 1, #PORTRAIT_LIST do
+			local bossName = DetailsFramework.EncounterJournal.EJ_GetEncounterInfoByIndex (i, INSTANCE_EJID)
+			if (bossName) then
+				tinsert (BOSSNAMES, bossName)
+				local encounterTable = {
+					boss = bossName,
+					portrait = PORTRAIT_LIST [i],
+				}
+				tinsert (ENCOUNTERS, encounterTable)
+			else
+				break
+			end
+		end
+
+		_detalhes:InstallEncounter ({
+			raidTier = RAID_TIER,
+			id = INSTANCE_MAPID, --map id
+			ej_id = INSTANCE_EJID, --encounter journal id
+			name = InstanceName,
+			icons = "Interface\\AddOns\\" .. HDIMAGESPATH .. "\\" .. HDFILEPREFIX .. "_BossFaces",
+			icon = "Interface\\AddOns\\" .. HDIMAGESPATH .. "\\" .. HDFILEPREFIX .. "_Icon256x128",
+			is_raid = true,
+			backgroundFile = {file = [[Interface\GLUES\LOADINGSCREENS\]] .. LOADINGSCREEN_FILE, coords = LOADINGSCREEN_COORDS},
+			backgroundEJ = "Interface\\EncounterJournal\\" .. EJ_LOREBG,
+			
+			encounter_ids = ENCOUNTER_ID_EJ,
+			encounter_ids2 = ENCOUNTER_ID_CL,
+			boss_names = BOSSNAMES,
+			encounters = ENCOUNTERS,
+			
+			boss_ids = {
+				--npc ids
+			},
+		})
+	end)
+
+end
+
+do
+	--> data for Ny'alotha the Waking City (BFA tier 4)
+	--F:\World of Warcraft\_retail_\BlizzardInterfaceArt\Interface\GLUES\LOADINGSCREENS\Expansion07\Main\LOADINGSCREEN_NzothRAID
+	local INSTANCE_EJID = 1180
+	local INSTANCE_MAPID = 2217
+	local HDIMAGESPATH = [[Details\images\raid]]
+	local HDFILEPREFIX = "NyalothaRaid"
+	local LOADINGSCREEN_FILE, LOADINGSCREEN_COORDS  = [[Expansion07\Main\LOADINGSCREEN_NzothRAID]], {0, 1, 285/1024, 875/1024}
+	local EJ_LOREBG = "UI-EJ-LOREBG-Nyalotha"
+
+	local PORTRAIT_LIST = {
+		3256385, --Wrathion - Wrathion, the Black Emperor
+		3256380, --Maut
+		3256384, --Skitra - Prophet Skitra
+		3256386, --Xanesh - Dark Inquisitor Xanesh
+		3256378, --Ka'zir - The Hivemind
+		3256383, --Shad'har - Shad'har the Insatiable
+		3256377, --Drest'agath
+		3256379, --Il'gynoth - Il'gynoth, Corruption Reborn
+		3257677, --Vexiona
+		3256382, --Ra-den - Ra-den the Despoiled
+		3256376, --Fury of N'Zoth - Carapace of N'Zoth
+		3256381, --N'zoth - N'Zoth, the Corruptor
+	}
+	
+	local ENCOUNTER_ID_CL = {
+		2329, 2327, 2334, 2328, 2333, 2335, 2343, 2345, 2336, 2331, 2337, 2344,
+		[2329] = 1, --Wrathion, the Black Emperor
+		[2327] = 2, --Maut
+		[2334] = 3, --Prophet Skitra
+		[2328] = 4, --Dark Inquisitor Xanesh
+		[2333] = 5, --The Hivemind
+		[2335] = 6, --Shad'har the Insatiable
+		[2343] = 7, --Drest'agath
+		[2345] = 8, --Il'gynoth, Corruption Reborn
+		[2336] = 9, --Vexiona
+		[2331] = 10, --Ra-den the Despoiled
+		[2337] = 11, --Carapace of N'Zoth
+		[2344] = 12, --N'Zoth, the Corruptor
+	}
+	
+	local ENCOUNTER_ID_EJ = {
+		2368, 2365, 2369, 2377, 2372, 2367, 2373, 2374, 2370, 2364, 2366, 2375,
+		[2368] = 1, --Wrathion, the Black Emperor
+		[2365] = 2, --Maut
+		[2369] = 3, --Prophet Skitra
+		[2377] = 4, --Dark Inquisitor Xanesh
+		[2372] = 5, --The Hivemind
+		[2367] = 6, --Shad'har the Insatiable
+		[2373] = 7, --Drest'agath
+		[2374] = 8, --Il'gynoth, Corruption Reborn
+		[2370] = 9, --Vexiona
+		[2364] = 10, --Ra-den the Despoiled
+		[2366] = 11, --Carapace of N'Zoth
+		[2375] = 12, --N'Zoth, the Corruptor
+	}
+	
+	--> install the raid
+	C_Timer.After (10, function()
+
+		--load encounter journal
+		DetailsFramework.EncounterJournal.EJ_SelectInstance (INSTANCE_EJID)
+
+		local InstanceName = DetailsFramework.EncounterJournal.EJ_GetInstanceInfo (INSTANCE_EJID)
+
+		--build the boss name list
+		local BOSSNAMES = {}
+		local ENCOUNTERS = {}
+		
+		for i = 1, #PORTRAIT_LIST do
+			local bossName = DetailsFramework.EncounterJournal.EJ_GetEncounterInfoByIndex (i, INSTANCE_EJID)
+			if (bossName) then
+				tinsert (BOSSNAMES, bossName)
+				local encounterTable = {
+					boss = bossName,
+					portrait = PORTRAIT_LIST [i],
+				}
+				tinsert (ENCOUNTERS, encounterTable)
+			else
+				break
+			end
+		end
+
+		_detalhes:InstallEncounter ({
+			raidTier = 25,
+			id = INSTANCE_MAPID, --map id
+			ej_id = INSTANCE_EJID, --encounter journal id
+			name = InstanceName,
+			icons = "Interface\\AddOns\\" .. HDIMAGESPATH .. "\\" .. HDFILEPREFIX .. "_BossFaces",
+			icon = "Interface\\AddOns\\" .. HDIMAGESPATH .. "\\" .. HDFILEPREFIX .. "_Icon256x128",
+			is_raid = true,
+			backgroundFile = {file = [[Interface\GLUES\LOADINGSCREENS\]] .. LOADINGSCREEN_FILE, coords = LOADINGSCREEN_COORDS},
+			backgroundEJ = "Interface\\EncounterJournal\\" .. EJ_LOREBG,
+			
+			encounter_ids = ENCOUNTER_ID_EJ,
+			encounter_ids2 = ENCOUNTER_ID_CL,
+			boss_names = BOSSNAMES,
+			encounters = ENCOUNTERS,
+			
+			boss_ids = {
+				--npc ids
+			},
+		})
+	end)
+
+end
+
+do
+	--> data for The Eternal Palace (BFA tier 3)
 	
 	local INSTANCE_EJID = 1179
 	local INSTANCE_MAPID = 2164
@@ -36,7 +249,7 @@ do
 	}
 	
 	local ENCOUNTER_ID_EJ = {
-		2352, 2347, 2353, 2354, 2351, 2359, 2349,
+		2352, 2347, 2353, 2354, 2351, 2359, 2349, 2361,
 		[2352] = 1, --Abyssal Commander Sivara
 		[2347] = 2, --Blackwater Behemoth
 		[2353] = 3, --Radiance of Azshara
@@ -75,6 +288,7 @@ do
 		end
 		
 		_detalhes:InstallEncounter ({
+			raidTier = 24,
 			id = INSTANCE_MAPID, --map id
 			ej_id = INSTANCE_EJID, --encounter journal id
 			name = InstanceName,
@@ -98,7 +312,7 @@ do
 end
 
 do
-	--> data for Crucible of Storms (BFA tier 1)
+	--> data for Crucible of Storms (BFA tier 2.5)
 	
 	local INSTANCE_EJID = 1177
 	local INSTANCE_MAPID = 2096
@@ -152,6 +366,7 @@ do
 		end
 		
 		_detalhes:InstallEncounter ({
+			raidTier = 23.5,
 			id = INSTANCE_MAPID, --map id
 			ej_id = INSTANCE_EJID, --encounter journal id
 			name = InstanceName,
@@ -175,7 +390,7 @@ do
 end
 
 do
-	--> data for Battle for Dazar'alor (BFA tier 1)
+	--> data for Battle for Dazar'alor (BFA tier 2)
 	
 --	DazaralorRaid_BossFaces.tga --TBD
 --	DazaralorRaid_Icon256x128.tga --TBD
@@ -253,6 +468,7 @@ do
 		end
 		
 		_detalhes:InstallEncounter ({
+			raidTier = 23,
 			id = INSTANCE_MAPID, --map id
 			ej_id = INSTANCE_EJID, --encounter journal id
 			name = InstanceName,
@@ -361,6 +577,7 @@ do
 		end
 		
 		_detalhes:InstallEncounter ({
+			raidTier = 22,
 			id = INSTANCE_MAPID, --map id
 			ej_id = INSTANCE_EJID, --encounter journal id
 			name = InstanceName,
@@ -469,7 +686,7 @@ do
 		end
 		
 		_detalhes:InstallEncounter ({
-		
+			raidTier = 21,
 			id = INSTANCE_MAPID, --map id
 			ej_id = INSTANCE_EJID, --encounter journal id
 			name = InstanceName,
@@ -484,7 +701,7 @@ do
 			boss_names = BOSSNAMES,
 			encounters = ENCOUNTERS,
 			
-			boss_ids = { 
+			boss_ids = {
 				--npc ids
 			},
 		})

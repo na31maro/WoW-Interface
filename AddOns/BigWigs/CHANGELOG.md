@@ -1,17 +1,11 @@
 # BigWigs
 
-## [v170](https://github.com/BigWigsMods/BigWigs/tree/v170) (2019-12-05)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v169...v170)
+## [v188.2](https://github.com/BigWigsMods/BigWigs/tree/v188.2) (2020-12-02)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v188.1...v188.2) [Previous Releases](https://github.com/BigWigsMods/BigWigs/releases)
 
 - bump version  
-- EternalPalace/QueenAzshara: Use spellId not spellName when checking essence duration, closes #727  
-- ruRU update (#728)  
-- Nyalotha/NZoth: Remove initial say from Gift of NZoth  
-- Nyalotha: Fix spell ids  
-- Nyalotha: Hivemind, Skitra and Nzoth updates for PTR  
-- Nyalotha/Wrathion: Add missing flag  
-- Nyalotha/Wrathion: Cleanups  
-- Nyalotha/Wrathion: Initial PTR update  
-- Nyalotha/Vexiona: Fix locale  
-- Nyalotha/Vexiona: Cleanups  
-- Nyalotha/Vexiona: PTR updates  
+- Media: Remove some old compat code  
+- Loader: Fix a regression from 83e56e39d8b84f06f858427deaa298c7ef23624e breaking the display of DBM users in the version check  
+- Update zhCN (#866)  
+- Update deDE (#865)  
+- CastleNathria: Add locale files  

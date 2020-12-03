@@ -1,0 +1,222 @@
+- version 3.0 (9.0)
+
+General
+* Fixed Purify Soul alert (Kyrian signature).
+* Removed Gladiator's Maledict (no longer seems to exist).
+
+Death Knight
+* Added Death's Due (Night Fae) to Cast Success.
+* Added Shackle the Unworthy (Kyrian) to Cast Success.
+* Added Swarming Mist (Venthyr) to Aura Applied.
+
+Demon Hunter
+* Added Fodder to the Flame (Necrolord) to Cast Success.
+
+Druid
+* Added the 3 Kindred buffs (Kyrian) to Cast Success.
+* Added Ravenous Frenzy (Venthyr) to Aura Applied.
+
+Hunter
+* Added Flayed Shot (Venthyr) to Cast Success.
+* Added Wild Spirits (Nightfae) to Cast Success.
+
+Mage
+* Added Radiant Spark (Kyrian) to Spell Casting.
+* Added Shifting Power (Nightfae) to Spell Casting).
+
+Monk
+* Added Faeline Stomp (Nightfae) to Cast Success.
+* Added Fallen Order (Venthyr) to Cast Success.
+
+Paladin
+* Added Divine Toll (Kyrian) to Cast Success.
+
+Priest
+* Added Mindgames (Venthyr) to Spell Casting.
+* Added Unholy Nova (Necrolord) to Cast Success.
+
+Rogue
+* Added Echoing Reprimand (Kyriand) to Cast Success.
+* Added Flagellation (Venthyr) to Cast Success.
+* Added Serrated Bone Spike (Necrolord) to Cast Success.
+* Fixed a missing comma that broke a few spells.
+* Removed Stormkeeper from rogues, apparently.
+* Don't drink and code, kids.
+
+Shaman
+* Added Chain Harvest (Venthyr) to Spell Casting.
+* Added Echoing Shock to Cast Success.
+* Added Fae Transfusion (Nightfae) to Spell Casting.
+* Added Primordial Wave (Necrolord) to Cast Success.
+
+Warlock
+* Added Impending Catastrophe (Venthyr) to Cast Success.
+* Added Phantom Singularity to Cast Success.
+
+Warrior
+* Added Conqueror Banner (Necrolord) to Cast Success.
+* Added Shattering Throw to Spell Casting.
+* Added Spear of Bastion (Kyrian) to Cast Success.
+
+===========================================
+- version SLB 3 (9.0)
+***THIS IS A WORK IN PROGRESS BETA BUILD. EXPECT (BUT PLEASE REPORT) PROBLEMS***
+
+General
+* Some changes documented in SLB 2 are actually in SLB 3. Weird things happened.
+* Imported many alert sounds given to me (thanks n30exca_ !) though they may not all be properly hooked up yet. Some are subject to change.
+
+Death Knight
+* Fixed missing option for Frostwyrm's Fury in Cast Success.
+
+Monk
+* Added Bonedust Brew (Necrolord) to Cast Success.
+
+Paladin
+* Added Ashen Hallow (Venthyr) to Cast Success.
+* Added all four Seasonal Blessings (Night Fae) to Cast Success.
+
+Priest
+* Added Boon of the Ascended (Kyrian) to Cast Success.
+
+Warrior
+* Added Ancient Aftershock (Night Fae) to Cast Success.
+
+===========================================
+- version SLB 2 (9.0)
+***THIS IS A WORK IN PROGRESS BETA BUILD. EXPECT (BUT PLEASE REPORT) PROBLEMS***
+
+NOTE: This version is a spell library update, and does not yet include sounds for the new abilities listed below.
+
+General
+* Added a Covenant ability section to all ability types.
+* Added all Covenant Signature abilities to their relevant sections.
+* Fixed several outdated spellIDs for existing spells. I'm sure there's more. Let me know. :)
+* Removed more invalid spellIDs.
+
+
+Death Knight
+* Added Abomination's Limb (Necrolord) to Buff Applied/Down.
+* Added Lichborne to Buff Applied/Down.
+* Added Sacrificial Pact to Cast Success.
+* Added Transfusion to Buff Applied/Down.
+* Added Raise Abomination to Cast Success.
+* Added missing option for Anti-Magic Zone.
+
+
+Demon Hunter
+* Added Sinful Brand (Venthyr) to Cast Success.
+* Added Elysian Decree (Kyrian) to Cast Success.
+* Added The Hunt to (Nightfae) to Cast Success.
+* LOL y'all getting screwed this expansion, aren't you?
+
+
+Druid
+* Added Convoke the Spirits (Nightfae) to Cast Success.
+* Added Ravenous Frenzy (Venthyr) to Aura Applied/Down.
+* Added Adaptive Swarm (Necrolord) to Cast Success.
+* Added Heart of the Wild to Buff Applied/Down.
+
+
+Hunter
+* Added Death Chakram (Necrolord) to Cast Success.
+* Added Resonating Shot (Kyrian) to Cast Success.
+* Added Tranquilizing Shot to the Purge alert.
+* Added Hunter's Mark to Cast Success.
+* Added Scare Beast to Spell Casting & "Success" alerts.
+* Moved Intimidation from Aura Applied to Cast Success.
+
+
+Mage
+* Added Alter Time to Buff Applied/Down.
+* Added Mirror Images to Cast Success.
+* Added Mirrors of Torment (Venthyr) to Spell Casting.
+* Added Deathborne (Necrolord) to Aura Applied/Down.
+
+
+Monk
+* Added Invoke Yu'lon, the Jade Serpent to Cast Success.
+* "Fistweaving" alert now applies to Invoke Chi-Ji, the Red Crane.
+
+
+Paladin
+* Added Turn Evil to Spell Casting.
+* Added Execution Sentence to Cast Success.
+* Added Seraphim to Cast Success.
+* Removed Holy Wrath (been gone for a while, lol).
+* (Paladin Covenant abilities did not seem like they had enough reactive gameplay involved to justify alerts. Might add them in the future.)
+
+
+Priest
+* Added Fae Guardians (Nightfae) to Cast Success.
+* Added Mind Games (Venthyr) to Cast Success.
+* Added Boon of the Ascended (Kyrian) to Cast Start.
+* Added Power Infusion to Buff Applied.
+* Added Spirit Shell to the Rapture alert.
+* Added Thoughtsteal to Cast Success.
+* Shadow Word: Death now uses the Premonition alert since its CC break effect is preserved. Might change later.
+
+
+Rogue
+* Added Sepsis (Nightfae) to Cast Success.
+* Added Dreadblades to Aura Applied/Down.
+* Added Crimson Vial to Cast Success.
+
+
+Shaman
+* Added Mana Tide Totem to Cast Success.
+* Added Vesper Totem (Kyrian) to Cast Success.
+
+
+Warlock
+* Added Howl of Terror to Cast Success.
+* Added Scouring Tithe (Kyrian) to Cast Success.
+
+
+Localization
+* New strings:
+    L["CovenantAbilities"]
+    L["FrostDK"]
+    L["BloodDK"]
+    L["UnholyDK"]
+    L["HavocDH"]
+    L["VengeanceDH"]
+    L["FeralDR"]
+    L["BalanceDR"]
+    L["RestorationDR"]
+    L["GuardianDR"]
+    L["MarksmanshipHN"]
+    L["SurvivalHN"]
+    L["BeastMasteryHN"]
+    L["FrostMG"]
+    L["FireMG"]
+    L["ArcaneMG"]
+    L["MistweaverMN"]
+    L["WindwalkerMN"]
+    L["BrewmasterMN"]
+    L["HolyPD"]
+    L["RetributionPD"]
+    L["ProtectionPD"]
+    L["HolyPR"]
+    L["DisciplinePR"]
+    L["ShadowPR"]
+    L["OutlawRG"]
+    L["AssassinationRG"]
+    L["SubtletyRG"]
+    L["RestorationSH"]
+    L["EnhancementSH"]
+    L["ElementalSH"]
+    L["DestructionWL"]
+    L["DemonologyWL"]
+    L["AfflictionWL"]
+    L["ArmsWR"]
+    L["FuryWR"]
+    L["ProtectionWR"]
+
+===========================================
+- version SLB 1 (9.0)
+***THIS IS A WORK IN PROGRESS BETA BUILD. EXPECT (BUT PLEASE REPORT) PROBLEMS***
+
+General
+* Updated Ace3 to fix SetBackdrop problems.
+* Removed invalid spell IDs.

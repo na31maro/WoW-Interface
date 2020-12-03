@@ -283,11 +283,11 @@ function EasyScrap:getTrueAzeriteItemLevel(itemIndex)
             end
         else
             --print warning about unknown final azerite armor trait?
-            DEFAULT_CHAT_FRAME:AddMessage('Easy Scrap: Discovered unknown azerite power ID, please report the following item to the developer: '..item.itemID)
+            --DEFAULT_CHAT_FRAME:AddMessage('Easy Scrap: Discovered unknown azerite power ID, please report the following item to the developer: '..item.itemID)
         end
     else
         --print warning about unknown azerite armor with multiple final traits?
-        DEFAULT_CHAT_FRAME:AddMessage('Easy Scrap: Discovered an azerite item with new final trait(s), please report the following item to the developer: '..item.itemID)
+        --DEFAULT_CHAT_FRAME:AddMessage('Easy Scrap: Discovered an azerite item with new final trait(s), please report the following item to the developer: '..item.itemID)
     end
 end
 
