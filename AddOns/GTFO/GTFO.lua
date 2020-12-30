@@ -23,10 +23,10 @@ GTFO = {
 		TrivialDamagePercent = 2; -- Minimum % of HP lost required for an alert to be trivial
 		SoundOverrides = { }; -- Override table for GTFO sounds
 	};
-	Version = "4.56.3"; -- Version number (text format)
+	Version = "4.57.3"; -- Version number (text format)
 	VersionNumber = 0; -- Numeric version number for checking out-of-date clients (placeholder until client is detected)
-	RetailVersionNumber = 45603; -- Numeric version number for checking out-of-date clients (retail)
-	ClassicVersionNumber = 45500; -- Numeric version number for checking out-of-date clients (classic)
+	RetailVersionNumber = 45703; -- Numeric version number for checking out-of-date clients (retail)
+	ClassicVersionNumber = 45702; -- Numeric version number for checking out-of-date clients (classic)
 	DataLogging = nil; -- Indicate whether or not the addon needs to run the datalogging function (for hooking)
 	DataCode = "4"; -- Saved Variable versioning, change this value to force a reset to default
 	CanTank = nil; -- The active character is capable of tanking
@@ -1767,14 +1767,21 @@ function GTFO_GetAlertID(alert, target)
 		elseif (alert.soundLFR) then
 			alertLevel = alert.soundLFR;
 		end
-	elseif (alert.soundHeroic or alert.soundChallenge or (tankAlert and (alert.tankSoundHeroic or alert.tankSoundChallenge))) then
-		local isHeroic, isChallenge = select(3, GetDifficultyInfo(select(3, GetInstanceInfo())));
+	elseif (alert.soundHeroic or alert.soundMythic or alert.soundChallenge or (tankAlert and (alert.tankSoundHeroic or alert.tankSoundMythic or alert.tankSoundChallenge))) then
+		local isHeroic, isChallenge, _, isMythic = select(3, GetDifficultyInfo(select(3, GetInstanceInfo())));
 		if (isChallenge == true) then
-			-- Challenge Mode
-			if (tankAlert and (alert.tankSoundChallenge or alert.tankSoundHeroic)) then
-				alertLevel = alert.tankSoundChallenge or alert.tankSoundHeroic;
-			elseif (alert.soundChallenge or alert.soundHeroic) then
-				alertLevel = alert.soundChallenge or alert.soundHeroic;
+			-- Mythic+/Challenge Mode
+			if (tankAlert and (alert.tankSoundChallenge or alert.tankSoundMythic or alert.tankSoundHeroic)) then
+				alertLevel = alert.tankSoundChallenge or alert.tankSoundMythic or alert.tankSoundHeroic;
+			elseif (alert.soundChallenge or alert.soundMythic or alert.soundHeroic) then
+				alertLevel = alert.soundChallenge or alert.soundMythic or alert.soundHeroic;
+			end
+		elseif (isMythic == true) then
+			-- Mythic Mode
+			if (tankAlert and (alert.tankSoundMythic or alert.tankSoundHeroic)) then
+				alertLevel = alert.tankSoundMythic or alert.tankSoundHeroic;
+			elseif (alert.soundMythic or alert.soundHeroic) then
+				alertLevel = alert.soundMythic or alert.soundHeroic;
 			end
 		elseif (isHeroic == true) then
 			-- Heroic Mode

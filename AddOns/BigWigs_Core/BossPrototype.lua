@@ -26,10 +26,12 @@ do
 end
 
 local L = BigWigsAPI:GetLocale("BigWigs: Common")
-local UnitAffectingCombat, UnitIsPlayer, UnitGUID, UnitPosition, UnitIsConnected = UnitAffectingCombat, UnitIsPlayer, UnitGUID, UnitPosition, UnitIsConnected
+local UnitAffectingCombat, UnitIsPlayer, UnitPosition, UnitIsConnected = UnitAffectingCombat, UnitIsPlayer, UnitPosition, UnitIsConnected
 local C_EncounterJournal_GetSectionInfo, GetSpellInfo, GetSpellTexture, GetTime, IsSpellKnown = C_EncounterJournal.GetSectionInfo, GetSpellInfo, GetSpellTexture, GetTime, IsSpellKnown
 local EJ_GetEncounterInfo, UnitGroupRolesAssigned = EJ_GetEncounterInfo, UnitGroupRolesAssigned
 local SendChatMessage, GetInstanceInfo, Timer = BigWigsLoader.SendChatMessage, BigWigsLoader.GetInstanceInfo, BigWigsLoader.CTimerAfter
+local UnitName, UnitGUID = BigWigsLoader.UnitName, BigWigsLoader.UnitGUID
+local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 local format, find, gsub, band, tremove, wipe = string.format, string.find, string.gsub, bit.band, table.remove, table.wipe
 local select, type, next, tonumber = select, type, next, tonumber
 local C = core.C
@@ -175,7 +177,17 @@ local bossNames = setmetatable({}, {__index =
 
 --- Register the module to enable on mob id.
 -- @number ... Any number of mob ids
-function boss:RegisterEnableMob(...) core:RegisterEnableMob(self, ...) end
+function boss:RegisterEnableMob(...)
+	self.enableMobs = {}
+	core:RegisterEnableMob(self, ...)
+end
+
+--- Check if a specific mob id would enable this module.
+-- @number mobId A singular specific mob id
+-- @return true or nil
+function boss:IsEnableMob(mobId)
+	return self.enableMobs[mobId] 
+end
 
 --- The encounter id as used by events ENCOUNTER_START, ENCOUNTER_END & BOSS_KILL.
 -- If this is set, no engage or wipe checking is required. The module will use this id and all engage/wipe checking will be handled automatically.
@@ -331,6 +343,7 @@ function boss:Disable(isWipe)
 		self.missing = nil
 		self.isWiping = nil
 		self.isEngaged = nil
+		self.bossTargetChecks = nil
 
 		self:CancelAllTimers()
 
@@ -685,30 +698,31 @@ do
 		end
 	end
 
+	local bosses = {"boss1", "boss2", "boss3", "boss4", "boss5"}
 	-- Update module engage status from querying boss units.
 	-- Engages modules if boss1-boss5 matches an registered enabled mob,
 	-- disables the module if set as engaged but has no boss match.
 	-- noEngage if set to "NoEngage", the module is prevented from engaging if enabling during a boss fight (after a DC)
 	function boss:CheckForEncounterEngage(noEngage)
-		local hasBoss = UnitHealth("boss1") > 0 or UnitHealth("boss2") > 0 or UnitHealth("boss3") > 0 or UnitHealth("boss4") > 0 or UnitHealth("boss5") > 0
-		if not self:IsEngaged() and hasBoss then
-			local guid = UnitGUID("boss1") or UnitGUID("boss2") or UnitGUID("boss3") or UnitGUID("boss4") or UnitGUID("boss5")
-			local module = core:GetEnableMobs()[self:MobId(guid)]
-			local modType = type(module)
-			if modType == "string" then
-				if module == self.moduleName then
-					self:Engage(noEngage == "NoEngage" and noEngage)
-				else
-					self:Disable()
-				end
-			elseif modType == "table" then
-				for i = 1, #module do
-					if module[i] == self.moduleName then
+		if not self:IsEngaged() then
+			for i = 1, 5 do
+				local boss = bosses[i]
+				local guid = UnitGUID(boss)
+				if guid and UnitHealth(boss) > 0 then
+					local mobId = self:MobId(guid)
+					if self:IsEnableMob(mobId) then
 						self:Engage(noEngage == "NoEngage" and noEngage)
-						break
+						return
+					elseif not self.disableTimer then
+						self.disableTimer = true
+						self:SimpleTimer(function()
+							self.disableTimer = nil
+							if not self:IsEngaged() then
+								self:Disable()
+							end
+						end, 3) -- 3 seconds should be enough time for the IEEU event to enable all the boss frames (fires once per boss frame)
 					end
 				end
-				if not self:IsEngaged() then self:Disable() end
 			end
 		end
 	end
@@ -921,7 +935,6 @@ end
 do
 	local bosses = {"boss1", "boss2", "boss3", "boss4", "boss5"}
 	local bossTargets = {"boss1target", "boss2target", "boss3target", "boss4target", "boss5target"}
-	local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 	local function bossScanner()
 		for i = #bossTargetScans, 1, -1 do
 			local self, func, tankCheckExpiry, guid = bossTargetScans[i][1], bossTargetScans[i][2], bossTargetScans[i][3], bossTargetScans[i][4]
@@ -964,6 +977,42 @@ do
 		end
 
 		bossTargetScans[#bossTargetScans+1] = {self, func, solo and 0.1 or tankCheckExpiry, guid, 0} -- Tiny allowance when solo
+	end
+
+
+	function boss:NextTarget(event, unit)
+		self:UnregisterUnitEvent(event, unit)
+		local func = self.bossTargetChecks[unit]
+		self.bossTargetChecks[unit] = nil
+		local id = unit.."target"
+		local playerGUID = UnitGUID(id)
+		local name = self:UnitName(id)
+		func(self, name, playerGUID)
+	end
+	--- Register a callback to get the next target a boss swaps to (boss1 - boss5).
+	-- Looks for the boss as defined by the GUID and then returns the next target selected by that boss.
+	-- Unlike the :GetBossTarget functionality, :GetNextBossTarget doesn't care what the target is, it will just fire the callback with whatever unit the boss targets next
+	-- @param func callback function, passed (module, playerName, playerGUID)
+	-- @string guid GUID of the mob to get the target of
+	-- @number[opt] timeToWait seconds to wait for the boss to change target until giving up, if nil the default time of 0.3s is used
+	function boss:GetNextBossTarget(func, guid, timeToWait)
+		if not self.bossTargetChecks then
+			self.bossTargetChecks = {}
+		end
+
+		for i = 1, 5 do
+			local unit = bosses[i]
+			if UnitGUID(unit) == guid then
+				self.bossTargetChecks[unit] = func
+				self:RegisterUnitEvent("UNIT_TARGET", "NextTarget", unit)
+				Timer(timeToWait or 0.3, function()
+					if self.bossTargetChecks[unit] then
+						self:UnregisterUnitEvent("UNIT_TARGET", unit)
+					end
+				end)
+				break
+			end
+		end
 	end
 end
 
@@ -1110,7 +1159,6 @@ function boss:Me(guid)
 end
 
 do
-	local UnitName = UnitName
 	--- Get the full name of a unit.
 	-- @string unit unit token or name
 	-- @return unit name with the server appended if appropriate
@@ -1122,6 +1170,15 @@ do
 			name = name .."-".. server
 		end
 		return name
+	end
+	--- Get the Globally Unique Identifier of a unit.
+	-- @string unit unit token or name
+	-- @return guid guid of the unit
+	function boss:UnitGUID(unit)
+		local guid = UnitGUID(unit)
+		if guid then
+			return guid
+		end
 	end
 end
 
@@ -1313,6 +1370,14 @@ function boss:Tank(unit)
 	else
 		return myRole == "TANK"
 	end
+end
+
+--- Check if you are tanking a unit.
+-- @string targetUnit check if you are currently tanking this unit
+-- @string[opt="player"] sourceUnit check if a different player is currently tanking the targetUnit
+-- @return boolean
+function boss:Tanking(targetUnit, sourceUnit)
+	return UnitDetailedThreatSituation(sourceUnit or "player", targetUnit)
 end
 
 --- Check if your talent tree role is HEALER.

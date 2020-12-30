@@ -54,11 +54,11 @@ do
     ns.PLAYER_REGION_ID = nil
     ns.PLAYER_FACTION = nil
     ns.PLAYER_FACTION_TEXT = nil
-    ns.OUTDATED_CUTOFF = 10 * 86400 * 3 -- number of seconds before we start warning about stale data (warning the user should update their addon)
-    ns.OUTDATED_BLOCK_CUTOFF = 10 * 86400 * 7 -- number of seconds before we hide the data (block showing score as its most likely inaccurate)
+    ns.OUTDATED_CUTOFF = 86400 * 3 -- number of seconds before we start warning about stale data (warning the user should update their addon)
+    ns.OUTDATED_BLOCK_CUTOFF = 86400 * 7 -- number of seconds before we hide the data (block showing score as its most likely inaccurate)
     ns.PROVIDER_DATA_TYPE = {MythicKeystone = 1, Raid = 2, PvP = 3}
     ns.LOOKUP_MAX_SIZE = floor(2^18-1)
-    ns.CURRENT_SEASON = 4 -- TODO: dynamic?
+    ns.CURRENT_SEASON = 1 -- TODO: dynamic?
     ns.RAIDERIO_ADDON_DOWNLOAD_URL = "https://rio.gg/addon"
 
     ns.HEADLINE_MODE = {
@@ -2067,7 +2067,14 @@ do
         return 20 + (value - 20) * 4
     end
 
-    local function Split64BitNumber(dword)
+    local function DecodeBits8(value)
+        if value < 200 then
+            return value
+        end
+        return 200 + (value - 200) * 2
+    end
+
+	local function Split64BitNumber(dword)
         local lo = band(dword, 0xfffffffff)
         return lo, (dword - lo) / 0x100000000
     end
@@ -2297,20 +2304,20 @@ do
         for encoderIndex = 1, #encodingOrder do
             local field = encodingOrder[encoderIndex]
             if field == ENCODER_MYTHICPLUS_FIELDS.CURRENT_SCORE then
-                results.currentScore, bitOffset = ReadBitsFromString(bucket, bitOffset, 14)
+                results.currentScore, bitOffset = ReadBitsFromString(bucket, bitOffset, 12)
                 results.hasRenderableData = results.hasRenderableData or results.currentScore > 0
             elseif field == ENCODER_MYTHICPLUS_FIELDS.CURRENT_ROLES then
                 value, bitOffset = ReadBitsFromString(bucket, bitOffset, 7)
                 results.currentRoleOrdinalIndex = 1 + value -- indexes are one-based
             elseif field == ENCODER_MYTHICPLUS_FIELDS.PREVIOUS_SCORE then
-                results.previousScore, bitOffset = ReadBitsFromString(bucket, bitOffset, 13)
+                results.previousScore, bitOffset = ReadBitsFromString(bucket, bitOffset, 12)
                 results.previousScoreSeason, bitOffset = ReadBitsFromString(bucket, bitOffset, 2)
                 results.hasRenderableData = results.hasRenderableData or results.previousScore > 0
             elseif field == ENCODER_MYTHICPLUS_FIELDS.PREVIOUS_ROLES then
                 value, bitOffset = ReadBitsFromString(bucket, bitOffset, 7)
                 results.previousRoleOrdinalIndex = 1 + value -- indexes are one-based
             elseif field == ENCODER_MYTHICPLUS_FIELDS.MAIN_CURRENT_SCORE then
-                results.mainCurrentScore, bitOffset = ReadBitsFromString(bucket, bitOffset, 13)
+                results.mainCurrentScore, bitOffset = ReadBitsFromString(bucket, bitOffset, 12)
                 results.hasRenderableData = results.hasRenderableData or results.mainCurrentScore > 0
             elseif field == ENCODER_MYTHICPLUS_FIELDS.MAIN_CURRENT_ROLES then
                 value, bitOffset = ReadBitsFromString(bucket, bitOffset, 7)
@@ -2324,14 +2331,14 @@ do
                 value, bitOffset = ReadBitsFromString(bucket, bitOffset, 7)
                 results.mainPreviousRoleOrdinalIndex = 1 + value -- indexes are one-based
             elseif field == ENCODER_MYTHICPLUS_FIELDS.DUNGEON_RUN_COUNTS then
-                value, bitOffset = ReadBitsFromString(bucket, bitOffset, 6)
-                results.keystoneFivePlus = DecodeBits6(value)
-                value, bitOffset = ReadBitsFromString(bucket, bitOffset, 6)
-                results.keystoneTenPlus = DecodeBits6(value)
-                value, bitOffset = ReadBitsFromString(bucket, bitOffset, 6 or 7) -- TODO: enable once the new feature `show-more-15s` is live
-                results.keystoneFifteenPlus = (DecodeBits6 or DecodeBits7)(value) -- TODO: enable once the new feature `show-more-15s` is live
-                value, bitOffset = ReadBitsFromString(bucket, bitOffset, 6)
-                results.keystoneTwentyPlus = DecodeBits6(value)
+                value, bitOffset = ReadBitsFromString(bucket, bitOffset, 8)
+                results.keystoneFivePlus = DecodeBits8(value)
+                value, bitOffset = ReadBitsFromString(bucket, bitOffset, 8)
+                results.keystoneTenPlus = DecodeBits8(value)
+                value, bitOffset = ReadBitsFromString(bucket, bitOffset, 8)
+                results.keystoneFifteenPlus = DecodeBits8(value)
+                value, bitOffset = ReadBitsFromString(bucket, bitOffset, 8)
+                results.keystoneTwentyPlus = DecodeBits8(value)
                 results.hasRenderableData = results.hasRenderableData or results.keystoneFivePlus > 0 or results.keystoneTenPlus > 0 or results.keystoneFifteenPlus > 0 or results.keystoneTwentyPlus > 0
             elseif field == ENCODER_MYTHICPLUS_FIELDS.DUNGEON_LEVELS then
                 results.dungeons = {}
@@ -3207,12 +3214,12 @@ do
                 local keystoneProfile = profile.mythicKeystoneProfile
                 local raidProfile = profile.raidProfile
                 local pvpProfile = profile.pvpProfile
-                local isKeystoneBlockShown = keystoneProfile and keystoneProfile.hasRenderableData and not keystoneProfile.blocked
+                local isExtendedProfile = Has(state.options, render.Flags.PROFILE_TOOLTIP)
+                local isKeystoneBlockShown = keystoneProfile and ((isExtendedProfile or keystoneProfile.hasRenderableData) and not keystoneProfile.blocked)
                 local isBlocked = keystoneProfile and (keystoneProfile.blocked or keystoneProfile.softBlocked)
                 local isOutdated = keystoneProfile and keystoneProfile.outdated
-                local isExtendedProfile = Has(state.options, render.Flags.PROFILE_TOOLTIP)
                 local showRaidEncounters = config:Get("showRaidEncountersInProfile")
-                local isRaidBlockShown = raidProfile and raidProfile.hasRenderableData and (not isExtendedProfile or showRaidEncounters)
+                local isRaidBlockShown = raidProfile and ((isExtendedProfile and showRaidEncounters) or raidProfile.hasRenderableData) and (not isExtendedProfile or showRaidEncounters)
                 local isPvpBlockShown = pvpProfile and pvpProfile.hasRenderableData
                 local isAnyBlockShown = isKeystoneBlockShown or isRaidBlockShown or isPvpBlockShown
                 local isUnitTooltip = Has(state.options, render.Flags.UNIT_TOOLTIP)
@@ -3304,7 +3311,7 @@ do
                                 break
                             end
                         end
-                        if hasBestDungeons then
+                        if hasBestDungeons or true then -- HOTFIX: we prefer to always display this in the expanded profile so even empty profiles can display what dungeons there are for the player to complete
                             if showHeader then
                                 if showPadding then
                                     tooltip:AddLine(" ")

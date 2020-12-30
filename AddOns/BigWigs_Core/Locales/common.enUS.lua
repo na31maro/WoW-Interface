@@ -18,6 +18,7 @@ L.count = "%s (%d)"
 L.count_icon = "%s (%d|T13700%d:0|t)"
 L.count_rticon = "%s (%d{rt%d})"
 L.near = "%s near YOU"
+L.on_group = "%s on GROUP"
 
 L.phase = "Phase %d"
 L.stage = "Stage %d"
@@ -82,3 +83,7 @@ L.amount_one = "%dB" -- Billions 1,000,000,000
 L.amount_two = "%dM" -- Millions 1,000,000
 L.amount_three = "%dK" -- Thousands 1,000
 L.seconds = "%.1fs" -- 1.1 seconds
+
+-- Common ability name replacements
+L.laser = "Laser" -- Used for abilities that act like a laser. Usually from the boss to a player, or, from the boss to a specific area
+L.bomb = "Bomb" -- Used for debuffs that make players explode

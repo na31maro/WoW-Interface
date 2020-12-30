@@ -54,6 +54,7 @@ L.trash = "Trash"
 L.underyou = "%s unter DIR"
 L.you = "%s auf DIR"
 L.you_icon = "%s auf |T13700%d:0|tDIR"
+L.on_group = "%s auf GRUPPE" -- spell on group
 
 L.active = "Aktiv" -- When a boss becomes active, after speech finishes
 
@@ -73,3 +74,7 @@ L.amount_one = "%dB" -- Billions 1,000,000,000
 L.amount_two = "%dM" -- Millions 1,000,000
 L.amount_three = "%dK" -- Thousands 1,000
 L.seconds = "%.1fs" -- 1.1 seconds
+
+-- Common ability name replacements
+L.laser = "Laser" -- Used for abilities that act like a laser. Usually from the boss to a player, or, from the boss to a specific area
+L.bomb = "Bombe" -- Used for debuffs that make players explode

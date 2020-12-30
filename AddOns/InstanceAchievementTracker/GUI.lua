@@ -26,6 +26,7 @@ local WrathOfTheLichKingContentButtons = {}
 local Left = nil
 local Top = nil
 local InfoFrameScale = nil
+local InfoFrameTestBarsActive = false
 
 -- Purpose:                         Stores information about the current status of the GUI
 Config.currentTab = nil             --Stores which tab is currently selected
@@ -34,9 +35,12 @@ Config.currentInstance = nil        --Stores which instance is currently selecte
 -- Purpose:         Stores information about the current options in the GUI
 AchievementTrackerOptions = {}
 
+-- Purpose:         Stores NPC names
+AchievementTrackerNPCCache = {}
+
 -- Purpose:         Information about the current release. This is mianly used to detect which addon should output messages to chat to avoid spam
 Config.majorVersion = 3						--Addon with a higher major version change have priority over a lower major version
-Config.minorVersion = 9    				--Addon with a minor version change have prioirty over a lower minor version
+Config.minorVersion = 13    				--Addon with a minor version change have prioirty over a lower minor version
 Config.revisionVersion = 0					--Addon with a revision change have the same priorty as a lower revision verison
 Config.releaseType = ""                     --Release type (Alpha, Beta, Release)
 
@@ -230,6 +234,14 @@ function Tab_OnClick(self)
             UIConfig.Main2.options27:Show()
             UIConfig.Main2.options28:Show()
             UIConfig.Main2.options29:Show()
+            UIConfig.Main2.options30:Show()
+            UIConfig.Main2.options31:Show()
+            UIConfig.Main2.options32:Show()
+            UIConfig.Main2.options33:Show()
+            UIConfig.Main2.options34:Show()
+            -- UIConfig.Main2.options35:Show()
+            -- UIConfig.Main2.options36:Show()
+            -- UIConfig.Main2.options37:Show()
 
             UIConfig.Main.author:Show()
             UIConfig.Main.tacticsCredit:Show()
@@ -320,16 +332,40 @@ function Tab_OnClick(self)
             UIConfig.Main2.options2 = Config:CreateCheckBox("TOPLEFT", UIConfig, "TOPLEFT", 20, -160, "AchievementTracker_EnableAddon")
             UIConfig.Main2.options2:SetScript("OnClick", enableAddon_OnClick)
             UIConfig.Main2.options3 = Config:CreateText2("TOPLEFT", UIConfig, "TOPLEFT", 51, -170, L["GUI_EnableAddon"],"GameFontHighlight")
+            UIConfig.Main2.options2:SetScript("OnEnter", function(self)
+                AltGameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                AltGameTooltip:SetText(L["GUI_EnableAddonDescription"],1.0,0.82,0.0,1,true)
+                AltGameTooltip:Show()
+            end)
+            UIConfig.Main2.options2:SetScript("OnLeave", function(self)
+                AltGameTooltip:Hide()
+            end)
 
             --Toggle Minimap Icon
             UIConfig.Main2.options4 = Config:CreateCheckBox("TOPLEFT", UIConfig.Main2.options2, "TOPLEFT", 0, -25, "AchievementTracker_ToggleMinimapIcon")
             UIConfig.Main2.options4:SetScript("OnClick", ATToggleMinimapIcon_OnClick)
             UIConfig.Main2.options5 = Config:CreateText2("TOPLEFT", UIConfig.Main2.options4, "TOPLEFT", 30, -9, L["GUI_ToggleMinimap"],"GameFontHighlight")
+            UIConfig.Main2.options4:SetScript("OnEnter", function(self)
+                AltGameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                AltGameTooltip:SetText(L["GUI_ShowMimapButtonDescription"],1.0,0.82,0.0,1,true)
+                AltGameTooltip:Show()
+            end)
+            UIConfig.Main2.options4:SetScript("OnLeave", function(self)
+                AltGameTooltip:Hide()
+            end)
 
             --Link achievements being tracked for current boss to chat
             UIConfig.Main2.options6 = Config:CreateCheckBox("TOPLEFT", UIConfig.Main2.options4, "TOPLEFT", 0, -25, "AchievementTracker_ToggleAchievementAnnounce")
             UIConfig.Main2.options6:SetScript("OnClick", ATToggleAchievementAnnounce_OnClick)
             UIConfig.Main2.options7 = Config:CreateText2("TOPLEFT", UIConfig.Main2.options6, "TOPLEFT", 30, -9, L["GUI_AnnounceTracking"],"GameFontHighlight")
+            UIConfig.Main2.options6:SetScript("OnEnter", function(self)
+                AltGameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                AltGameTooltip:SetText(L["GUI_AnnounceAchievementsToGroupDescription"],1.0,0.82,0.0,1,true)
+                AltGameTooltip:Show()
+            end)
+            UIConfig.Main2.options6:SetScript("OnLeave", function(self)
+                AltGameTooltip:Hide()
+            end)
 
             --Only track achievements in the group that players need.
             --Note this will only track achievements if players need them account wide not character wide
@@ -337,11 +373,27 @@ function Tab_OnClick(self)
             UIConfig.Main2.options8 = Config:CreateCheckBox("TOPLEFT", UIConfig.Main2.options6, "TOPLEFT", 0, -25, "AchievementTracker_ToggleTrackMissingAchievementsOnly")
             UIConfig.Main2.options8:SetScript("OnClick", ATToggleTrackMissingAchievementsOnly_OnClick)
             UIConfig.Main2.options9 = Config:CreateText2("TOPLEFT", UIConfig.Main2.options8, "TOPLEFT", 30, -9, L["GUI_OnlyTrackMissingAchievements"],"GameFontHighlight")
+            UIConfig.Main2.options8:SetScript("OnEnter", function(self)
+                AltGameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                AltGameTooltip:SetText(L["GUI_OnlyTrackMissingAchievementsDescription"],1.0,0.82,0.0,1,true)
+                AltGameTooltip:Show()
+            end)
+            UIConfig.Main2.options8:SetScript("OnLeave", function(self)
+                AltGameTooltip:Hide()
+            end)
 
             --Announce messages to Raid Warning if player has permission
             UIConfig.Main2.options10 = Config:CreateCheckBox("TOPLEFT", UIConfig.Main2.options8, "TOPLEFT", 0, -25, "AchievementTracker_ToggleAnnounceToRaidWarning")
             UIConfig.Main2.options10:SetScript("OnClick", ATToggleAnnounceToRaidWarning_OnClick)
             UIConfig.Main2.options11 = Config:CreateText2("TOPLEFT", UIConfig.Main2.options10, "TOPLEFT", 30, -9, L["GUI_AnnounceMessagesToRaidWarning"],"GameFontHighlight")
+            UIConfig.Main2.options10:SetScript("OnEnter", function(self)
+                AltGameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                AltGameTooltip:SetText(L["GUI_AnnounceMessagesToRaidWarningDescription"],1.0,0.82,0.0,1,true)
+                AltGameTooltip:Show()
+            end)
+            UIConfig.Main2.options10:SetScript("OnLeave", function(self)
+                AltGameTooltip:Hide()
+            end)
 
             --Links to current guides and achievement discord credit for tactics
             UIConfig.Main2.credits = Config:CreateText2("TOPRIGHT",UIConfig, "TOPRIGHT", -10, -70, L["GUI_AchievementsDiscordTitle"] .. ":","GameFontNormalLarge")
@@ -358,6 +410,14 @@ function Tab_OnClick(self)
             UIConfig.Main2.options12 = Config:CreateCheckBox("TOPLEFT", UIConfig.Main2.options10, "TOPLEFT", 0, -25, "AchievementTracker_ToggleSound")
             UIConfig.Main2.options12:SetScript("OnClick", ATToggleSound_OnClick)
             UIConfig.Main2.options13 = Config:CreateText2("TOPLEFT", UIConfig.Main2.options12, "TOPLEFT", 30, -9, L["GUI_PlaySoundOnSuccess"],"GameFontHighlight")
+            UIConfig.Main2.options12:SetScript("OnEnter", function(self)
+                AltGameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                AltGameTooltip:SetText(L["GUI_PlaySoundOnCompletionDescription"],1.0,0.82,0.0,1,true)
+                AltGameTooltip:Show()
+            end)
+            UIConfig.Main2.options12:SetScript("OnLeave", function(self)
+                AltGameTooltip:Hide()
+            end)
 
             --Dropdown menu to select sound for completed Achievement
             UIConfig.Main2.options15 = MSA_DropDownMenu_Create("AchievementTracker_SelectSoundDropdownCompleted", UIConfig.Main2.options12)
@@ -377,10 +437,18 @@ function Tab_OnClick(self)
                 end
             end)
 
-            --Make a sound when an achievement has been completed
+            --Make a sound when an achievement has been failed
             UIConfig.Main2.options012 = Config:CreateCheckBox("TOPLEFT", UIConfig.Main2.options12, "TOPLEFT", 0, -25, "AchievementTracker_ToggleSoundFailed")
             UIConfig.Main2.options012:SetScript("OnClick", ATToggleSoundFailed_OnClick)
             UIConfig.Main2.options013 = Config:CreateText2("TOPLEFT", UIConfig.Main2.options012, "TOPLEFT", 30, -9, L["GUI_PlaySoundOnFailed"],"GameFontHighlight")
+            UIConfig.Main2.options012:SetScript("OnEnter", function(self)
+                AltGameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                AltGameTooltip:SetText(L["GUI_PlaySoundOnFailDescription"],1.0,0.82,0.0,1,true)
+                AltGameTooltip:Show()
+            end)
+            UIConfig.Main2.options012:SetScript("OnLeave", function(self)
+                AltGameTooltip:Hide()
+            end)
 
             --Dropdown menu to select sound for failed Achievement
             UIConfig.Main2.options17 = MSA_DropDownMenu_Create("AchievementTracker_SelectSoundDropdownFailed", UIConfig.Main2.options012)
@@ -404,11 +472,27 @@ function Tab_OnClick(self)
             UIConfig.Main2.options18 = Config:CreateCheckBox("TOPLEFT", UIConfig.Main2.options012, "TOPLEFT", 0, -25, "AchievementTracker_HideCompletedAchievements")
             UIConfig.Main2.options18:SetScript("OnClick", ATToggleHideCompletedAchievements_OnClick)
             UIConfig.Main2.options19 = Config:CreateText2("TOPLEFT", UIConfig.Main2.options18, "TOPLEFT", 30, -9, L["GUI_HideCompletedAchievements"],"GameFontHighlight")
+            UIConfig.Main2.options18:SetScript("OnEnter", function(self)
+                AltGameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                AltGameTooltip:SetText(L["GUI_HideCompletedAchievementsDescription"],1.0,0.82,0.0,1,true)
+                AltGameTooltip:Show()
+            end)
+            UIConfig.Main2.options18:SetScript("OnLeave", function(self)
+                AltGameTooltip:Hide()
+            end)
 
             --Grey out completed achievements
             UIConfig.Main2.options20 = Config:CreateCheckBox("TOPLEFT", UIConfig.Main2.options18, "TOPLEFT", 0, -25, "AchievementTracker_GreyOutCompletedAchievements")
             UIConfig.Main2.options20:SetScript("OnClick", ATToggleGreyOutCompletedAchievements_OnClick)
             UIConfig.Main2.options21 = Config:CreateText2("TOPLEFT", UIConfig.Main2.options20, "TOPLEFT", 30, -9, L["GUI_GreyOutCompletedAchievements"],"GameFontHighlight")
+            UIConfig.Main2.options20:SetScript("OnEnter", function(self)
+                AltGameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                AltGameTooltip:SetText(L["GUI_GreyOutCompletedAchievementsDescription"],1.0,0.82,0.0,1,true)
+                AltGameTooltip:Show()
+            end)
+            UIConfig.Main2.options20:SetScript("OnLeave", function(self)
+                AltGameTooltip:Hide()
+            end)
             -- UIConfig.Main2.options20:Hide()
             -- UIConfig.Main2.options21:Hide()
 
@@ -416,16 +500,40 @@ function Tab_OnClick(self)
             UIConfig.Main2.options22 = Config:CreateCheckBox("TOPLEFT", UIConfig.Main2.options20, "TOPLEFT", 0, -25, "AchievementTracker_EnableAutomaticCombatLogging")
             UIConfig.Main2.options22:SetScript("OnClick", ATToggleAutomaticCombatLogging_OnClick)
             UIConfig.Main2.options23 = Config:CreateText2("TOPLEFT", UIConfig.Main2.options22, "TOPLEFT", 30, -9, L["GUI_EnableAutomaticCombatLogging"],"GameFontHighlight")
+            UIConfig.Main2.options22:SetScript("OnEnter", function(self)
+                AltGameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                AltGameTooltip:SetText(L["GUI_EnableCombatLogDescription"],1.0,0.82,0.0,1,true)
+                AltGameTooltip:Show()
+            end)
+            UIConfig.Main2.options22:SetScript("OnLeave", function(self)
+                AltGameTooltip:Hide()
+            end)
 
             --Disable InfoFrame
             UIConfig.Main2.options24 = Config:CreateCheckBox("TOPLEFT", UIConfig.Main2.options22, "TOPLEFT", 0, -25, "AchievementTracker_DisplayInfoFrame")
             UIConfig.Main2.options24:SetScript("OnClick", ATToggleInfoFrame_OnClick)
             UIConfig.Main2.options25 = Config:CreateText2("TOPLEFT", UIConfig.Main2.options24, "TOPLEFT", 30, -9, L["GUI_DisplayInfoFrame"],"GameFontHighlight")
+            UIConfig.Main2.options24:SetScript("OnEnter", function(self)
+                AltGameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                AltGameTooltip:SetText(L["GUI_EnableInfoFrameDescription"],1.0,0.82,0.0,1,true)
+                AltGameTooltip:Show()
+            end)
+            UIConfig.Main2.options24:SetScript("OnLeave", function(self)
+                AltGameTooltip:Hide()
+            end)
 
             --Track missing achievements in Blizzard UI
             UIConfig.Main2.options26 = Config:CreateCheckBox("TOPLEFT", UIConfig.Main2.options24, "TOPLEFT", 0, -25, "AchievementTracker_TrackAchievementsInBlizzardUI")
             UIConfig.Main2.options26:SetScript("OnClick", ATToggleTrackAchievementsInBlizzardUI_OnClick)
             UIConfig.Main2.options27 = Config:CreateText2("TOPLEFT", UIConfig.Main2.options26, "TOPLEFT", 30, -9, L["GUI_TrackAchievementsInBlizzardUI"],"GameFontHighlight")
+            UIConfig.Main2.options26:SetScript("OnEnter", function(self)
+                AltGameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                AltGameTooltip:SetText(L["GUI_TrackAchievementsInUIDescription"],1.0,0.82,0.0,1,true)
+                AltGameTooltip:Show()
+            end)
+            UIConfig.Main2.options26:SetScript("OnLeave", function(self)
+                AltGameTooltip:Hide()
+            end)
 
             --Track achievements completed by player instead of account
             UIConfig.Main2.options28 = Config:CreateCheckBox("TOPLEFT", UIConfig.Main2.options2, "TOPLEFT", 363, 0, "AchievementTracker_TrackCharacterAchievements")
@@ -434,6 +542,92 @@ function Tab_OnClick(self)
             UIConfig.Main2.options29:SetWordWrap(true)
             UIConfig.Main2.options29:SetWidth(400)
             UIConfig.Main2.options29:SetJustifyH("LEFT")
+            UIConfig.Main2.options28:SetScript("OnEnter", function(self)
+                AltGameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                AltGameTooltip:SetText(L["GUI_TrackChararcterAchievementsDescription"],1.0,0.82,0.0,1,true)
+                AltGameTooltip:Show()
+            end)
+            UIConfig.Main2.options28:SetScript("OnLeave", function(self)
+                AltGameTooltip:Hide()
+            end)
+
+            --Track achievement automatically upon entering a compatible instance
+            UIConfig.Main2.options30 = Config:CreateCheckBox("TOPLEFT", UIConfig.Main2.options28, "TOPLEFT", 0, -25, "AchievementTracker_TrackAchievementsAutomatically")
+            UIConfig.Main2.options30:SetScript("OnClick", ATToggleTrackAchievementsAutomatically_OnClick)
+            UIConfig.Main2.options31 = Config:CreateText2("TOPLEFT", UIConfig.Main2.options30, "TOPLEFT", 30, -9, L["GUI_TrackAchievementsAutomatically"],"GameFontHighlight")
+            UIConfig.Main2.options31:SetWordWrap(true)
+            UIConfig.Main2.options31:SetWidth(400)
+            UIConfig.Main2.options31:SetJustifyH("LEFT")
+            UIConfig.Main2.options30:SetScript("OnEnter", function(self)
+                AltGameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                AltGameTooltip:SetText(L["GUI_TrackAchievementsAutomaticallyDescription"],1.0,0.82,0.0,1,true)
+                AltGameTooltip:Show()
+            end)
+            UIConfig.Main2.options30:SetScript("OnLeave", function(self)
+                AltGameTooltip:Hide()
+            end)
+
+            --Change Minimap icon when addon is enabled/disabled
+            UIConfig.Main2.options32 = Config:CreateCheckBox("TOPLEFT", UIConfig.Main2.options30, "TOPLEFT", 0, -25, "AchievementTracker_ChangeMinimapIcon")
+            UIConfig.Main2.options32:SetScript("OnClick", ATToggleChangeMinimapIcon_OnClick)
+            UIConfig.Main2.options33 = Config:CreateText2("TOPLEFT", UIConfig.Main2.options32, "TOPLEFT", 30, -9, L["GUI_ChangeMinimapIcon"],"GameFontHighlight")
+            UIConfig.Main2.options33:SetWordWrap(true)
+            UIConfig.Main2.options33:SetWidth(400)
+            UIConfig.Main2.options33:SetJustifyH("LEFT")
+            UIConfig.Main2.options32:SetScript("OnEnter", function(self)
+                AltGameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                AltGameTooltip:SetText(L["GUI_ChangeMinimapIconDescription"],1.0,0.82,0.0,1,true)
+                AltGameTooltip:Show()
+            end)
+            UIConfig.Main2.options32:SetScript("OnLeave", function(self)
+                AltGameTooltip:Hide()
+            end)
+
+            --Show/Hide InfoFrame
+            UIConfig.Main2.options34 = Config:CreateButton2("TOPLEFT", UIConfig.Main2.options32, "TOPLEFT", 0, -35, L["GUI_ToggleInfoFrameTestFrame"])
+            UIConfig.Main2.options34:SetWidth(UIConfig.Main2.options34:GetTextWidth() + 10)
+            UIConfig.Main2.options34:SetScript("OnClick", ATToggleShowInfoFrameTestFrame_OnClick)
+            UIConfig.Main2.options34:SetScript("OnEnter", function(self)
+                AltGameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+                AltGameTooltip:SetText(L["GUI_ToggleInfoFrameTestFrameDescription"],1.0,0.82,0.0,1,true)
+                AltGameTooltip:Show()
+            end)
+            UIConfig.Main2.options34:SetScript("OnLeave", function(self)
+                AltGameTooltip:Hide()
+            end)
+
+            -- --Make a sound whxen an achievement has been failed
+            -- UIConfig.Main2.options35 = Config:CreateCheckBox("TOPLEFT", UIConfig.Main2.options34, "TOPLEFT", 0, -25, "AchievementTracker_ToggleLocalisation")
+            -- UIConfig.Main2.options35:SetScript("OnClick", ATToggleSoundFailed_OnClick)
+            -- UIConfig.Main2.options36 = Config:CreateText2("TOPLEFT", UIConfig.Main2.options35, "TOPLEFT", 30, -9, L["GUI_SelectLocalisation"],"GameFontHighlight")
+            -- UIConfig.Main2.options35:SetScript("OnEnter", function(self)
+            --     AltGameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+            --     AltGameTooltip:SetText(L["GUI_SelectLocalisationDescription"],1.0,0.82,0.0,1,true)
+            --     AltGameTooltip:Show()
+            -- end)
+            -- UIConfig.Main2.options35:SetScript("OnLeave", function(self)
+            --     AltGameTooltip:Hide()
+            -- end)
+
+            -- --Dropdown menu to select sound for failed Achievement
+            -- UIConfig.Main2.options37 = MSA_DropDownMenu_Create("AchievementTracker_SelectLocalisationDropdown", UIConfig.Main2.options35)
+            -- UIConfig.Main2.options37:SetPoint("TOPLEFT", UIConfig.Main2.options35, "TOPLEFT", UIConfig.Main2.options36:GetStringWidth() + 30, 0)
+            -- MSA_DropDownMenu_SetWidth(UIConfig.Main2.options37, 100)
+            -- MSA_DropDownMenu_SetText(UIConfig.Main2.options37, L["GUI_Automatic"])
+            -- MSA_DropDownMenu_Initialize(UIConfig.Main2.options37, function(self, level, menuList)
+            --     local info = MSA_DropDownMenu_CreateInfo()
+            --     info.func = AchievementTracker_SelectLocalisation
+            --     local languages = {L["GUI_Automatic"],_G["ENGB"],_G["DEDE"],_G["ESES"],_G["RURU"],_G["FRFR"],_G["ZHCN"],_G["ZHTW"]}
+            --     for i=1,#languages do
+            --         info.text = languages[i]
+            --         info.menuList = i
+            --         info.value = i
+            --         info.arg1 = languages[i]
+            --         info.arg2 = UIConfig.Main2.options37
+            --         info.arg3 = i
+            --         MSA_DropDownMenu_AddButton(info)
+            --     end
+            -- end)
         end
     else                                --User has selected an expansion tab so hide main menu options
         UIConfig.ScrollFrame:Show()
@@ -482,6 +676,14 @@ function Tab_OnClick(self)
         UIConfig.Main2.options27:Hide()
         UIConfig.Main2.options28:Hide()
         UIConfig.Main2.options29:Hide()
+        UIConfig.Main2.options30:Hide()
+        UIConfig.Main2.options31:Hide()
+        UIConfig.Main2.options32:Hide()
+        UIConfig.Main2.options33:Hide()
+        UIConfig.Main2.options34:Hide()
+        -- UIConfig.Main2.options35:Hide()
+        -- UIConfig.Main2.options36:Hide()
+        -- UIConfig.Main2.options37:Hide()
 
         UIConfig.Main.author:Hide()
         UIConfig.Main.verison:Hide()
@@ -502,6 +704,36 @@ function Tab_OnClick(self)
             UIConfig.achievementsCompleted:Hide()
         end
     end
+end
+
+-- function AchievementTracker_SelectLocalisation(self, arg1, arg2, arg3, checked)
+--     AchievementTrackerOptions["localisationOption"] = arg1
+--     AchievementTrackerOptions["localisationOptionIndex"] = arg3
+--     MSA_DropDownMenu_SetText(arg2, arg3)
+-- end
+
+function ATToggleShowInfoFrameTestFrame_OnClick(self)
+    if InfoFrameTestBarsActive == false then
+        InfoFrameTestBarsActive = true
+        core.IATInfoFrame:SetupInfoFrame()
+        core.IATInfoFrame:ToggleOn()
+        core.IATInfoFrame:SetHeading(GetAchievementLink(14148))
+        core.IATInfoFrame:SetSubHeading1(L["Shared_PlayersMetCriteria"] .. " (0/10)")
+        core.IATInfoFrame:SetText1(getNPCName(134442).."\n"..getNPCName(144637).."\n"..getNPCName(138314).."\n"..getNPCName(94960).."\n"..getNPCName(95833).."\n"..getNPCName(116691).."\n"..getNPCName(111882).."\n"..getNPCName(111861).."\n"..getNPCName(74571).."\n"..getNPCName(74570))
+    else
+        InfoFrameTestBarsActive = false
+        core.IATInfoFrame:ToggleOff()
+    end
+end
+
+function ATToggleChangeMinimapIcon_OnClick(self)
+    AchievementTrackerOptions["changeMinimapIcon"] = self:GetChecked()
+    setChangeMinimapIcon(self:GetChecked())
+end
+
+function ATToggleTrackAchievementsAutomatically_OnClick(self)
+    AchievementTrackerOptions["trackAchievementsAutomatically"] = self:GetChecked()
+    setTrackAchievementsAutomatically(self:GetChecked())
 end
 
 function ATToggleTrackCharacterAchievements_OnClick(self)
@@ -876,6 +1108,7 @@ function Config:CreateGUI()
     UIConfig:RegisterForDrag("LeftButton")
     UIConfig:SetScript("OnDragStart", UIConfig.StartMoving)
     UIConfig:SetScript("OnDragStop", UIConfig.StopMovingOrSizing)
+    UIConfig:SetFrameStrata("HIGH")
 
     --Title
     UIConfig.title = UIConfig:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -1176,9 +1409,20 @@ function Config:CreateGUI()
             button.headerText:SetPoint("LEFT",12,0)
 
             -- the text for the content
-            button.contentText = button:CreateFontString(nil,"ARTWORK","GameFontHighlight")
+            -- button.contentText = button:CreateFontString(nil,"ARTWORK","GameFontHighlight")
+            button.contentText = CreateFrame("SimpleHTML")
+            button.contentText:SetScript("OnHyperlinkEnter", function(self, linkData, link, button)
+                AltGameTooltip:SetOwner(UIConfig, "ANCHOR_TOPRIGHT")
+                AltGameTooltip:SetHyperlink(linkData)
+                AltGameTooltip:Show()
+            end)
+            button.contentText:SetScript("OnHyperlinkLeave", function(self, linkData, link, button)
+                AltGameTooltip:Hide()
+            end)
+            button.contentText:SetParent(button)
             button.contentText:SetPoint("TOPLEFT",16,0)
             button.contentText:SetJustifyH("LEFT")
+            --button.contentText:SetIndentedWordWrap(true)
 
             --Tactics
             button.tactics = Config:CreateButton2("TOPRIGHT", button, "TOPRIGHT", -1, -7, L["GUI_OutputTactics"])
@@ -1447,11 +1691,26 @@ function Instance_OnClick(self)
                     tactics = instanceLocation["boss" .. counter2].tactics
                 end
 
+                tactics = tactics:gsub("%\n", "<br />")
+
                 --Only show players if user has enabled achievement tracking
-                if core.achievementTrackingEnabled == false then
-                    button.contentText:SetText(L["GUI_Achievement"] .. ": " .. GetAchievementLink(instanceLocation["boss" .. counter2].achievement) .. "\n\n" .. L["GUI_Tactic"] .. ": " .. tactics)
+                button.contentText:SetWidth(500)
+                if (GetLocale() == 'koKR') then
+                    button.contentText:SetFont("Fonts\\2002.TTF", 12);
+                elseif (GetLocale() == 'zhCN') then
+                    button.contentText:SetFont("Fonts\\ARKai_T.ttf", 16);
+                elseif (GetLocale() == 'zhTW') then
+                    button.contentText:SetFont("Fonts\\blei00d.TTF", 16);
+                elseif (GetLocale() == 'ruRU') then
+                    button.contentText:SetFont("Fonts\\FRIZQT___CYR.TTF", 12);
                 else
-                    button.contentText:SetText(L["GUI_Achievement"] .. ": " .. GetAchievementLink(instanceLocation["boss" .. counter2].achievement) .. "\n\n" .. players .. "\n\n" .. L["GUI_Tactic"] .. ": " .. tactics)
+                    button.contentText:SetFont("Fonts\\FRIZQT__.TTF", 12);
+                end
+                local achievementLink = GetAchievementLink(instanceLocation["boss" .. counter2].achievement)
+                if core.achievementTrackingEnabled == false then
+                    button.contentText:SetText("<html><body><p>" .. L["GUI_Achievement"] .. ": ".. achievementLink .. "<br /><br />" .. L["GUI_Tactic"] .. ": " .. tactics .. "</p></body></html>")
+                else
+                    button.contentText:SetText("<html><body><p>" .. L["GUI_Achievement"] .. ": " .. achievementLink .. "<br /><br />" .. players .. "<br /><br />" .. L["GUI_Tactic"] .. ": " .. tactics .. "</p></body></html>")
                 end
 
                 if playersFound == false and core.achievementDisplayStatus == "grey" then
@@ -1465,12 +1724,8 @@ function Instance_OnClick(self)
                 button.contentText:Show()
                 button.headerText:Hide()
                 button:SetNormalTexture(nil)
-                button.contentText:SetWidth(500)
-                button.contentText:SetHeight(500)
-
-                button.contentText:SetWordWrap(true)
-                button.contentText:SetHeight(button.contentText:GetStringHeight())
-                heightDifference = button.contentText:GetStringHeight();
+                button.contentText:SetHeight(button.contentText:GetContentHeight())
+                button:SetHeight(button.contentText:GetContentHeight())
 
                 button.tactics:Hide()
                 button.players:Hide()
@@ -1973,7 +2228,10 @@ function GetNameFromNpcIDCache(npcID)
 					end
 				end
 			end
-		end
+        end
+
+        --Add NPC to NPCCache
+        AchievementTrackerNPCCache[npcID] = name
     else
         C_Timer.After(0.1, function()
             if tip:NumLines()>0 then
@@ -1993,9 +2251,46 @@ function GetNameFromNpcIDCache(npcID)
                         end
                     end
                 end
+
+                --Add NPC to NPCCache
+                AchievementTrackerNPCCache[npcID] = name
             else
                 GetNameFromNpcIDCache(npcID)
             end
         end)
+    end
+end
+
+function GetNameFromLocalNpcIDCache()
+    --Attempt to fetch NPC name from local cache if it exists
+    if AchievementTrackerNPCCache ~= nil then
+        for npcID,name in pairs(AchievementTrackerNPCCache) do
+            --core:sendDebugMessage("Located: " .. name)
+            for expansion, _ in pairs(core.Instances) do
+                for instanceType, _ in pairs(core.Instances[expansion]) do
+                    for instance, _ in pairs(core.Instances[expansion][instanceType]) do
+                        for boss, _ in pairs(core.Instances[expansion][instanceType][instance]) do
+                            if boss ~= "name" then
+                                if type(core.Instances[expansion][instanceType][instance][boss].tactics) == "table" then
+                                    if UnitFactionGroup("player") == "Alliance" then
+                                        if string.find(core.Instances[expansion][instanceType][instance][boss].tactics[1], ("IAT_" .. npcID)) then
+                                            core.Instances[expansion][instanceType][instance][boss].tactics[1] = string.gsub(core.Instances[expansion][instanceType][instance][boss].tactics[1], ("IAT_" .. npcID), name)
+                                        end
+                                    else
+                                        if string.find(core.Instances[expansion][instanceType][instance][boss].tactics[2], ("IAT_" .. npcID)) then
+                                            core.Instances[expansion][instanceType][instance][boss].tactics[2] = string.gsub(core.Instances[expansion][instanceType][instance][boss].tactics[2], ("IAT_" .. npcID), name)
+                                        end
+                                    end
+                                else
+                                    if string.find(core.Instances[expansion][instanceType][instance][boss].tactics, ("IAT_" .. npcID)) then
+                                        core.Instances[expansion][instanceType][instance][boss].tactics = string.gsub(core.Instances[expansion][instanceType][instance][boss].tactics, ("IAT_" .. npcID), name)
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
     end
 end

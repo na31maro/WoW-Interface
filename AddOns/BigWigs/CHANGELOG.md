@@ -1,11 +1,11 @@
 # BigWigs
 
-## [v188.2](https://github.com/BigWigsMods/BigWigs/tree/v188.2) (2020-12-02)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v188.1...v188.2) [Previous Releases](https://github.com/BigWigsMods/BigWigs/releases)
+## [v199.2](https://github.com/BigWigsMods/BigWigs/tree/v199.2) (2020-12-26)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v199.1...v199.2) [Previous Releases](https://github.com/BigWigsMods/BigWigs/releases)
 
-- bump version  
-- Media: Remove some old compat code  
-- Loader: Fix a regression from 83e56e39d8b84f06f858427deaa298c7ef23624e breaking the display of DBM users in the version check  
-- Update zhCN (#866)  
-- Update deDE (#865)  
-- CastleNathria: Add locale files  
+- Shadowlands/NurgashMuckformed: Import module  
+- CastleNathria/Xymox: Filter Stasis Trap messages for Normal and below  
+- CastleNathria/TheCouncilofBlood: Improve timers on Duelist Riposte and Evasive Lunge when you leave Frieda alive (#894)  
+- CastleNathria/Denathrius: Update and fix some options and localization  
+- CastleNathria/TheCouncilofBlood: Update normal/heroic timers for Drain Essence & Prideful Eruption (#902)  
+- CastleNathria: Add missing strings to locale files (#901)  

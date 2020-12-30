@@ -98,6 +98,9 @@ function events:GET_ITEM_INFO_RECEIVED(self, arg1)
 end
 
 function generateNPCCache()
+	core:sendDebugMessage("Attempting to load from local NPC Cache")
+	GetNameFromLocalNpcIDCache()
+
 	core:sendDebugMessage("Generating NPC Cache...")
 	local count = 1
 	local tempNPC = {}
@@ -198,6 +201,8 @@ local trackAchievementsInUI = false				--Track achievements in achievements UI u
 local trackAchievementInUiTable = {}
 local trackCharacterAchievements = false
 local changeInfoFrameScale = false
+local trackAchievementsNoPrompt = false
+local changeMinimapIcon = false
 
 local sendMessageOnTimer_ProcessMessage = false	--Set when we have message in message queue that needs to be output
 local sendMessageOnTimer_Message = nil			--Message in queue to be outputted
@@ -601,12 +606,12 @@ function getInstanceInfomation()
 					instanceCompatible = true
 
 					--Set instance we want to debug
-					-- core.instanceNameSpaces = "The Necrotic Wake"
-					-- core.instanceName = "TheNecroticWake"
-					-- core.instance = 2286
-					-- core.instanceClear = "_2286"
+					-- core.instanceNameSpaces = "Castle Nathria"
+					-- core.instanceName = "CastleNathria"
+					-- core.instance = 2296
+					-- core.instanceClear = "_2296"
 					-- core.expansion = 2
-					-- core.instanceType = "Dungeons"
+					-- core.instanceType = "Raids"
 				end
 
 				if instanceCompatible == true and core.expansion ~= nil then
@@ -632,8 +637,12 @@ function getInstanceInfomation()
 							createEnableAchievementTrackingUI()
 						else
 							core:sendDebugMessage("Displaying Tracking UI since it was already created")
-							UIConfig.content:SetText(L["Core_EnableAchievementTracking"] .. ": " .. core.instanceNameSpaces);
-							UIConfig:Show()
+							if trackAchievementsNoPrompt == true then
+								enableAchievementTracking()
+							else
+								UIConfig.content:SetText(L["Core_EnableAchievementTracking"] .. ": " .. core.instanceNameSpaces);
+								UIConfig:Show()
+							end
 						end
 					else
 						core:sendDebugMessage("No Achievements to track for this instance")
@@ -730,15 +739,15 @@ function createEnableAchievementTrackingUI()
 	UIConfig.btnNo:SetScript("OnClick", disableAchievementTracking);
 
 	UIConfig:SetMovable(true)
-    UIConfig:EnableMouse(true)
-    UIConfig:SetClampedToScreen(true)
-    UIConfig:RegisterForDrag("LeftButton")
-    UIConfig:SetScript("OnDragStart", UIConfig.StartMoving)
-    UIConfig:SetScript("OnDragStop", function(self)
-        self:StopMovingOrSizing()
-        AchievementTrackerOptions["trackingFrameXPos"] = self:GetLeft()
-        AchievementTrackerOptions["trackingFrameYPos"] = self:GetBottom()
-    end)
+	UIConfig:EnableMouse(true)
+	UIConfig:SetClampedToScreen(true)
+	UIConfig:RegisterForDrag("LeftButton")
+	UIConfig:SetScript("OnDragStart", UIConfig.StartMoving)
+	UIConfig:SetScript("OnDragStop", function(self)
+		self:StopMovingOrSizing()
+		AchievementTrackerOptions["trackingFrameXPos"] = self:GetLeft()
+		AchievementTrackerOptions["trackingFrameYPos"] = self:GetBottom()
+	end)
 
     --Info Frame X/Y Posiions
 	if AchievementTrackerOptions["trackingFrameXPos"] ~= nil and AchievementTrackerOptions["trackingFrameYPos"] ~= nil then
@@ -750,6 +759,10 @@ function createEnableAchievementTrackingUI()
 
 	--Setup the InfoFrame
 	core.IATInfoFrame:SetupInfoFrame()
+
+	if trackAchievementsNoPrompt == true then
+		enableAchievementTracking()
+	end
 end
 
 --Players wants to track achievements for this instance
@@ -821,7 +834,7 @@ function enableAchievementTracking(self)
 
 	if core.warnCompatible == true then
 		StaticPopupDialogs["IAT_WarnCompatible"] = {
-			text = L["[IAT] Some achievements cannot be earned on Mythic difficulty. It is recommended switching to Heroic difficulty"],
+			text = L["GUI_DifficultyWarning"],
 			button1 = "Ok",
 			timeout = 0,
 			whileDead = true,
@@ -830,12 +843,20 @@ function enableAchievementTracking(self)
 		StaticPopup_Show ("IAT_WarnCompatible")
 		core.warnCompatible = false
 	end
+
+	if changeMinimapIcon == true then
+		_G["LibDBIcon10_InstanceAchievementTracker"].icon:SetVertexColor(0,1,0)
+	end
 end
 
 --Hide the achievment tracking UI once the player has left the instance
 function disableAchievementTracking(self)
 	UIConfig:Hide()
 	core.inInstance = false
+
+	if changeMinimapIcon == true then
+		_G["LibDBIcon10_InstanceAchievementTracker"].icon:SetVertexColor(1,0,0)
+	end
 end
 
 --Used to detect when everyone in the group has left combat so we can reset global and instance variables
@@ -1221,6 +1242,24 @@ function events:ADDON_LOADED(event, name)
 	end
 	_G["AchievementTracker_TrackCharacterAchievements"]:SetChecked(AchievementTrackerOptions["trackCharacterAchievements"])
 
+	--Track achievements Automatically
+	if AchievementTrackerOptions["trackAchievementsAutomatically"] == nil then
+		AchievementTrackerOptions["trackAchievementsAutomatically"] = false --Disabled by default
+		trackAchievementsNoPrompt = false
+	elseif AchievementTrackerOptions["trackAchievementsAutomatically"] == true then
+		trackAchievementsNoPrompt = true
+	end
+	_G["AchievementTracker_TrackAchievementsAutomatically"]:SetChecked(AchievementTrackerOptions["trackAchievementsAutomatically"])
+
+	--Change Miniamp Icon depending on addon state
+	if AchievementTrackerOptions["changeMinimapIcon"] == nil then
+		AchievementTrackerOptions["changeMinimapIcon"] = false --Disabled by default
+		changeMinimapIcon = false
+	elseif AchievementTrackerOptions["changeMinimapIcon"] == true then
+		changeMinimapIcon = true
+	end
+	_G["AchievementTracker_ChangeMinimapIcon"]:SetChecked(AchievementTrackerOptions["changeMinimapIcon"])
+
 	SLASH_IAT1 = "/iat";
 	SlashCmdList.IAT = HandleSlashCommands;
 
@@ -1231,6 +1270,22 @@ function events:ADDON_LOADED(event, name)
 
 	--Set whether addon should be enabled or disabled
 	setAddonEnabled(AchievementTrackerOptions["enableAddon"])
+end
+
+function setChangeMinimapIcon(setChangeMinimapIcon)
+	if setChangeMinimapIcon then
+		changeMinimapIcon = true
+	else
+		changeMinimapIcon = false
+	end
+end
+
+function setTrackAchievementsAutomatically(setTrackAchievementsAutomatically)
+	if setTrackAchievementsAutomatically then
+		trackAchievementsNoPrompt = true
+	else
+		trackAchievementsNoPrompt = false
+	end
 end
 
 function setTrackCharacterAchievements(setTrackCharacterAchievements)
@@ -1380,6 +1435,12 @@ function setAddonEnabled(addonEnabled)
 
 		--Attempt to fetch instance information in case player has enabled addon while inside of an instance
 		getInstanceInfomation()
+
+		if changeMinimapIcon == true then
+			C_Timer.After(1, function()
+				_G["LibDBIcon10_InstanceAchievementTracker"].icon:SetVertexColor(1,1,1)
+			end)
+		end
 	else
 		core:sendDebugMessage("Disabling Addon")
 		events:UnregisterEvent("PLAYER_ENTERING_WORLD")
@@ -1399,6 +1460,12 @@ function setAddonEnabled(addonEnabled)
 		checkAndClearInstanceVariables()
 
 		ClearGUITabs()
+
+		if changeMinimapIcon == true then
+			C_Timer.After(1, function()
+				_G["LibDBIcon10_InstanceAchievementTracker"].icon:SetVertexColor(0.4,0.4,0.4)
+			end)
+		end
 	end
 end
 
@@ -1890,6 +1957,10 @@ function checkAndClearInstanceVariables()
 			core.infoFrameLock = false
 		else
 			core:sendDebugMessage("InfoFrame was not active")
+		end
+
+		if changeMinimapIcon == true then
+			_G["LibDBIcon10_InstanceAchievementTracker"].icon:SetVertexColor(1,1,1)
 		end
 	end
 end
@@ -2910,7 +2981,7 @@ function core:sendMessage(message, outputToRW, messageType)
 	--The master addon check will be reset after every boss fight so we don't have to worry about players out of range/offline players etc
 end
 
-function core:sendMessageSafe(message, requireMasterAddon)
+function core:sendMessageSafe(message, requireMasterAddon, outputToRW)
 	message = message:gsub("[\r\n]+","") --Remove newlines before ouputting to chat
 	local openBracketOpen = false
 	local tmpMessageStr = ""
@@ -2985,11 +3056,13 @@ function core:sendMessageSafe(message, requireMasterAddon)
 
 	--Print the chat
 	for i in ipairs(tmpMessageArr) do
-		if debugMode == false then
+		if debugModeChat == false then
 			-- print("Printing Safe Message")
 			--Check if we just want the master addon to output or anyone can output this message
 			if requireMasterAddon == true then
 				core:sendMessage(tmpMessageArr[i])
+			elseif outputToRW == true then
+				core:sendMessage(tmpMessageArr[i],true)
 			else
 				-- print("Attempting to send... with length " .. strlen("[IAT] " .. tmpMessageArr[i]))
 				-- print(tmpMessageArr[i])

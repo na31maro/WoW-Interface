@@ -1,4 +1,3 @@
-
 --------------------------------------------------------------------------------
 -- TODO:
 -- -- Fallback if yells are not detected for stage changes
@@ -22,6 +21,8 @@ local dimensionalTearCount = 1
 local spiritCount = 1
 local seedCount = 1
 local annihilateCount = 1
+local sparkCount = 1
+local glyphCount = 1
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -83,6 +84,7 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "Extinction", 329107)
 	self:Log("SPELL_AURA_APPLIED", "WitheringTouchApplied", 340860)
 	self:Log("SPELL_CAST_START", "EdgeofAnnihilation", 328789)
+	--self:Log("SPELL_CAST_START", "UnleashPower", 342854)
 end
 
 function mod:OnEngage()
@@ -91,17 +93,23 @@ function mod:OnEngage()
 	spiritCount = 1
 	seedCount = 1
 	annihilateCount = 1
-	self:Bar(325399, 5.5) -- Hyperlight Spark
-	self:Bar(326271, 11) -- Stasis Trap
+	sparkCount = 1
+	glyphCount = 1
+
+	self:Bar(325399, 5.5, CL.count:format(self:SpellName(325399), sparkCount)) -- Hyperlight Spark
+	if not self:Easy() then -- No traps in Normal (and LFR?)
+		self:Bar(326271, 11) -- Stasis Trap
+	end
 	self:Bar(328437, 17, CL.count:format(self:SpellName(328437), dimensionalTearCount)) -- Dimensional Tear
 	self:Bar(335013, 21) -- Rift Blast
-	self:Bar(325236, 31) -- Glyph of Destruction
+	self:Bar(325236, 31, CL.count:format(self:SpellName(325236), glyphCount)) -- Glyph of Destruction
 	self:Bar(340758, 27, CL.count:format(self:SpellName(340758), spiritCount)) -- Fleeting Spirit
 end
 
 --------------------------------------------------------------------------------
 -- Event Handlers
 --
+
 function mod:CHAT_MSG_MONSTER_YELL(_, msg)
 	if msg:find(L.stage2_yell) then
 		self:StopBar(326271) -- Stasis Trap
@@ -145,7 +153,7 @@ do
 	function mod:DimensionalTear(args)
 		self:StopBar(CL.count:format(self:SpellName(328437), dimensionalTearCount))
 		dimensionalTearCount = dimensionalTearCount + 1
-		self:CDBar(328437, 41.3, CL.count:format(self:SpellName(328437), dimensionalTearCount))
+		self:CDBar(328437, self:Mythic() and (stage == 3 and 80 or stage == 2 and 51 or 36.5) or 41.3, CL.count:format(self:SpellName(328437), dimensionalTearCount))
 	end
 
 	function mod:DimensionalTearApplied(args)
@@ -172,11 +180,13 @@ do
 end
 
 function mod:GlyphofDestruction(args)
-	self:CDBar(325236, 29)
+	self:StopBar(CL.count:format(self:SpellName(325236), glyphCount))
+	glyphCount = glyphCount + 1
+	self:CDBar(325236, self:Mythic() and 36.5 or 29, CL.count:format(self:SpellName(325236), glyphCount))
 end
 
 function mod:GlyphofDestructionApplied(args)
-	self:TargetMessage(args.spellId, "purple", args.destName)
+	self:TargetMessage(args.spellId, "purple", args.destName, CL.count:format(args.spellName, glyphCount-1))
 	self:PlaySound(args.spellId, "warning")
 	self:TargetBar(args.spellId, 8, args.destName)
 	if self:Me(args.destGUID) then
@@ -191,9 +201,11 @@ function mod:GlyphofDestructionRemoved(args)
 end
 
 function mod:StasisTrap(args)
-	self:Message(args.spellId, "red")
-	self:PlaySound(args.spellId, "alert")
-	self:CDBar(args.spellId, 30)
+	if not self:Easy() then -- this event triggers in normal but no traps spawn, lets filter anything there
+		self:Message(args.spellId, "red")
+		self:PlaySound(args.spellId, "alert")
+		self:CDBar(args.spellId, self:Mythic() and (stage == 3 and 36 or 30) or 30)
+	end
 end
 
 function mod:RiftBlast(args)
@@ -203,9 +215,10 @@ function mod:RiftBlast(args)
 end
 
 function mod:HyperlightSpark(args)
-	self:Message(args.spellId, "yellow")
+	self:Message(args.spellId, "yellow", CL.count:format(args.spellName, sparkCount))
 	self:PlaySound(args.spellId, "alert")
-	self:CDBar(args.spellId, 15.8)
+	sparkCount = sparkCount + 1
+	self:CDBar(args.spellId, 15.8, CL.count:format(args.spellName, sparkCount))
 end
 
 -- The Relics of Castle Nathria
@@ -235,11 +248,11 @@ function mod:SeedsofExtinction(args)
 	self:Message(340788, "cyan", CL.count:format(self:SpellName(340788), seedCount))
 	self:PlaySound(340788, "long")
 	seedCount = seedCount + 1
-	self:Bar(340788, 41.5, CL.count:format(self:SpellName(340788), seedCount))
+	self:Bar(340788, self:Mythic() and (seedCount == 2 and 30 or 51) or seedCount % 2 and 53.3 or 41.3, CL.count:format(self:SpellName(340788), seedCount))
 end
 
 function mod:Extinction(args)
-	self:CastBar(args.spellId, 12, CL.count:format(args.spellName, seedCount-1))
+	self:CastBar(args.spellId, self:Normal() and 16 or 12, CL.count:format(args.spellName, seedCount-1))
 end
 
 function mod:WitheringTouchApplied(args)
@@ -250,9 +263,11 @@ function mod:WitheringTouchApplied(args)
 end
 
 function mod:EdgeofAnnihilation(args)
+	self:StopBar(CL.count:format(args.spellName, annihilateCount))
 	self:Message(args.spellId, "orange", CL.count:format(args.spellName, annihilateCount))
 	self:PlaySound(args.spellId, "warning")
 	self:CastBar(args.spellId, 10, CL.count:format(args.spellName, annihilateCount))
 	annihilateCount = annihilateCount + 1
-	self:CDBar(args.spellId, 82, CL.count:format(args.spellName, annihilateCount))
+	self:CDBar(args.spellId, self:Mythic() and (annihilateCount == 2 and 32 or 74) or 52, CL.count:format(args.spellName, annihilateCount))
 end
+

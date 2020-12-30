@@ -1,4 +1,3 @@
-
 --------------------------------------------------------------------------------
 -- TODO
 -- -- Mark the Essence Font with the same marker the Vile Occultist was marked with (SPELL_SUMMON events for GUIDs)
@@ -18,22 +17,40 @@ mod.respawnTime = 30
 --
 
 local startTime = 0
-local addTimers = { -- Heroic Testing
+local addTimersHeroic = { -- Heroic
 	[1] = {
-		[-21954] = {73, 119}, -- Rockbound Vanquishers
-		[-21993] = {65}, -- Bleakwing Assassin
-		[-21952] = {99}, -- Vile Occultists
-		[-21953] = {}, -- Soul Infusers
+		[-21954] = {35, 100}, -- Rockbound Vanquishers
+		[-21993] = {54, 144, 281}, -- Bleakwing Assassin
+		[-21952] = {54, 144}, -- Vile Occultists
+		[-21953] = {115}, -- Soul Infusers
 		[-22082] = {54.5, 95.5}, -- Pestering Fiend
 	},
 	[2] = { -- From Reflection of Guilt Removed
-		[-21954] = {26, 76.5, 125}, -- Rockbound Vanquishers
-		[-21993] = {59.5, 89, 140, 158}, -- Bleakwing Assassin
-		[-21952] = {12}, -- Vile Occultists
-		[-21953] = {12, 83, 113.5}, -- Soul Infusers
-		[-22082] = {49, 108, 128.5}, -- Pestering Fiend
+		[-21954] = {69, 134, 199}, -- Rockbound Vanquishers
+		[-21993] = {24, 84, 114, 154, 204, 234, 294, 334}, -- Bleakwing Assassin
+		[-21952] = {114, 184, 324}, -- Vile Occultists
+		[-21953] = {54, 114, 264, 334}, -- Soul Infusers
+		[-22082] = {24, 54, 84, 154, 184, 234, 264, 294}, -- Pestering Fiend
 	},
 }
+
+local addTimersMythic = { -- Mythic
+	[1] = {
+		[-21954] = {51.7}, -- Rockbound Vanquishers
+		[-21993] = {}, -- Bleakwing Assassin
+		[-21952] = {}, -- Vile Occultists
+		[-21953] = {}, -- Soul Infusers
+		[-22082] = {}, -- Pestering Fiend
+	},
+	[2] = { -- From Reflection of Guilt Removed
+		[-21954] = {3.5, 73.5, 143.5, 213.5}, -- Rockbound Vanquishers
+		[-21993] = {33.7, 143.5, 213.5}, -- Bleakwing Assassin
+		[-21952] = {33.7, 183.7, 218}, -- Vile Occultists
+		[-21953] = {90.7, 190.7}, -- Soul Infusers
+		[-22082] = {53.7, 93.7, 143.5, 213.5}, -- Pestering Fiend
+	},
+}
+local addTimers = {}
 local addWaveCount = {
 	[-21954] = 1, -- Rockbound Vanquishers
 	[-21993] = 1, -- Bleakwing Assassin
@@ -42,7 +59,7 @@ local addWaveCount = {
 	[-22082] = 1, -- Pestering Fiend
 }
 local addScheduledTimers = {}
-local nextStageWarning = 37
+local nextStageWarning = 42
 local mobCollector = {}
 local iconsInUse = {}
 local vileOccultistMarkCount = 0
@@ -52,6 +69,7 @@ local concussiveSmashCountTable = {}
 local blazingSurgeCount = 1
 local emberBlastCount = 1
 local cloakofFlamesCount = 1
+local phoenixCount = 0
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -59,15 +77,18 @@ local cloakofFlamesCount = 1
 
 local vileOccultistMarker = mod:AddMarkerOption(false, "npc", 8, -21952, 8, 7, 6, 5, 4, 3) -- Vile Occultist
 local essenceFontMarker = mod:AddMarkerOption(false, "npc", 1, -22232, 1, 2, 3, 4, 5, 6) -- Essence Font
+local phoenixMarker = mod:AddMarkerOption(false, "npc", 4, -22090, 1, 2, 3, 4) -- Reborn Phoenix
 function mod:GetOptions()
 	return {
 		"stages",
+		"berserk",
 		{326455, "TANK"}, -- Fiery Strike
 		326456, -- Burning Remnants
 		{325877, "SAY", "SAY_COUNTDOWN", "FLASH"}, -- Ember Blast
 		329518, -- Blazing Surge
 		328579, -- Smoldering Remnants
 		328479, -- Eyes on Target
+		phoenixMarker,
 		-21954, -- Rockbound Vanquisher
 		{325440, "TANK"}, -- Vanquishing Strike
 		{325442, "TANK"}, -- Vanquished
@@ -87,7 +108,8 @@ function mod:GetOptions()
 		-- High Torturer Darithos
 		{328889, "SAY", "PROXIMITY"}, -- Greater Castigation
 		-- Mythic
-		337859,  -- Cloak of Flames
+		337859, -- Cloak of Flames
+		343026, -- Damage Cloak of Flames
 	},{
 		["stages"] = "general",
 		[326455] = -21966, -- Shade of Kael'thas
@@ -110,7 +132,6 @@ function mod:OnBossEnable()
 	self:Log("SPELL_AURA_APPLIED", "BurningRemnantsApplied", 326456)
 	self:Log("SPELL_AURA_APPLIED_DOSE", "BurningRemnantsApplied", 326456)
 	self:Log("SPELL_CAST_START", "EmberBlast", 325877)
-	self:RegisterEvent("CHAT_MSG_RAID_BOSS_EMOTE") -- Ember Blast Target
 	self:Log("SPELL_CAST_START", "BlazingSurge", 329518)
 	self:Log("SPELL_AURA_APPLIED", "EyesonTarget", 328479) -- Phoenix Fixate
 	self:Log("SPELL_AURA_REMOVED", "ReflectionofGuiltRemoved", 323402)
@@ -132,16 +153,28 @@ function mod:OnBossEnable()
 	-- High Torturer Darithos
 	self:Log("SPELL_CAST_START", "GreaterCastigation", 328885)
 	self:Log("SPELL_AURA_APPLIED", "GreaterCastigationApplied", 332871) -- Pre-debuff
+	self:Log("SPELL_MISSED", "GreaterCastigationRemoved", 328889) -- Actual Channeled debuff Immune
 	self:Log("SPELL_AURA_REMOVED", "GreaterCastigationRemoved", 328889) -- Actual Channeled debuff
 	self:Death("DarithosDeath", 168973) -- High Torturer Darithos
 
 	-- Mythic
-	self:Log("SPELL_AURA_APPLIED", "CloakofFlamesApplied", 337859)
-	self:Log("SPELL_AURA_REMOVED", "CloakofFlamesRemoved", 337859)
+	self:Log("SPELL_AURA_APPLIED", "CloakofFlamesApplied", 337859, 343026)
+	self:Log("SPELL_AURA_REMOVED", "CloakofFlamesRemoved", 337859, 343026)
 
 	self:Log("SPELL_AURA_APPLIED", "GroundDamage", 328579) -- Smoldering Remnants
 	self:Log("SPELL_PERIODIC_DAMAGE", "GroundDamage", 328579)
 	self:Log("SPELL_PERIODIC_MISSED", "GroundDamage", 328579)
+end
+
+function mod:VerifyEnable(unit, mobId)
+	if mobId == 165759 then -- Kael'thas
+		local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
+		if hp < 50 then
+			return true
+		end
+	else
+		return true
+	end
 end
 
 function mod:OnEngage()
@@ -152,9 +185,10 @@ function mod:OnEngage()
 		[-21953] = 1, -- Soul Infusers
 		[-22082] = 1, -- Pestering Fiend
 	}
+	addTimers = self:Mythic() and addTimersMythic or addTimersHeroic
 	addScheduledTimers = {}
 	startTime = GetTime()
-	nextStageWarning = 37
+	nextStageWarning = 42
 	mobCollector = {}
 	iconsInUse = {}
 	stage = 1
@@ -162,6 +196,8 @@ function mod:OnEngage()
 	blazingSurgeCount = 1
 	emberBlastCount = 1
 	cloakofFlamesCount = 1
+	shadeUp = nil
+	phoenixCount = 0
 
 	self:Bar(328889, 5.5) -- Greater Castigation
 
@@ -169,14 +205,18 @@ function mod:OnEngage()
 		self:StartAddTimer(stage, key, count)
 	end
 
-	-- if self:Mythic() then
-	-- 	self:Bar(337859, 79.5, CL.count:format(self:SpellName(337859), cloakofFlamesCount)) -- Cloak of Flames
-	-- end
+	if self:Mythic() then
+		self:Bar(337859, 62, CL.count:format(self:SpellName(337859), cloakofFlamesCount)) -- Cloak of Flames
+	end
 
 	self:RegisterUnitEvent("UNIT_HEALTH", nil, "boss1")
 
-	if self:GetOption(vileOccultistMarker) or self:GetOption(essenceFontMarker) then
+	if self:GetOption(vileOccultistMarker) or self:GetOption(essenceFontMarker) or self:GetOption(phoenixMarker) then
 		self:RegisterTargetEvents("SunKingsSalvationMarker")
+	end
+
+	if not self:Mythic() then
+		self:Berserk(840) -- 14 minutes
 	end
 end
 
@@ -212,9 +252,9 @@ end
 
 function mod:UNIT_HEALTH(event, unit)
 	local hp = UnitHealth(unit) / UnitHealthMax(unit) * 100
-	if hp > nextStageWarning then -- Stage changes at 40% and 90%
+	if hp > nextStageWarning then -- Stage changes at 45% and 90%
 		self:Message("stages", "green", CL.soon:format(self:SpellName(-21966)), "achievement_raid_revendrethraid_kaelthassunstrider")
-		nextStageWarning = nextStageWarning + 50
+		nextStageWarning = nextStageWarning + 45
 		if nextStageWarning > 90 then
 			self:UnregisterUnitEvent(event, unit)
 		end
@@ -236,6 +276,10 @@ function mod:SunKingsSalvationMarker(event, unit, guid)
 				mobCollector[guid] = true
 			end
 		end
+	elseif self:GetOption(phoenixMarker) and self:MobId(guid) == 168962 and not mobCollector[guid] then -- Phoenix
+		phoenixCount = phoenixCount + 1
+		SetRaidTarget(unit, phoenixCount)
+		mobCollector[guid] = true
 	end
 end
 
@@ -273,16 +317,21 @@ function mod:ReflectionofGuiltApplied(args)
 		blazingSurgeCount = 1
 		emberBlastCount = 1
 
-		self:Bar(326455, 15) -- Fiery Strike
-		self:Bar(325877, 19.1, CL.count:format(self:SpellName(325877), emberBlastCount)) -- Ember Blast
-		self:Bar(329518, 29.1, CL.count:format(self:SpellName(329518), blazingSurgeCount)) -- Blazing Surge
+		self:Bar(326455, 13.5) -- Fiery Strike
+		self:Bar(325877, 19.5, CL.count:format(self:SpellName(325877), emberBlastCount)) -- Ember Blast
+		self:Bar(329518, 29.5, CL.count:format(self:SpellName(329518), blazingSurgeCount)) -- Blazing Surge
+
+		cloakofFlamesCount = 1
+		if self:Mythic() then
+			self:Bar(343026, 38.9, CL.count:format(self:SpellName(343026), cloakofFlamesCount))
+		end
 	end
 end
 
 function mod:FieryStrike(args)
 	self:Message(args.spellId, "purple")
 	self:PlaySound(args.spellId, "alert")
-	self:Bar(args.spellId, 7)
+	self:CDBar(args.spellId, 8) --6.8~10.6
 end
 
 function mod:BurningRemnantsApplied(args)
@@ -299,28 +348,23 @@ function mod:BurningRemnantsApplied(args)
 end
 
 do
-	local castEnd = 0
-	function mod:CHAT_MSG_RAID_BOSS_EMOTE(_, msg, _, _, _, destName)
-		if msg:find("325873", nil, true) then -- Ember Blast
-			self:TargetMessage(325877, "orange", destName, CL.count:format(self:SpellName(325877), emberBlastCount))
-			local guid = UnitGUID(destName)
-			if self:Me(guid) then
-				self:PlaySound(325877, "warning")
-				self:Say(325877)
-				self:Flash(325877)
-				local castLeft = castEnd - GetTime()
-				self:SayCountdown(325877, castLeft)
-			else
-				self:PlaySound(325877, "alert")
-			end
+	local function printTarget(self, player, guid)
+		if self:Me(guid) then
+			self:PlaySound(325877, "warning")
+			self:Yell(325877)
+			self:Flash(325877)
+			self:YellCountdown(325877, 3)
+		else
+			self:PlaySound(325877, "alert")
 		end
+		self:TargetMessage(325877, "orange", player, CL.count:format(self:SpellName(325877), emberBlastCount-1))
 	end
 
 	function mod:EmberBlast(args)
-		castEnd = GetTime() + 5
-		self:CastBar(args.spellId, 5, CL.count:format(args.spellName, emberBlastCount))
+		self:GetNextBossTarget(printTarget, args.sourceGUID)
+		self:CastBar(args.spellId, 3, CL.count:format(args.spellName, emberBlastCount))
 		emberBlastCount = emberBlastCount + 1
-		self:Bar(args.spellId, 20, CL.count:format(args.spellName, emberBlastCount))
+		self:Bar(args.spellId, 20.5, CL.count:format(args.spellName, emberBlastCount))
 	end
 end
 
@@ -328,7 +372,7 @@ function mod:BlazingSurge(args)
 	self:Message(args.spellId, "yellow", CL.count:format(args.spellName, blazingSurgeCount))
 	self:PlaySound(args.spellId, "alert")
 	blazingSurgeCount = blazingSurgeCount + 1
-	self:Bar(args.spellId, 20, CL.count:format(args.spellName, blazingSurgeCount))
+	self:Bar(args.spellId, 19.5, CL.count:format(args.spellName, blazingSurgeCount))
 end
 
 function mod:EyesonTarget(args)
@@ -346,8 +390,10 @@ function mod:ReflectionofGuiltRemoved()
 	self:StopBar(CL.count:format(self:SpellName(325877), emberBlastCount)) -- Ember Blast
 	self:StopBar(CL.cast:format(CL.count:format(self:SpellName(325877), emberBlastCount-1))) -- Ember Blast
 	self:CancelSayCountdown(325877) -- Ember Blast
+	self:StopBar(CL.count:format(self:SpellName(343026), cloakofFlamesCount)) -- Cloak of Flames
 
 	stage = stage + 1
+	if stage == 3 then return end -- You win
 	shadeUp = nil
 	addWaveCount = {
 		[-21954] = 1, -- Rockbound Vanquishers
@@ -359,6 +405,11 @@ function mod:ReflectionofGuiltRemoved()
 	startTime = GetTime()
 	for key,count in pairs(addWaveCount) do
 		self:StartAddTimer(stage, key, count)
+	end
+
+	cloakofFlamesCount = 1
+	if self:Mythic() then
+		self:Bar(337859, 34.3, CL.count:format(self:SpellName(337859), cloakofFlamesCount))
 	end
 end
 
@@ -383,7 +434,7 @@ function mod:ConcussiveSmash(args)
 	self:Message(args.spellId, "orange", CL.count:format(args.spellName, count))
 	self:PlaySound(args.spellId, "alarm")
 	concussiveSmashCountTable[args.sourceGUID] = count + 1
-	self:Bar(args.spellId, 21, CL.count:format(args.spellName, count))
+	self:Bar(args.spellId, 19.5, CL.count:format(args.spellName, count))
 end
 
 function mod:RockboundVanquisherDeath(args)
@@ -442,7 +493,7 @@ end
 -- High Torturer Darithos
 function mod:GreaterCastigation(args)
 	self:Message(328889, "yellow") -- Greater Castigation
-	self:Bar(328889, 8.5) -- Greater Castigation
+	self:Bar(328889, 15.5) -- Greater Castigation
 end
 
 do
@@ -487,7 +538,7 @@ function mod:CloakofFlamesApplied(args)
 	self:PlaySound(args.spellId, "warning")
 	self:CastBar(args.spellId, 6, CL.count:format(args.spellName, cloakofFlamesCount))
 	cloakofFlamesCount = cloakofFlamesCount + 1
-	--self:Bar(args.spellId, 30, CL.count:format(args.spellName, cloakofFlamesCount))
+	self:Bar(args.spellId, shadeUp and 30 or 60, CL.count:format(args.spellName, cloakofFlamesCount))
 end
 
 function mod:CloakofFlamesRemoved(args)

@@ -1,10 +1,12 @@
-tag 586969807cb60479a4114390d04c93db1adb9671 9.0.2.0
+tag 8eb0799e304115b85314c406fd2d245e5eea2950 9.0.2.2
 Author:	semlar <teslagraafs@gmail.com>
-Date:	Mon Nov 30 02:35:49 2020 -0500
+Date:	Mon Dec 14 07:26:40 2020 -0500
 
-commit 371362d2dcb365a5089c302acdaaca52e3c572f1
+commit 94a5f52610e86b42e6426aa2c711322402a71437
 Author: semlar <teslagraafs@gmail.com>
-Date:   Mon Nov 30 02:35:38 2020 -0500
+Date:   Mon Dec 14 07:26:30 2020 -0500
 
-    Bump toc for 9.0.2
+    Handle nameplates created during login process being hidden before addon loads
+    
+    - Make sure custom settings are applied to all nameplates created during the login process
 

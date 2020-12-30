@@ -8,6 +8,8 @@ sm.movers = {}
 
 local mod = sm.movers
 local L = sm.L
+local ClearAllPoints = sm.core.frame.ClearAllPoints
+local SetPoint = sm.core.frame.SetPoint
 
 local options = {
 	type = "group",
@@ -157,6 +159,102 @@ local options = {
 			end,
 			disabled = function() return not mod.db.moveObjectives end,
 		},
+		spacer3 = {
+			order = 10,
+			name = " ",
+			type = "description",
+			width = "full",
+		},
+		moveCaptureBar = {
+			order = 11,
+			name = L.enableObject:format(L.pvpCaptureBar),
+			type = "toggle",
+			width = "full",
+			confirm = function(info, v)
+				if not v then
+					return L.disableWarning
+				end
+			end,
+			get = function()
+				return mod.db.moveCaptureBar
+			end,
+			set = function(info, v)
+				mod.db.moveCaptureBar = v
+				if v then
+					mod:EnableCaptureBarMover()
+				else
+					mod.db.lockCaptureBar = false
+					mod.db.moverPositions.capturebar = nil
+					ReloadUI()
+				end
+			end,
+		},
+		lockCaptureBar = {
+			order = 12,
+			name = L.lockObject:format(L.pvpCaptureBar),
+			type = "toggle",
+			width = "full",
+			get = function()
+				return mod.db.lockCaptureBar
+			end,
+			set = function(info, v)
+				mod.db.lockCaptureBar = v
+				if v then
+					SexyMapCaptureBarMover:Hide()
+				else
+					SexyMapCaptureBarMover:Show()
+				end
+			end,
+			disabled = function() return not mod.db.moveCaptureBar end,
+		},
+		spacer4 = {
+			order = 13,
+			name = " ",
+			type = "description",
+			width = "full",
+		},
+		moveBuffs = {
+			order = 14,
+			name = L.enableObject:format(L.buffs),
+			type = "toggle",
+			width = "full",
+			confirm = function(info, v)
+				if not v then
+					return L.disableWarning
+				end
+			end,
+			get = function()
+				return mod.db.moveBuffs
+			end,
+			set = function(info, v)
+				mod.db.moveBuffs = v
+				if v then
+					mod:EnableBuffsMover()
+				else
+					mod.db.lockBuffs = false
+					mod.db.moverPositions.buffs = nil
+					ReloadUI()
+				end
+			end,
+		},
+		lockBuffs = {
+			order = 15,
+			name = L.lockObject:format(L.buffs),
+			type = "toggle",
+			width = "full",
+			get = function()
+				return mod.db.lockBuffs
+			end,
+			set = function(info, v)
+				mod.db.lockBuffs = v
+				if v then
+					SexyMapBuffsFrameMover:Hide()
+				else
+					SexyMapBuffsFrameMover:Show()
+				end
+			end,
+			disabled = function() return not mod.db.moveBuffs end,
+		},
 	},
 }
 
@@ -169,6 +267,10 @@ function mod:OnInitialize(profile)
 			lockDurability = false,
 			moveVehicle = false,
 			lockVehicle = false,
+			moveCaptureBar = false,
+			lockCaptureBar = false,
+			moveBuffs = false,
+			lockBuffs = false,
 			moverPositions = {},
 		}
 	end
@@ -185,6 +287,12 @@ function mod:OnEnable()
 	end
 	if self.db.moveObjectives then
 		self:EnableObjectivesMover()
+	end
+	if self.db.moveCaptureBar then
+		self:EnableCaptureBarMover()
+	end
+	if self.db.moveBuffs then
+		self:EnableBuffsMover()
 	end
 end
 
@@ -214,14 +322,14 @@ function mod:EnableDurabilityMover()
 		frame:SetWidth(width + 5)
 	end)
 
-	local function SetPoint(self)
-		sm.core.frame.ClearAllPoints(self)
+	local function SetNewPoint(self)
+		ClearAllPoints(self)
 		-- TOPRIGHT is our only choice or we'd create SetPoint errors in UIParent.lua
 		-- Where SetPoint is called by Blizz without performing a ClearAllPoints first
-		sm.core.frame.SetPoint(self, "TOPRIGHT", frame, "TOPRIGHT")
+		SetPoint(self, "TOPRIGHT", frame, "TOPRIGHT")
 	end
-	hooksecurefunc(DurabilityFrame, "SetPoint", SetPoint)
-	SetPoint(DurabilityFrame)
+	hooksecurefunc(DurabilityFrame, "SetPoint", SetNewPoint)
+	SetNewPoint(DurabilityFrame)
 
 	frame:SetScript("OnDragStart", function(self) self:StartMoving() end)
 	frame:SetScript("OnDragStop", function(self)
@@ -263,14 +371,14 @@ function mod:EnableVehicleMover()
 	frame:RegisterForDrag("LeftButton")
 	frame:SetMovable(true)
 
-	local function SetPoint(self)
-		sm.core.frame.ClearAllPoints(self)
+	local function SetNewPoint(self)
+		ClearAllPoints(self)
 		-- TOPRIGHT is our only choice or we'd create SetPoint errors in UIParent.lua
 		-- Where SetPoint is called by Blizz without performing a ClearAllPoints first
-		sm.core.frame.SetPoint(self, "TOPRIGHT", frame, "TOPRIGHT")
+		SetPoint(self, "TOPRIGHT", frame, "TOPRIGHT")
 	end
-	hooksecurefunc(VehicleSeatIndicator, "SetPoint", SetPoint)
-	SetPoint(VehicleSeatIndicator)
+	hooksecurefunc(VehicleSeatIndicator, "SetPoint", SetNewPoint)
+	SetNewPoint(VehicleSeatIndicator)
 
 	frame:SetScript("OnDragStart", function(self) self:StartMoving() end)
 	frame:SetScript("OnDragStop", function(self)
@@ -312,13 +420,13 @@ function mod:EnableObjectivesMover()
 	frame:RegisterForDrag("LeftButton")
 	frame:SetMovable(true)
 
-	local function SetPoint(self)
-		sm.core.frame.ClearAllPoints(self)
-		sm.core.frame.SetPoint(self, "TOPRIGHT", frame, "TOPRIGHT")
-		sm.core.frame.SetPoint(self, "BOTTOMRIGHT", frame, "BOTTOMRIGHT")
+	local function SetNewPoint(self)
+		ClearAllPoints(self)
+		SetPoint(self, "TOPRIGHT", frame, "TOPRIGHT")
+		SetPoint(self, "BOTTOMRIGHT", frame, "BOTTOMRIGHT")
 	end
-	hooksecurefunc(ObjectiveTrackerFrame, "SetPoint", SetPoint)
-	SetPoint(ObjectiveTrackerFrame)
+	hooksecurefunc(ObjectiveTrackerFrame, "SetPoint", SetNewPoint)
+	SetNewPoint(ObjectiveTrackerFrame)
 
 	-- Allows the sorting that occurs in UIParent.lua to skip the ObjectiveTrackerFrame
 	ObjectiveTrackerFrame:SetMovable(true)
@@ -342,5 +450,97 @@ function mod:EnableObjectivesMover()
 	local header = frame:CreateFontString(nil, "OVERLAY", "TextStatusBarText")
 	header:SetPoint("BOTTOM", frame, "TOP")
 	header:SetText(L["Objectives Tracker"])
+	header:Show()
+end
+
+function mod:EnableCaptureBarMover()
+	if SexyMapCaptureBarMover then return end
+	local UIWidgetBelowMinimapContainerFrame = UIWidgetBelowMinimapContainerFrame
+
+	local frame = CreateFrame("Frame", "SexyMapCaptureBarMover")
+	if self.db.moverPositions.capturebar then
+		local tbl = self.db.moverPositions.capturebar
+		frame:SetPoint(tbl[1], UIParent, tbl[2], tbl[3], tbl[4])
+	else
+		frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+	end
+	frame:SetSize(150, 30) -- No defaults, dynamically resizes
+	if self.db.lockCaptureBar then
+		frame:Hide()
+	else
+		frame:Show()
+	end
+	frame:EnableMouse(true)
+	frame:RegisterForDrag("LeftButton")
+	frame:SetMovable(true)
+
+	local function SetNewPoint(self)
+		ClearAllPoints(self)
+		SetPoint(self, "TOPRIGHT", frame, "TOPRIGHT")
+	end
+	hooksecurefunc(UIWidgetBelowMinimapContainerFrame, "SetPoint", SetNewPoint)
+	SetNewPoint(UIWidgetBelowMinimapContainerFrame)
+
+	frame:SetScript("OnDragStart", function(self) self:StartMoving() end)
+	frame:SetScript("OnDragStop", function(self)
+		self:StopMovingOrSizing()
+		local a, _, b, c, d = self:GetPoint()
+		mod.db.moverPositions.capturebar = {a, b, c, d}
+	end)
+
+	local bg = frame:CreateTexture()
+	bg:SetAllPoints(frame)
+	bg:SetColorTexture(0, 1, 0, 0.3)
+	bg:Show()
+
+	local header = frame:CreateFontString(nil, "OVERLAY", "TextStatusBarText")
+	header:SetPoint("BOTTOM", frame, "TOP")
+	header:SetText(L.pvpCaptureBar)
+	header:Show()
+end
+
+function mod:EnableBuffsMover()
+	if SexyMapBuffsFrameMover then return end
+	local BuffFrame = BuffFrame
+
+	local frame = CreateFrame("Frame", "SexyMapBuffsFrameMover")
+	if self.db.moverPositions.buffs then
+		local tbl = self.db.moverPositions.buffs
+		frame:SetPoint(tbl[1], UIParent, tbl[2], tbl[3], tbl[4])
+	else
+		frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+	end
+	frame:SetSize(190, 225) -- defaults: 50, 50
+	if self.db.lockBuffs then
+		frame:Hide()
+	else
+		frame:Show()
+	end
+	frame:EnableMouse(true)
+	frame:RegisterForDrag("LeftButton")
+	frame:SetMovable(true)
+
+	local function SetNewPoint(self)
+		ClearAllPoints(self)
+		SetPoint(self, "TOPRIGHT", frame, "TOPRIGHT")
+	end
+	hooksecurefunc(BuffFrame, "SetPoint", SetNewPoint)
+	SetNewPoint(BuffFrame)
+
+	frame:SetScript("OnDragStart", function(self) self:StartMoving() end)
+	frame:SetScript("OnDragStop", function(self)
+		self:StopMovingOrSizing()
+		local a, _, b, c, d = self:GetPoint()
+		mod.db.moverPositions.buffs = {a, b, c, d}
+	end)
+
+	local bg = frame:CreateTexture()
+	bg:SetAllPoints(frame)
+	bg:SetColorTexture(0, 1, 0, 0.3)
+	bg:Show()
+
+	local header = frame:CreateFontString(nil, "OVERLAY", "TextStatusBarText")
+	header:SetPoint("BOTTOM", frame, "TOP")
+	header:SetText(L.buffs)
 	header:Show()
 end

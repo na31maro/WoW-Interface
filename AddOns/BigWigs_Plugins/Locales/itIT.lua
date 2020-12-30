@@ -75,7 +75,7 @@ L.countWipes = "Numero Fallimenti:"
 L.createTimeBar = "Mostra la barra 'Miglior Tempo'"
 L.customBarStarted = "Barra personalizzata '%s' creata da utente %s - %s."
 L.customRange = "Indicatore di Distanza Personalizzato"
-L.customSoundDesc = "Riproduci il suono personalizzato scelto invece che quelli proposti dal modulo"
+L.customSoundDesc = "Riproduci il suono personalizzato scelto invece che quelli proposti dal modulo."
 L.defeated = "%s è stato sconfitto!"
 L.disable = "Disabilita"
 L.disabled = "Disabilitato"
@@ -243,6 +243,12 @@ L.wrongPullFormat = "Deve essere tra 1 e 60 secondi. Un'esempio corretto è: /pu
 L.wrongTime = "Specificato tempo non valido. <time> può essere sia un numero in secondi, una coppia M:S , o Mm. Per esempio 5, 1:20 or 2m."
 
 -----------------------------------------------------------------------
+-- AltPower.lua
+--
+
+--L.resetAltPowerDesc = "Reset all the options related to AltPower, including the position of the AltPower anchor."
+
+-----------------------------------------------------------------------
 -- AutoReply.lua
 --
 
@@ -277,13 +283,20 @@ L.wrongTime = "Specificato tempo non valido. <time> può essere sia un numero in
 --L.visibleBarLimit = "Visible bar limit"
 --L.visibleBarLimitDesc = "Set the maximum amount of bars that are visible at the same time."
 --L.textDesc = "Whether to show or hide the text displayed on the bars."
+--L.resetBarsDesc = "Reset all the options related to bars, including the position of the bar anchors."
 
 -----------------------------------------------------------------------
 -- BossBlock.lua
 --
 
---L.disableSfx = "Disable sound effects"
---L.disableSfxDesc = "The 'Sound Effects' option in WoW's sound options will be turned off, then turned back on when the boss encounter is over. This can help you focus on warning sounds from BigWigs."
+L.audio = "Audio"
+L.music = "Musica"
+L.ambience = "Audio ambientale"
+L.sfx = "Effetti audio"
+--L.disableMusic = "Mute music (recommended)"
+--L.disableAmbience = "Mute ambient sounds (recommended)"
+--L.disableSfx = "Mute sound effects (not recommended)"
+--L.disableAudioDesc = "The '%s' option in WoW's sound options will be turned off, then turned back on when the boss encounter is over. This can help you focus on warning sounds from BigWigs."
 --L.blockTooltipQuests = "Block tooltip quest objectives"
 --L.blockTooltipQuestsDesc = "When you need to kill a boss for a quest, it will usually show as '0/1 complete' in the tooltip when you place your mouse over the boss. This will be hidden whilst in combat with that boss to prevent the tooltip growing very large."
 --L.blockFollowerMission = "Blocca i popup della Guarnigione" -- Rename to follower mission
@@ -317,6 +330,24 @@ L.subzone_port_of_zandalar = "Porto di Zandalar" -- Battle of Dazar'alor raid (B
 --
 
 --L.infoBox = "InfoBox"
+
+-----------------------------------------------------------------------
+-- Messages.lua
+--
+
+--L.resetMessagesDesc = "Reset all the options related to messages, including the position of the message anchors."
+
+-----------------------------------------------------------------------
+-- Proximity.lua
+--
+
+--L.resetProximityDesc = "Reset all the options related to proximity, including the position of the proximity anchor."
+
+-----------------------------------------------------------------------
+-- Sound.lua
+--
+
+--L.resetSoundDesc = "Resets the above sounds to their defaults."
 
 -----------------------------------------------------------------------
 -- Statistics.lua

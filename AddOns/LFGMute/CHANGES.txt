@@ -1,22 +1,10 @@
-lightweight tag 28f5e7c56bd6a1578c358f552ba0c0040d4a8b20 8.0.1.3
+lightweight tag 2b710d3897b2ab58ca36b65a87bc5e235f0b3ef7 9.0.2.4
 Author:	Hemario <kevin.de.smet@outlook.be>
-Date:	Wed Sep 12 10:39:20 2018 +0200
+Date:	Fri Dec 11 19:53:24 2020 +0100
 
-commit 28f5e7c56bd6a1578c358f552ba0c0040d4a8b20
+commit 2b710d3897b2ab58ca36b65a87bc5e235f0b3ef7
 Author: Hemario <kevin.de.smet@outlook.be>
-Date:   Wed Sep 12 10:39:20 2018 +0200
+Date:   Fri Dec 11 19:53:24 2020 +0100
 
-    version 8.0.1.3
-
-commit 13d751e8982428f98b1ba4b0b3f3bc42ac329e50
-Author: Hemario <kevin.de.smet@outlook.be>
-Date:   Wed Sep 12 10:38:33 2018 +0200
-
-    tabs
-
-commit fabf8e71430515a8f19333224ae8c6df81578ed7
-Author: Hemario <kevin.de.smet@outlook.be>
-Date:   Wed Sep 12 10:38:29 2018 +0200
-
-    Play Sound in master channel
+    update toc for 9.0.2
 

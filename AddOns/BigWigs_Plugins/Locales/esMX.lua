@@ -20,6 +20,7 @@ L.altPowerTitle = "PoderAlternativo"
 L.toggleDisplayPrint = "La pantalla mostrará la próxima vez. Para desactivarlo completamente para este encuentro, debes desactivarlo en las opciones del encuentro."
 L.disabled = "Desactivado"
 L.disabledDisplayDesc = "Desactiva la pantalla para todos los módulos que la utilicen."
+--L.resetAltPowerDesc = "Reset all the options related to AltPower, including the position of the AltPower anchor."
 
 -----------------------------------------------------------------------
 -- AutoReply.lua
@@ -50,6 +51,7 @@ L.autoReplyLeftCombatAdvancedWipe = "Perdí contra '%s' en: %s"
 L.bars = "Barras"
 L.style = "Estilo"
 L.bigWigsBarStyleName_Default = "Por defecto"
+--L.resetBarsDesc = "Reset all the options related to bars, including the position of the bar anchors."
 
 L.nameplateBars = "Barras de nombres"
 L.nameplateAutoWidth = "Igualar anchura de la placa de nombre"
@@ -147,8 +149,14 @@ L.blockGuildChallenge = "Bloquea las ventanas emergentes de logros de hermandad"
 L.blockGuildChallengeDesc = "Las ventanas emergentes de logros de hermandad muestran algunas cosas, principalmente cuando un grupo en tu hermandad completa un calabozo heroico o un calabozo en modo desafío.\n\nEstas ventanas emergentes pueden cubrir partes críticas de tu UI durante un encuentro con un jefe, así que recomendamos bloquearlos."
 L.blockSpellErrors = "Bloquear mensajes de hechizos fallidos"
 L.blockSpellErrorsDesc = "Mensajes tales como \"El hechizo no está listo aún\" que usualmente es mostrado en la parte de arriba de la pantalla serán bloqueados."
-L.disableSfx = "Deshabilitar efectos de sonido"
-L.disableSfxDesc = "La opción 'Efectos de sonido' en las opciones de sonido de WoW será deshabilitada, luego se volverá a habilidad cuando el encuentro con el jefe termina. Esto puede ayudarte a enfocarte en los sonidos de alerta de BigWigs."
+L.audio = "Audio"
+L.music = "Música"
+L.ambience = "Sonido ambiental"
+L.sfx = "Efectos de sonido"
+--L.disableMusic = "Mute music (recommended)"
+--L.disableAmbience = "Mute ambient sounds (recommended)"
+--L.disableSfx = "Mute sound effects (not recommended)"
+L.disableAudioDesc = "La opción '%s' en las opciones de sonido de WoW será deshabilitada, luego se volverá a habilidad cuando el encuentro con el jefe termina. Esto puede ayudarte a enfocarte en los sonidos de alerta de BigWigs."
 L.blockTooltipQuests = "Bloquea la ventana de información de los objetivos de misiones"
 L.blockTooltipQuestsDesc = "Cuando necesitas matar a un jefe para una misión, normalmente se mostrará como '0/1 completado' en la ventana de información cuando pasas tu mouse sobre el jefe. Esto se esconderá durante el combate con ese jefe para evitar que la ventana de información crezca mucho."
 L.blockObjectiveTracker = "Ocultar el seguimiento de misión"
@@ -217,6 +225,7 @@ L.infoBox = "InfoBox"
 L.sinkDescription = "Dirige la salida de este complemento a través de la pantalla de mensajes de BigWigs. Esta pantalla soporta iconos, colores y puede mostrar hasta 4 mensajes en la pantalla a la vez. Los mensajes recién insertados crecerán en tamaño y se reducirán de nuevo rápidamente para notificar al usuario."
 L.emphasizedSinkDescription = "Dirige la salida de este complemento a través de la pantalla de mensajes de BigWigs enfatizada. Esta pantalla admite texto y colores, y sólo puede mostrar un mensaje a la vez."
 L.emphasizedCountdownSinkDescription = "Dirige la salida de este complemento a través de la pantalla de mensajes de BigWigs enfatizada en la cuenta regresiva. Esta pantalla admite texto y colores, y sólo puede mostrar un mensaje a la vez."
+--L.resetMessagesDesc = "Reset all the options related to messages, including the position of the message anchors."
 
 L.bwEmphasized = "BigWigs enfatizado"
 L.messages = "Menajes"
@@ -257,6 +266,7 @@ L.soundDelayDesc = "Especifica el tiempo que BigWigs debería esperar entre cada
 
 L.proximity = "Pantalla de proximidad"
 L.proximity_desc = "Muestra la ventana de proximidad cuando sea apropiado para este encuentro, enumerando los jugadores que están demasiado cerca de ti."
+--L.resetProximityDesc = "Reset all the options related to proximity, including the position of the proximity anchor."
 
 L.close = "Cerrar"
 L.closeProximityDesc = "Cierra la ventana de proximidad.\n\nPara deshabilitarla completamente para un encuentro, debes ir a las opciones para ese encuentro module y deshabilitar la opción de 'Proximidad'."
@@ -324,7 +334,8 @@ L.Warning = "Alerta"
 L.sound = "Sonido"
 L.soundDesc = "Los mensajes pueden venir con un sonido. A algunas personas les resulta más fácil escucharlos una vez que han aprendido qué sonido va con cada mensaje, en lugar de leer los mensajes reales."
 
-L.customSoundDesc = "Reproduce el sonido personalizado seleccionado en lugar del suministrado por el módulo"
+L.customSoundDesc = "Reproduce el sonido personalizado seleccionado en lugar del suministrado por el módulo."
+--L.resetSoundDesc = "Resets the above sounds to their defaults."
 L.resetAllCustomSound = "Si has personalizado los sonidos para cualquier encuentro con el jefe, este botón los reajustará TODOS para que se usen los sonidos definidos aquí."
 
 -----------------------------------------------------------------------

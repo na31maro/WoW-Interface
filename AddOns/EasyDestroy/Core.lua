@@ -1,5 +1,5 @@
 EasyDestroy = {}
-EasyDestroy.Version =  "1.0.2"
+EasyDestroy.Version =  GetAddOnMetadata("EasyDestroy", "version")
 EasyDestroy.DebugActive = false
 EasyDestroy.AddonName = "EasyDestroy"
 EasyDestroy.AddonLoaded = false
@@ -15,7 +15,7 @@ EasyDestroy.DestroyTypes = {}
 EasyDestroy.DestroyTypes.DISENCHANT = "DISENCHANT"
 EasyDestroy.DestroyTypes.MILL = "MILL"
 EasyDestroy.DestroyTypes.PROSPECT = "PROSPECT"
-
+EasyDestroy.WarnedLootOpen = false
 EasyDestroy.DestroyFilters = {}
 EasyDestroy.DestroyFilters[EasyDestroy.DestroyTypes.DISENCHANT] = {{itype=LE_ITEM_CLASS_WEAPON, stype=nil}, {itype=LE_ITEM_CLASS_ARMOR, stype=nil}}
 
@@ -108,5 +108,16 @@ function GetTableSize(t)
 	end
 	return count
 end
+
+-- function to give me something more akin to python's "in" operator.
+function _in_(checkTable, checkValue)
+	for k, v in pairs(checkTable) do
+		if k == checkValue then
+			return true
+		end
+	end
+	return false
+end
+
 
 

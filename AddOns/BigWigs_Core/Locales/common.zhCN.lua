@@ -54,6 +54,7 @@ L.trash = "小怪"
 L.underyou = "你脚下：%s"
 L.you = "你 %s"
 L.you_icon = "|T13700%2$d:0|t你 %1$s"
+L.on_group = "队伍 %s" -- spell on group
 
 L.active = "激活" -- When a boss becomes active, after speech finishes
 
@@ -73,3 +74,7 @@ L.amount_one = "%.2f亿" -- Billions 1,000,000,000
 L.amount_two = "%.1f万" -- Millions 1,000,000
 L.amount_three = "%d千" -- Thousands 1,000
 L.seconds = "%.1f秒" -- 1.1 seconds
+
+-- Common ability name replacements
+L.laser = "激光" -- Used for abilities that act like a laser. Usually from the boss to a player, or, from the boss to a specific area
+L.bomb = "炸弹" -- Used for debuffs that make players explode

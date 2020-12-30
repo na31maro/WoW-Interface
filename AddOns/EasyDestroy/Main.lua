@@ -10,6 +10,7 @@ EasyDestroyFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 EasyDestroyFrame:RegisterEvent("PLAYER_LOGOUT")
 EasyDestroyFrame:RegisterEvent("PLAYER_LOGIN")
 EasyDestroyFrame:RegisterEvent("BAG_UPDATE_DELAYED")
+EasyDestroyFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
 
 --[[ 
 Note1: Considering looking at events to handle the enable/disable of the disenchant button
@@ -27,10 +28,17 @@ have less than X bag slots they won't disenchant.
 
 function EasyDestroy_EventHandler(self, event, ...)
 	if event == "BAG_UPDATE_DELAYED" and EasyDestroy.AddonLoaded and EasyDestroyFrame:IsVisible() then 
-		EasyDestroyItemsScrollBar_Update()
+		-- Originally reenabled the button via a timer, however by doing it as a callback this makes it so
+		-- that we don't have to worry about it ever somehow being re-enabled before the bags and
+		-- item list have been properly processed.
+		EasyDestroyItemsScrollBar_Update(function() EasyDestroyButton:Enable() end)
 	elseif event=="PLAYER_ENTERING_WORLD" and EasyDestroy.AddonLoaded then
 		EasyDestroy.CurrentFilter=testfilter
 		EasyDestroyItemsScrollBar_Update()
+	elseif event == "UNIT_SPELLCAST_INTERRUPTED" then
+		if select(1, ...) == "player" then
+			EasyDestroyButton:Enable()
+		end
 	elseif event=="ADDON_LOADED" then
 		local name = ...
 		if name == EasyDestroy.AddonName then
@@ -107,6 +115,8 @@ function SlashCmdList.OPENUI(msg)
 	if msg=="reset" then
 		-- reset position to center of screen
 		EasyDestroyFrame:SetPoint("RIGHT", UIParent, "CENTER", 0, 0)
+	elseif msg=="macro" then
+		CreateMacro("ED_Disenchant", 236557, "/click EasyDestroyButton", nil)
 	else
 		if EasyDestroyFrame:IsVisible() then
 			EasyDestroyFrame:Hide()

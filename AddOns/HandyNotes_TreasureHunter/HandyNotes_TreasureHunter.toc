@@ -2,7 +2,7 @@
 ## Title: HandyNotes_TreasureHunter (Draenor Treasures)
 ## Notes: Where the Treasure Hunter objects are in Draenor
 ## Author: Kemayo
-## Version: v19
+## Version: v22
 ## DefaultState: enabled
 ## X-Category: Map
 ## X-eMail: kemayo @ gmail DOT com
@@ -13,3 +13,4 @@
 handler.lua
 config.lua
 Treasure.lua
+Rares.lua

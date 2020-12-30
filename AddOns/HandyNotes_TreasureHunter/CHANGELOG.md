@@ -1,5 +1,18 @@
 # Changelog
 
+## Changed in v22
+
+* Added a bunch of missing drops
+* Cleaned up some overly long labels
+
+## Changed in v21
+
+* Cleaned up some data, filled out Tanaan Jungle rares better
+
+## Changed in v20
+
+* Pick up fixes and improvements from [HandyNotes: Shadowlands Treasures](https://www.curseforge.com/wow/addons/handynotes-shadowlands-treasures)
+
 ## Changed in v19
 
 * Update for 9.0.2

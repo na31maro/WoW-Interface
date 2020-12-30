@@ -19,6 +19,7 @@ L.altPowerTitle = "AltPower"
 L.toggleDisplayPrint = "The display will show next time. To disable it completely for this encounter, you need to toggle it off in the encounter options."
 L.disabled = "Disabled"
 L.disabledDisplayDesc = "Disable the display for all modules that use it."
+L.resetAltPowerDesc = "Reset all the options related to AltPower, including the position of the AltPower anchor."
 
 -----------------------------------------------------------------------
 -- AutoReply.lua
@@ -49,6 +50,7 @@ L.autoReplyLeftCombatAdvancedWipe = "I lost against '%s' at: %s"
 L.bars = "Bars"
 L.style = "Style"
 L.bigWigsBarStyleName_Default = "Default"
+L.resetBarsDesc = "Reset all the options related to bars, including the position of the bar anchors."
 
 L.nameplateBars = "Nameplate Bars"
 L.nameplateAutoWidth = "Match width of nameplate"
@@ -146,8 +148,14 @@ L.blockGuildChallenge = "Block guild challenge popups"
 L.blockGuildChallengeDesc = "Guild challenge popups show for a few things, mainly when a group in your guild completes a heroic dungeon or a challenge mode dungeon.\n\nThese popups can cover up critical parts of your UI during a boss fight, so we recommend blocking them."
 L.blockSpellErrors = "Block spell failed messages"
 L.blockSpellErrorsDesc = "Messages such as \"Spell is not ready yet\" that usually show at the top of the screen will be blocked."
-L.disableSfx = "Disable sound effects"
-L.disableSfxDesc = "The 'Sound Effects' option in WoW's sound options will be turned off, then turned back on when the boss encounter is over. This can help you focus on warning sounds from BigWigs."
+L.audio = "Audio"
+L.music = "Music"
+L.ambience = "Ambient Sounds"
+L.sfx = "Sound Effects"
+L.disableMusic = "Mute music (recommended)"
+L.disableAmbience = "Mute ambient sounds (recommended)"
+L.disableSfx = "Mute sound effects (not recommended)"
+L.disableAudioDesc = "The '%s' option in WoW's sound options will be turned off, then turned back on when the boss encounter is over. This can help you focus on warning sounds from BigWigs."
 L.blockTooltipQuests = "Block tooltip quest objectives"
 L.blockTooltipQuestsDesc = "When you need to kill a boss for a quest, it will usually show as '0/1 complete' in the tooltip when you place your mouse over the boss. This will be hidden whilst in combat with that boss to prevent the tooltip growing very large."
 L.blockObjectiveTracker = "Hide quest tracker"
@@ -216,6 +224,7 @@ L.infoBox = "InfoBox"
 L.sinkDescription = "Route output from this addon through the BigWigs message display. This display supports icons, colors and can show up to 4 messages on the screen at a time. Newly inserted messages will grow in size and shrink again quickly to notify the user."
 L.emphasizedSinkDescription = "Route output from this addon through the BigWigs Emphasized message display. This display supports text and colors, and can only show one message at a time."
 L.emphasizedCountdownSinkDescription = "Route output from this addon through the BigWigs Emphasized Countdown message display. This display supports text and colors, and can only show one message at a time."
+--L.resetMessagesDesc = "Reset all the options related to messages, including the position of the message anchors."
 
 L.bwEmphasized = "BigWigs Emphasized"
 L.messages = "Messages"
@@ -256,6 +265,7 @@ L.soundDelayDesc = "Specify how long BigWigs should wait between repeating the s
 
 L.proximity = "Proximity display"
 L.proximity_desc = "Show the proximity window when appropriate for this encounter, listing players who are standing too close to you."
+L.resetProximityDesc = "Reset all the options related to proximity, including the position of the proximity anchor."
 
 L.close = "Close"
 L.closeProximityDesc = "Closes the proximity display.\n\nTo disable it completely for any encounter, you have to go into the options for the relevant boss module and toggle the 'Proximity' option off."
@@ -323,7 +333,8 @@ L.Warning = "Warning"
 L.sound = "Sound"
 L.soundDesc = "Messages might come with a sound. Some people find it easier to listen for these after they've learned which sound goes with which message, as opposed to reading the actual messages."
 
-L.customSoundDesc = "Play the selected custom sound instead of the one supplied by the module"
+L.customSoundDesc = "Play the selected custom sound instead of the one supplied by the module."
+L.resetSoundDesc = "Resets the above sounds to their defaults."
 L.resetAllCustomSound = "If you've customized sounds for any boss encounter settings, this button will reset ALL of them so the sounds defined here will be used instead."
 
 -----------------------------------------------------------------------

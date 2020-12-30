@@ -54,6 +54,7 @@ L.trash = "Basura"
 L.underyou = "%s debajo de TI"
 L.you = "%s en TI"
 L.you_icon = "%s en |T13700%d:0|tTI"
+--L.on_group = "%s on GROUP" -- spell on group
 
 L.active = "Activo" -- Cuando un jefe se activa, después de que acabe el diálogo
 
@@ -73,3 +74,7 @@ L.amount_one = "%dB" -- Billions 1,000,000,000
 L.amount_two = "%dM" -- Millions 1,000,000
 L.amount_three = "%dK" -- Thousands 1,000
 L.seconds = "%.1fs" -- 1.1 seconds
+
+-- Common ability name replacements
+--L.laser = "Laser" -- Used for abilities that act like a laser. Usually from the boss to a player, or, from the boss to a specific area
+--L.bomb = "Bomb" -- Used for debuffs that make players explode

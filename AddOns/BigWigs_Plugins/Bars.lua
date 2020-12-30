@@ -1,7 +1,7 @@
 
 --[[
-See BigWigs/Docs/BarStyles.txt for in-depth information on how to register new
-bar styles from 3rd party addons.
+Visit: https://github.com/BigWigsMods/BigWigs/wiki/Custom-Bar-Styles
+for in-depth information on how to register new bar styles from 3rd party addons.
 ]]
 
 --------------------------------------------------------------------------------
@@ -46,7 +46,6 @@ local empUpdate = nil -- emphasize updater frame
 local nameplateEmpUpdate = nil
 local rearrangeBars
 local rearrangeNameplateBars
-local UnitGUID = UnitGUID
 local GetNamePlateForUnit = C_NamePlate.GetNamePlateForUnit
 
 local clickHandlers = {}
@@ -63,7 +62,7 @@ do
 	findUnitByGUID = function(id)
 		for i = 1, unitTableCount do
 			local unit = unitTable[i]
-			local guid = UnitGUID(unit)
+			local guid = plugin:UnitGUID(unit)
 			if guid == id then
 				return unit
 			end
@@ -76,20 +75,23 @@ end
 --
 
 local currentBarStyler = nil
+local SetBarStyle
 
-local barStyles = {
-	Default = {
-		apiVersion = 1,
-		version = 1,
-		--GetSpacing = function(bar) end,
-		--ApplyStyle = function(bar) end,
-		--BarStopped = function(bar) end,
-		GetStyleName = function()
-			return L.bigWigsBarStyleName_Default
-		end,
-	},
-}
-local barStyleRegister = {}
+BigWigsAPI:RegisterBarStyle("Default", {
+	apiVersion = 1,
+	version = 1,
+	--barSpacing = 1,
+	--barHeight = 16,
+	--fontSizeNormal = 10,
+	--fontSizeEmphasized = 13,
+	--fontOutline = "NONE",
+	--GetSpacing = function(bar) end,
+	--ApplyStyle = function(bar) end,
+	--BarStopped = function(bar) end,
+	GetStyleName = function()
+		return L.bigWigsBarStyleName_Default
+	end,
+})
 
 do
 	-- !Beautycase styling, based on !Beatycase by Neal "Neave" @ WowI, texture made by Game92 "Aftermathh" @ WowI
@@ -185,14 +187,14 @@ do
 		bar:Set("bigwigs:beautycase:borders", borders)
 	end
 
-	barStyles.BeautyCase = {
+	BigWigsAPI:RegisterBarStyle("BeautyCase", {
 		apiVersion = 1,
 		version = 10,
 		barSpacing = 8,
 		ApplyStyle = styleBar,
 		BarStopped = freeStyle,
 		GetStyleName = function() return "!Beautycase" end,
-	}
+	})
 end
 
 do
@@ -276,7 +278,7 @@ do
 		bar.candyBarDuration:SetPoint("BOTTOMRIGHT", bar.candyBarBar, "TOPRIGHT", -2, 2)
 	end
 
-	barStyles.MonoUI = {
+	BigWigsAPI:RegisterBarStyle("MonoUI", {
 		apiVersion = 1,
 		version = 10,
 		barHeight = 20,
@@ -286,7 +288,7 @@ do
 		ApplyStyle = styleBar,
 		BarStopped = removeStyle,
 		GetStyleName = function() return "MonoUI" end,
-	}
+	})
 end
 
 do
@@ -363,14 +365,14 @@ do
 		bd:Show()
 	end
 
-	barStyles.TukUI = {
+	BigWigsAPI:RegisterBarStyle("TukUI", {
 		apiVersion = 1,
 		version = 10,
 		barSpacing = 7,
 		ApplyStyle = styleBar,
 		BarStopped = removeStyle,
 		GetStyleName = function() return "TukUI" end,
-	}
+	})
 end
 
 do
@@ -463,7 +465,7 @@ do
 		bd:Show()
 	end
 
-	barStyles.ElvUI = {
+	BigWigsAPI:RegisterBarStyle("ElvUI", {
 		apiVersion = 1,
 		version = 10,
 		barSpacing = E and (E.PixelMode and 4 or 8) or 4,
@@ -471,7 +473,7 @@ do
 		ApplyStyle = styleBar,
 		BarStopped = removeStyle,
 		GetStyleName = function() return "ElvUI" end,
-	}
+	})
 end
 
 --------------------------------------------------------------------------------
@@ -663,35 +665,43 @@ do
 						type = "select",
 						name = L.style,
 						order = 5,
-						values = barStyleRegister,
+						values = function() return BigWigsAPI:GetBarStyleList() end,
 						set = function(info, value)
 							db[info[#info]] = value
-							plugin:SetBarStyle(value)
-							local style = barStyles[value]
+							SetBarStyle(value)
+							local style = BigWigsAPI:GetBarStyle(value)
 							if style then
-								if style.barSpacing then
+								if type(style.barSpacing) == "number" and style.barSpacing > 0 and style.barSpacing < 101 then
 									db.spacing = style.barSpacing
 								else
-									db.spacing = 1
+									db.spacing = plugin.defaultDB.spacing
 								end
 								rearrangeBars(normalAnchor)
 								rearrangeBars(emphasizeAnchor)
 
-								if style.barHeight then
+								if type(style.barHeight) == "number" and style.barHeight > 0 and style.barHeight < 201 then
 									db.BigWigsAnchor_height = style.barHeight
 									db.BigWigsEmphasizeAnchor_height = style.barHeight * 1.1
 								else
-									db.BigWigsAnchor_height = 16
-									db.BigWigsEmphasizeAnchor_height = 22
+									db.BigWigsAnchor_height = plugin.defaultDB.BigWigsAnchor_height
+									db.BigWigsEmphasizeAnchor_height = plugin.defaultDB.BigWigsEmphasizeAnchor_height
 								end
-								if style.fontSizeNormal then
+								if type(style.fontSizeNormal) == "number" and style.fontSizeNormal > 0 and style.fontSizeNormal < 201 then
 									db.fontSize = style.fontSizeNormal
-									updateFont()
+								else
+									db.fontSize = plugin.defaultDB.fontSize
 								end
-								if style.fontSizeEmphasized then
+								if type(style.fontSizeEmphasized) == "number" and style.fontSizeEmphasized > 0 and style.fontSizeEmphasized < 201 then
 									db.fontSizeEmph = style.fontSizeEmphasized
-									updateFont()
+								else
+									db.fontSizeEmph = plugin.defaultDB.fontSize
 								end
+								if type(style.fontOutline) == "string" and (style.fontOutline == "NONE" or style.fontOutline == "OUTLINE" or style.fontOutline == "THICKOUTLINE") then
+									db.outline = style.fontOutline
+								else
+									db.outline = plugin.defaultDB.outline
+								end
+								updateFont()
 
 								for bar in next, normalAnchor.bars do
 									currentBarStyler.BarStopped(bar)
@@ -717,6 +727,7 @@ do
 						order = 6,
 						softMax = 30,
 						min = 0,
+						max = 100,
 						step = 1,
 						width = 2,
 						set = sortBars,
@@ -919,6 +930,18 @@ do
 							end
 						end,
 						disabled = function() return not db.icon end,
+					},
+					header3 = {
+						type = "header",
+						name = "",
+						order = 18,
+					},
+					reset = {
+						type = "execute",
+						name = L.resetAll,
+						desc = L.resetBarsDesc,
+						func = function() plugin.db:ResetProfile() end,
+						order = 19,
 					},
 				},
 			},
@@ -1465,7 +1488,7 @@ do
 		header:SetShadowOffset(1, -1)
 		header:SetTextColor(1,0.82,0,1)
 		header:SetText(title)
-		header:SetAllPoints(display)
+		header:SetPoint("CENTER", display, "CENTER")
 		header:SetJustifyH("CENTER")
 		header:SetJustifyV("MIDDLE")
 		local drag = CreateFrame("Frame", nil, display)
@@ -1487,13 +1510,6 @@ do
 		display:SetScript("OnDragStart", onDragStart)
 		display:SetScript("OnDragStop", onDragStop)
 		display.bars = {}
-		display.Reset = function(self)
-			db[self.x] = nil
-			db[self.y] = nil
-			db[self.w] = nil
-			db[self.h] = nil
-			self:RefixPosition()
-		end
 		display.RefixPosition = function(self)
 			self:ClearAllPoints()
 			if db[self.x] and db[self.y] then
@@ -1523,30 +1539,15 @@ local function hideAnchors()
 	emphasizeAnchor:Hide()
 end
 
-local function resetAnchors()
-	normalAnchor:Reset()
-	emphasizeAnchor:Reset()
-end
-
 local function updateProfile()
 	db = plugin.db.profile
 	normalAnchor:RefixPosition()
 	emphasizeAnchor:RefixPosition()
 	if plugin:IsEnabled() then
 		if not media:Fetch(STATUSBAR, db.texture, true) then db.texture = "BantoBar" end
-		plugin:SetBarStyle(db.barStyle)
+		SetBarStyle(db.barStyle)
 		plugin:RegisterMessage("DBM_AddonMessage")
 	end
-	-- XXX temp cleanup [8.0.1]
-	db.scale = nil
-	db.emphasizeScale = nil
-	if not db.emphasizeMove then
-		db.BigWigsEmphasizeAnchor_width = db.BigWigsAnchor_width*db.emphasizeMultiplier
-		db.BigWigsEmphasizeAnchor_height = db.BigWigsAnchor_height*db.emphasizeMultiplier
-	end
-	db.tempMonoUIReset = nil
-	db.tempSpacingReset = nil
-	db.font = nil
 end
 
 --------------------------------------------------------------------------------
@@ -1558,10 +1559,6 @@ function plugin:OnRegister()
 
 	self:RegisterMessage("BigWigs_ProfileUpdate", updateProfile)
 	updateProfile()
-
-	for k, v in next, barStyles do
-		barStyleRegister[k] = v:GetStyleName()
-	end
 end
 
 function plugin:OnPluginEnable()
@@ -1582,7 +1579,6 @@ function plugin:OnPluginEnable()
 	self:RegisterMessage("BigWigs_OnPluginDisable", "StopModuleBars")
 	self:RegisterMessage("BigWigs_StartConfigureMode", showAnchors)
 	self:RegisterMessage("BigWigs_StopConfigureMode", hideAnchors)
-	self:RegisterMessage("BigWigs_ResetPositions", resetAnchors)
 	self:RegisterMessage("BigWigs_ProfileUpdate", updateProfile)
 
 	self:RefixClickIntercepts()
@@ -1595,6 +1591,9 @@ function plugin:OnPluginEnable()
 	-- custom bars
 	self:RegisterMessage("BigWigs_PluginComm")
 	self:RegisterMessage("DBM_AddonMessage")
+
+	-- XXX temporary workaround for wow custom font loading issues, start a dummy bar to force load the selected font into memory
+	self:SendMessage("BigWigs_StartBar", self, nil, "test", 0.01, 134376)
 
 	local tbl = BigWigs3DB.breakTime
 	if tbl then -- Break time present, resume it
@@ -1613,38 +1612,28 @@ end
 --
 
 do
-	local currentAPIVersion = 1
-	local errorWrongAPI = "The bar style API version is now %d; the bar style %q needs to be updated for this version of BigWigs."
-	local errorMismatchedData = "The given style data does not seem to be a BigWigs bar styler."
-	local errorAlreadyExist = "Trying to register %q as a bar styler, but it already exists."
+	local errorDeprecated = "An addon registered the bar style '%s' using the old method. Visit github.com/BigWigsMods/BigWigs/wiki/Custom-Bar-Styles to learn how to do it correctly."
 	function plugin:RegisterBarStyle(key, styleData)
-		if type(key) ~= "string" then error(errorMismatchedData) end
-		if type(styleData) ~= "table" then error(errorMismatchedData) end
-		if type(styleData.version) ~= "number" then error(errorMismatchedData) end
-		if type(styleData.apiVersion) ~= "number" then error(errorMismatchedData) end
-		if type(styleData.GetStyleName) ~= "function" then error(errorMismatchedData) end
-		if styleData.apiVersion ~= currentAPIVersion then error(errorWrongAPI:format(currentAPIVersion, key)) end
-		if barStyles[key] and barStyles[key].version == styleData.version then error(errorAlreadyExist:format(key)) end
-		if not barStyles[key] or barStyles[key].version < styleData.version then
-			barStyles[key] = styleData
-			barStyleRegister[key] = styleData:GetStyleName()
-		end
+		BigWigs:Print(errorDeprecated:format(key))
+		BigWigsAPI:RegisterBarStyle(key, styleData)
 	end
 end
 
 do
-	local errorNoStyle = "BigWigs: No style with the ID %q has been registered. Reverting to default style."
-	local function noop() end
-	function plugin:SetBarStyle(style)
-		if type(style) ~= "string" or not barStyles[style] then
-			print(errorNoStyle:format(tostring(style)))
-			style = "Default"
+	function plugin:SetBarStyle(styleName)
+		-- Ask users to select your bar styles. Forcing a selection is deprecated.
+		-- This is to allow users to install multiple styles gracefully, and to encourage authors to use new style entry APIs like `.barHeight` or `.fontSizeNormal`
+		-- Want more style API entries? We're open to suggestions!
+		BigWigs:Print(("SetBarStyle is deprecated, bar style '%s' was not set automatically, you may need to set it yourself."):format(styleName))
+	end
+	local errorNoStyle = "No style with the ID %q has been registered. Reverting to default style."
+	function SetBarStyle(styleName)
+		local style = BigWigsAPI:GetBarStyle(styleName)
+		if not style then
+			BigWigs:Print(errorNoStyle:format(styleName))
+			styleName = "Default"
 		end
-		local newBarStyler = barStyles[style]
-		if not newBarStyler.ApplyStyle then newBarStyler.ApplyStyle = noop end
-		if not newBarStyler.BarStopped then newBarStyler.BarStopped = noop end
-		if not newBarStyler.GetSpacing then newBarStyler.GetSpacing = noop end
-		if not newBarStyler.OnEmphasize then newBarStyler.OnEmphasize = noop end
+		style = BigWigsAPI:GetBarStyle(styleName)
 
 		-- Iterate all running bars
 		if currentBarStyler then
@@ -1652,24 +1641,24 @@ do
 				for bar in next, normalAnchor.bars do
 					currentBarStyler.BarStopped(bar)
 					bar.candyBarBackdrop:Hide()
-					newBarStyler.ApplyStyle(bar)
+					style.ApplyStyle(bar)
 				end
 			end
 			if emphasizeAnchor then
 				for bar in next, emphasizeAnchor.bars do
 					currentBarStyler.BarStopped(bar)
 					bar.candyBarBackdrop:Hide()
-					newBarStyler.ApplyStyle(bar)
+					style.ApplyStyle(bar)
 				end
 			end
 		end
-		currentBarStyler = newBarStyler
+		currentBarStyler = style
 
 		rearrangeBars(normalAnchor)
 		rearrangeBars(emphasizeAnchor)
 
 		if db then
-			db.barStyle = style
+			db.barStyle = styleName
 		end
 	end
 end
@@ -2297,7 +2286,7 @@ end
 --
 
 function plugin:NAME_PLATE_UNIT_ADDED(_, unit)
-	local guid = UnitGUID(unit)
+	local guid = plugin:UnitGUID(unit)
 	local unitBars = nameplateBars[guid]
 	if not unitBars then return end
 	for _, barInfo in next, unitBars do
@@ -2329,7 +2318,7 @@ function plugin:NAME_PLATE_UNIT_ADDED(_, unit)
 end
 
 function plugin:NAME_PLATE_UNIT_REMOVED(_, unit)
-	local guid = UnitGUID(unit)
+	local guid = plugin:UnitGUID(unit)
 	local unitBars = nameplateBars[guid]
 	if not unitBars then return end
 

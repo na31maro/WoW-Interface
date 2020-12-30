@@ -1,7 +1,6 @@
 # SexyMap
 
-## [v9.0.13](https://github.com/funkydude/SexyMap/tree/v9.0.13) (2020-11-23)
-[Full Changelog](https://github.com/funkydude/SexyMap/compare/v9.0.12...v9.0.13) [Previous Releases](https://github.com/funkydude/SexyMap/releases)
+## [v9.0.16](https://github.com/funkydude/SexyMap/tree/v9.0.16) (2020-12-12)
+[Full Changelog](https://github.com/funkydude/SexyMap/compare/v9.0.15...v9.0.16) [Previous Releases](https://github.com/funkydude/SexyMap/releases)
 
-- Fix login error when coordinates are disabled, closes #177  
-- Tweak  
+- Buttons: If the calendar button is set to show on hover (the default) it will now be force-shown when you receive a calendar invite until you respond to it.  

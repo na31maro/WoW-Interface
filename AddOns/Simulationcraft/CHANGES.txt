@@ -1,10 +1,10 @@
-lightweight tag dc15c749ab71474bd3cc780008c06a9c8d40f6df v9.0.2-09
+lightweight tag f7e67db4ced21b62603e71aa8a9ffbc169e722a2 v9.0.2-15
 Author:	Dave Hendler <sollaires@gmail.com>
-Date:	Tue Dec 1 18:29:51 2020 -0800
+Date:	Wed Dec 16 00:03:20 2020 -0800
 
-commit dc15c749ab71474bd3cc780008c06a9c8d40f6df
+commit f7e67db4ced21b62603e71aa8a9ffbc169e722a2
 Author: Dave Hendler <sollaires@gmail.com>
-Date:   Tue Dec 1 18:29:51 2020 -0800
+Date:   Wed Dec 16 00:03:20 2020 -0800
 
-    Fix TOC, still had reference to a removed dependency
+    Clean up weapon token debugging
 
